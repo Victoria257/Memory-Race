@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import { generateDeck, CATEGORIES, COLORS } from './src/data/deck';
 import { Card, Player, GameState } from './src/types';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { GoogleGenAI, Modality } from '@google/genai';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,6 +27,9 @@ async function startServer() {
 
 // JSON парсер
 app.use(bodyParser.json());
+app.use(cors());
+
+  app.get('/favicon.ico', (req, res) => res.status(204).end());
 
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok' });

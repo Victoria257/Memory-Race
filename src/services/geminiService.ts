@@ -22,7 +22,8 @@ export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk
   // }
 
    try {
-    const response = await fetch(`${import.meta.env.VITE_APP_URL}/api/speak`, {
+    const baseUrl = import.meta.env.VITE_APP_URL || '';
+    const response = await fetch(`${baseUrl}/api/speak`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, language })
@@ -40,50 +41,7 @@ export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk
     console.warn('Server TTS failed, fallback to browser TTS:', err);
   }
     // fallback
-  fallbackToBrowserTTS(text, langMap[language]);
-
-
-  const ai = new GoogleGenAI({ apiKey });
-  const ttsTimeout = new Promise<null>((_, reject) => 
-    setTimeout(() => reject(new Error("Gemini TTS Timeout")), 5000)
-  );
-
-  try {
-    const responsePromise = ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text }] }],
-      config: {
-        systemInstruction: `You are a fun, energetic and very friendly game master for a kids game. 
-        Speak the following text in ${langNameMap[language]} language. 
-        Use a very expressive, happy, and child-friendly tone. 
-        Do NOT use any other language like Russian.`,
-        responseModalities: [Modality.AUDIO],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Kore' },
-          },
-        },
-      },
-    });
-
-    const response = await Promise.race([responsePromise, ttsTimeout]) as any;
-    if (!response) throw new Error("No response");
-
-    const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    if (base64Audio) {
-      const pcmData = Uint8Array.from(atob(base64Audio), c => c.charCodeAt(0));
-      const wavHeader = createWavHeader(pcmData.length, 24000);
-      const wavBlob = new Blob([wavHeader, pcmData], { type: 'audio/wav' });
-      const audioUrl = URL.createObjectURL(wavBlob);
-      const audio = new Audio(audioUrl);
-      
-      audio.onended = () => URL.revokeObjectURL(audioUrl);
-      await audio.play();
-    }
-  } catch (error) {
-    console.error("Gemini TTS Error or Timeout:", error);
     fallbackToBrowserTTS(text, langMap[language]);
-  }
 };
 
 // export const generateGameCommentary = async (context: string, language: string) => {
@@ -107,7 +65,8 @@ export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk
 
 export const generateGameCommentary = async (context: string, language: string) => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_APP_URL}/api/generate`, {
+    const baseUrl = import.meta.env.VITE_APP_URL || '';
+    const response = await fetch(`${baseUrl}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt: context, language })
@@ -120,8 +79,6 @@ export const generateGameCommentary = async (context: string, language: string) 
     return 'Good luck!';
   }
 };
-
-
 
 
 
