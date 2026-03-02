@@ -9,7 +9,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+app.listen(PORT);
 
 const categories = ['furniture', 'appliances', 'transport', 'animals', 'food', 'clothing', 'dishes'];
 const colors = ['gray', 'black', 'blue', 'yellow', 'green', 'red', 'brown', 'white'];
