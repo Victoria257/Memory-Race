@@ -1,46 +1,6 @@
 import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
-
-export type Player = {
-  id: string;
-  socketId: string;
-  name: string;
-  tokenColor: string;
-  age: number;
-  position: number;
-  skipNextTurn: boolean;
-  place: number | null;
-  connected: boolean;
-  lastActive: number;
-  missedTurns: number;
-  isBot: boolean;
-};
-
-export type Card = {
-  id: string;
-  category: string;
-  color: string;
-  itemEn: string;
-  itemSv: string;
-  itemUk: string;
-  colorEn: string;
-  colorSv: string;
-  colorUk: string;
-  imageUrl: string | null;
-};
-
-export type GameState = {
-  roomId: string;
-  status: 'lobby' | 'playing' | 'paused' | 'finished';
-  initiator: string;
-  players: Player[];
-  deckCount: number;
-  currentTurnIndex: number;
-  phase: 'select' | 'reveal' | 'action';
-  currentSelection: { category: string, color: string } | null;
-  currentCard: Card | null;
-  turnStartTime: number;
-};
+import { Player, Card, GameState } from './types';
 
 interface AppState {
   socket: Socket | null;

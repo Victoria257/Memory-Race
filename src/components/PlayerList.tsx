@@ -28,7 +28,7 @@ export const PlayerList = () => {
   };
 
   const isMyTurn = gameState.players[gameState.currentTurnIndex].id === playerId;
-  const showBell = !isMyTurn && timeSinceTurnStart > 20000;
+  const showBell = !isMyTurn && timeSinceTurnStart > 30000;
   const anyPlayerFinished = gameState.players.some(p => p.place !== null);
   const myPlayer = gameState.players.find(p => p.id === playerId);
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;

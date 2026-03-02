@@ -1,10 +1,17 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-
 export const speakText = async (text: string) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    console.warn("GEMINI_API_KEY is not set, falling back to browser TTS");
+    fallbackToBrowserTTS(text);
+    return;
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   const ttsTimeout = new Promise<null>((_, reject) => 
-    setTimeout(() => reject(new Error("Gemini TTS Timeout")), 2500)
+    setTimeout(() => reject(new Error("Gemini TTS Timeout")), 5000)
   );
 
   try {
@@ -37,12 +44,33 @@ export const speakText = async (text: string) => {
     }
   } catch (error) {
     console.error("Gemini TTS Error or Timeout:", error);
-    // Fallback to browser TTS
-    const utterance = new SpeechSynthesisUtterance(text);
-    // Try to match language
-    if (text.match(/[а-яА-Я]/)) utterance.lang = 'uk-UA';
-    window.speechSynthesis.speak(utterance);
+    fallbackToBrowserTTS(text);
   }
+};
+
+export const generateGameCommentary = async (context: string, language: string) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return "Good luck!";
+
+  const ai = new GoogleGenAI({ apiKey });
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: `You are a fun, energetic game master for a kids game called "Memory Race". 
+      Provide a very short (max 10 words) commentary in ${language} language about this event: ${context}.
+      Be encouraging and fun!`,
+    });
+    return response.text?.trim() || "";
+  } catch (error) {
+    console.error("Gemini Commentary Error:", error);
+    return "";
+  }
+};
+
+const fallbackToBrowserTTS = (text: string) => {
+  const utterance = new SpeechSynthesisUtterance(text);
+  if (text.match(/[а-яА-Я]/)) utterance.lang = 'uk-UA';
+  window.speechSynthesis.speak(utterance);
 };
 
 function createWavHeader(pcmDataLength: number, sampleRate: number) {

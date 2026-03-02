@@ -6,6 +6,8 @@ import { ArrowRight, FastForward, SkipForward } from 'lucide-react';
 export const ActionPanel = () => {
   const { gameState, playerId, performAction } = useStore();
   const [showPenalty, setShowPenalty] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [isActuallyVisible, setIsActuallyVisible] = useState(false);
 
   if (!gameState) return null;
 
@@ -15,6 +17,23 @@ export const ActionPanel = () => {
 
   const prevIsMyTurn = React.useRef(isMyTurn);
   const containerRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isMyTurn) setShowPenalty(false);
+    
+    if (isActionPhase && isMyTurn) {
+      setIsLocked(true);
+      setIsActuallyVisible(false);
+      const timer = setTimeout(() => {
+        setIsLocked(false);
+        setIsActuallyVisible(true);
+      }, 4000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsLocked(false);
+      setIsActuallyVisible(false);
+    }
+  }, [isActionPhase, isMyTurn]);
 
   useEffect(() => {
     if (!isMyTurn) setShowPenalty(false);
@@ -66,41 +85,50 @@ export const ActionPanel = () => {
       className={`w-full h-full bg-white text-gray-800 p-6 transition-all duration-500 rounded-3xl shadow-xl border-4 border-indigo-50 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'}`}>
       
       <div className="max-w-4xl mx-auto relative h-full flex flex-col">
-        <h3 className="text-xl font-black mb-6 text-center text-indigo-600 uppercase tracking-[0.2em]">
-          {canAct ? '🚀 Твій хід! Куди їдемо?' : '😴 Чекаємо на хід...'}
-        </h3>
+        {!isActuallyVisible && isActionPhase && isMyTurn ? (
+          <div className="flex-1 flex flex-col items-center justify-center gap-4 py-12">
+            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+            <p className="text-xl font-black text-indigo-600 animate-pulse uppercase tracking-widest">Слухай уважно...</p>
+          </div>
+        ) : (
+          <>
+            <h3 className="text-xl font-black mb-6 text-center text-indigo-600 uppercase tracking-[0.2em]">
+              {canAct ? '🚀 Твій хід! Куди їдемо?' : '😴 Чекаємо на хід...'}
+            </h3>
 
-        <div className="flex flex-col sm:flex-row lg:flex-col justify-center gap-4">
-          <button
-            disabled={!canAct || showPenalty}
-            onClick={() => handleAction('pass')}
-            className={`px-6 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all transform
-              ${canAct && !showPenalty ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 active:scale-95 shadow-md' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
-              border-4 border-gray-200 w-full`}
-          >
-            <SkipForward size={24} strokeWidth={3} /> <span className="whitespace-nowrap">Пропустити</span>
-          </button>
+            <div className="flex flex-col sm:flex-row lg:flex-col justify-center gap-4">
+              <button
+                disabled={!canAct || showPenalty || isLocked}
+                onClick={() => handleAction('pass')}
+                className={`px-6 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all transform
+                  ${canAct && !showPenalty && !isLocked ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 active:scale-95 shadow-md' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
+                  border-4 border-gray-200 w-full`}
+              >
+                <SkipForward size={24} strokeWidth={3} /> <span className="whitespace-nowrap">Пропустити</span>
+              </button>
 
-          <button
-            disabled={!canAct || showPenalty}
-            onClick={() => handleAction('move1')}
-            className={`px-6 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all transform
-              ${canAct && !showPenalty ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-blue-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
-              border-4 border-blue-300 w-full`}
-          >
-            <ArrowRight size={24} strokeWidth={3} /> <span className="whitespace-nowrap">1 крок</span>
-          </button>
+              <button
+                disabled={!canAct || showPenalty || isLocked}
+                onClick={() => handleAction('move1')}
+                className={`px-6 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all transform
+                  ${canAct && !showPenalty && !isLocked ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-blue-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
+                  border-4 border-blue-300 w-full`}
+              >
+                <ArrowRight size={24} strokeWidth={3} /> <span className="whitespace-nowrap">1 крок</span>
+              </button>
 
-          <button
-            disabled={!canAct || showPenalty}
-            onClick={() => handleAction('move2')}
-            className={`px-6 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all transform
-              ${canAct && !showPenalty ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-emerald-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
-              border-4 border-emerald-300 w-full`}
-          >
-            <FastForward size={24} strokeWidth={3} /> <span className="whitespace-nowrap">2 кроки!</span>
-          </button>
-        </div>
+              <button
+                disabled={!canAct || showPenalty || isLocked}
+                onClick={() => handleAction('move2')}
+                className={`px-6 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all transform
+                  ${canAct && !showPenalty && !isLocked ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-emerald-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
+                  border-4 border-emerald-300 w-full`}
+              >
+                <FastForward size={24} strokeWidth={3} /> <span className="whitespace-nowrap">2 кроки!</span>
+              </button>
+            </div>
+          </>
+        )}
 
         <AnimatePresence>
           {showPenalty && (
