@@ -44,6 +44,20 @@ export default function App() {
     };
   }, [gameState, playerId, reportActivity]);
 
+  // Auto-scroll to selection panel when it's user's turn and select phase
+  useEffect(() => {
+    if (!gameState || gameState.status !== 'playing') return;
+    const isMyTurn = gameState.players[gameState.currentTurnIndex]?.id === playerId;
+    if (isMyTurn && gameState.phase === 'select') {
+      setTimeout(() => {
+        const panel = document.getElementById('selection-panel');
+        if (panel) {
+          panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 500);
+    }
+  }, [gameState?.currentTurnIndex, gameState?.phase, playerId]);
+
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900 flex flex-col">
       <Header />

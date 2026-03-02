@@ -1,11 +1,23 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
-export const speakText = async (text: string) => {
+export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk') => {
   const apiKey = process.env.GEMINI_API_KEY;
   
+  const langMap = {
+    'en': 'en-US',
+    'sv': 'sv-SE',
+    'uk': 'uk-UA'
+  };
+
+  const langNameMap = {
+    'en': 'English',
+    'sv': 'Swedish',
+    'uk': 'Ukrainian'
+  };
+
   if (!apiKey) {
     console.warn("GEMINI_API_KEY is not set, falling back to browser TTS");
-    fallbackToBrowserTTS(text);
+    fallbackToBrowserTTS(text, langMap[language]);
     return;
   }
 
@@ -19,6 +31,10 @@ export const speakText = async (text: string) => {
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text }] }],
       config: {
+        systemInstruction: `You are a fun, energetic and very friendly game master for a kids game. 
+        Speak the following text in ${langNameMap[language]} language. 
+        Use a very expressive, happy, and child-friendly tone. 
+        Do NOT use any other language like Russian.`,
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
@@ -44,7 +60,7 @@ export const speakText = async (text: string) => {
     }
   } catch (error) {
     console.error("Gemini TTS Error or Timeout:", error);
-    fallbackToBrowserTTS(text);
+    fallbackToBrowserTTS(text, langMap[language]);
   }
 };
 
@@ -67,9 +83,9 @@ export const generateGameCommentary = async (context: string, language: string) 
   }
 };
 
-const fallbackToBrowserTTS = (text: string) => {
+const fallbackToBrowserTTS = (text: string, lang: string) => {
   const utterance = new SpeechSynthesisUtterance(text);
-  if (text.match(/[а-яА-Я]/)) utterance.lang = 'uk-UA';
+  utterance.lang = lang;
   window.speechSynthesis.speak(utterance);
 };
 

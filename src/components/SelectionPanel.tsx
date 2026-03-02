@@ -13,6 +13,14 @@ export const SelectionPanel = () => {
   const isSelectPhase = gameState.phase === 'select';
   const canSelect = isMyTurn && isSelectPhase;
 
+  const getStatusMessage = () => {
+    if (!isMyTurn) return '⏳ Чекаємо на друзів...';
+    if (isSelectPhase) return '🎯 Твій хід! Обирай:';
+    if (gameState.phase === 'reveal') return '🎴 Категорію обрано! Відкривай карту';
+    if (gameState.phase === 'action') return '🚀 Час робити хід!';
+    return '🎯 Твій хід!';
+  };
+
   const categories = [
     { id: 'furniture', icon: '🛋️', name: { uk: 'Меблі', en: 'Furniture', sv: 'Möbler' } },
     { id: 'appliances', icon: '📺', name: { uk: 'Техніка', en: 'Appliances', sv: 'Apparater' } },
@@ -39,13 +47,21 @@ export const SelectionPanel = () => {
       selectAttributes(selectedCategory, selectedColor);
       setSelectedCategory(null);
       setSelectedColor(null);
+      
+      // Scroll to deck after selection
+      setTimeout(() => {
+        const deckElement = document.getElementById('deck-panel');
+        if (deckElement) {
+          deckElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
   };
 
   return (
-    <div className="flex-grow h-full bg-white rounded-3xl shadow-xl p-6 border-4 border-indigo-50 transition-all duration-300">
+    <div id="selection-panel" className="flex-grow h-full bg-white rounded-3xl shadow-xl p-6 border-4 border-indigo-50 transition-all duration-300">
       <h3 className="text-xl font-black mb-6 text-indigo-600 flex items-center gap-2">
-        {canSelect ? '🎯 Твій хід! Обирай:' : '⏳ Чекаємо на друзів...'}
+        {getStatusMessage()}
       </h3>
 
       <div className="mb-8">

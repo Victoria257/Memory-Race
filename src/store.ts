@@ -32,7 +32,9 @@ interface AppState {
   clearError: () => void;
 }
 
-const socketUrl = (import.meta as any).env?.VITE_APP_URL || window.location.origin;
+// const socketUrl = (import.meta as any).env?.VITE_APP_URL || window.location.origin;
+const socketUrl =
+  import.meta.env.VITE_APP_URL || window.location.origin;
 
 export const useStore = create<AppState>((set, get) => ({
   socket: null,

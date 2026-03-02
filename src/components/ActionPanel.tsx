@@ -39,10 +39,10 @@ export const ActionPanel = () => {
     if (!isMyTurn) setShowPenalty(false);
     
     if (!prevIsMyTurn.current && isMyTurn) {
-      // Turn started, scroll to the selection panel
+      // Turn started, scroll to the selection panel (where categories are)
       setTimeout(() => {
-        containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
+        document.getElementById('selection-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
     }
     
     if (prevIsMyTurn.current && !isMyTurn) {
@@ -53,6 +53,15 @@ export const ActionPanel = () => {
     }
     prevIsMyTurn.current = isMyTurn;
   }, [isMyTurn]);
+
+  useEffect(() => {
+    if (isActuallyVisible && isActionPhase && isMyTurn) {
+      // Buttons appeared, scroll to action panel
+      setTimeout(() => {
+        document.getElementById('action-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+  }, [isActuallyVisible, isActionPhase, isMyTurn]);
 
   const handleAction = (action: 'pass' | 'move1' | 'move2') => {
     if (!canAct) return;
@@ -81,7 +90,7 @@ export const ActionPanel = () => {
 
   return (
     <div 
-      ref={containerRef}
+      id="action-panel"
       className={`w-full h-full bg-white text-gray-800 p-6 transition-all duration-500 rounded-3xl shadow-xl border-4 border-indigo-50 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'}`}>
       
       <div className="max-w-4xl mx-auto relative h-full flex flex-col">

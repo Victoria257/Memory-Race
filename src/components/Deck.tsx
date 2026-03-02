@@ -24,14 +24,19 @@ export const Deck = () => {
       if (isMyTurn && !isMuted) {
         // Play sound based on language and card content using Gemini TTS
         const textToSpeak = `${gameState.currentCard[`item${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}. ${gameState.currentCard[`color${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}`;
-        speakText(textToSpeak);
+        speakText(textToSpeak, language);
+        
+        // Scroll to card on mobile
+        setTimeout(() => {
+          document.getElementById('deck-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
       }
       lastSpokenCardId.current = gameState.currentCard.id;
     }
   }, [gameState.currentCard, language, isMuted, isMyTurn]);
 
   return (
-    <div className="w-full lg:w-72 h-full bg-white rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-4 border-indigo-50 transition-all duration-300">
+    <div id="deck-panel" className="w-full lg:w-72 h-full bg-white rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-4 border-indigo-50 transition-all duration-300">
       <div className="text-xs font-black text-indigo-300 mb-6 uppercase tracking-[0.2em]">📦 Колода ({gameState.deckCount})</div>
       
       <div className="relative w-44 h-64 sm:w-52 sm:h-80 perspective-1000">
