@@ -1,7 +1,7 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
 export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk') => {
-  const apiKey = process.env.GEMINI_API_KEY;
+  // const apiKey = process.env.GEMINI_API_KEY;
   
   const langMap = {
     'en': 'en-US',
@@ -15,11 +15,33 @@ export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk
     'uk': 'Ukrainian'
   };
 
-  if (!apiKey) {
-    console.warn("GEMINI_API_KEY is not set, falling back to browser TTS");
-    fallbackToBrowserTTS(text, langMap[language]);
-    return;
+  // if (!apiKey) {
+  //   console.warn("GEMINI_API_KEY is not set, falling back to browser TTS");
+  //   fallbackToBrowserTTS(text, langMap[language]);
+  //   return;
+  // }
+
+   try {
+    const response = await fetch(`${import.meta.env.VITE_APP_URL}/api/speak`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, language })
+    });
+
+    const data = await response.json();
+    if (data.audio) {
+      const audioUrl = URL.createObjectURL(new Blob([new Uint8Array(data.audio)], { type: 'audio/wav' }));
+      const audio = new Audio(audioUrl);
+      audio.onended = () => URL.revokeObjectURL(audioUrl);
+      await audio.play();
+      return;
+    }
+  } catch (err) {
+    console.warn('Server TTS failed, fallback to browser TTS:', err);
   }
+    // fallback
+  fallbackToBrowserTTS(text, langMap[language]);
+
 
   const ai = new GoogleGenAI({ apiKey });
   const ttsTimeout = new Promise<null>((_, reject) => 
@@ -83,7 +105,6 @@ export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk
 //   }
 // };
 
-
 export const generateGameCommentary = async (context: string, language: string) => {
   try {
     const response = await fetch(`${import.meta.env.VITE_APP_URL}/api/generate`, {
@@ -99,6 +120,8 @@ export const generateGameCommentary = async (context: string, language: string) 
     return 'Good luck!';
   }
 };
+
+
 
 
 

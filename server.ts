@@ -24,6 +24,9 @@ async function startServer() {
     cors: { origin: '*' }
   });
 
+// JSON парсер
+app.use(bodyParser.json());
+
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok' });
   });
@@ -196,7 +199,22 @@ async function startServer() {
         game.discardPile = [];
       }
       
-      const card = game.deck.pop()!;
+      // const card = game.deck.pop()!;
+      let card = game.deck.pop();
+if (!card) {
+  if (game.discardPile.length > 0) {
+    // Перемішати discardPile назад в deck
+    game.deck = game.discardPile.sort(() => Math.random() - 0.5);
+    game.discardPile = [];
+    card = game.deck.pop();
+  }
+}
+
+if (!card) {
+  console.warn(`[Game ${roomId}] No cards left in deck or discard pile.`);
+  return; // або зробити якусь fallback-логіку
+}
+
       console.log(`[Game ${roomId}] Revealed card: ${card.itemUk} (${card.category}, ${card.colorUk}). Remaining in deck: ${game.deck.length}`);
       game.currentCard = card;
       
@@ -626,8 +644,7 @@ async function startServer() {
     });
   }
 
-// JSON парсер
-app.use(bodyParser.json());
+
 
 // Ініціалізація генеративного AI
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -649,6 +666,35 @@ app.post('/api/generate', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'AI generation failed' });
+  }
+});
+
+app.post('/api/speak', async (req, res) => {
+  try {
+    const { text, language = 'uk' } = req.body;
+    const langNameMap: Record<string,string> = { en:'English', sv:'Swedish', uk:'Ukrainian' };
+
+    const response = await genAI.models.generateContent({
+      model: 'gemini-2.5-flash-preview-tts',
+      contents: [{ parts: [{ text }] }],
+      config: {
+        systemInstruction: `You are a fun, energetic and very friendly game master. Speak in ${langNameMap[language]}.`,
+        responseModalities: [Modality.AUDIO],
+        speechConfig: {
+          voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } }
+        }
+      }
+    });
+
+    const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+    if (!base64Audio) return res.status(500).json({ error: 'No audio returned' });
+
+    const audioBuffer = Buffer.from(base64Audio, 'base64');
+    res.json({ audio: Array.from(audioBuffer) });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'TTS generation failed' });
   }
 });
 
