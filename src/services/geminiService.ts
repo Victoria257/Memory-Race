@@ -64,24 +64,44 @@ export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk
   }
 };
 
-export const generateGameCommentary = async (context: string, language: string) => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return "Good luck!";
+// export const generateGameCommentary = async (context: string, language: string) => {
+//   const apiKey = process.env.GEMINI_API_KEY;
+//   if (!apiKey) return "Good luck!";
 
-  const ai = new GoogleGenAI({ apiKey });
+//   const ai = new GoogleGenAI({ apiKey });
+//   try {
+//     const response = await ai.models.generateContent({
+//       model: "gemini-3-flash-preview",
+//       contents: `You are a fun, energetic game master for a kids game called "Memory Race". 
+//       Provide a very short (max 10 words) commentary in ${language} language about this event: ${context}.
+//       Be encouraging and fun!`,
+//     });
+//     return response.text?.trim() || "";
+//   } catch (error) {
+//     console.error("Gemini Commentary Error:", error);
+//     return "";
+//   }
+// };
+
+
+export const generateGameCommentary = async (context: string, language: string) => {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `You are a fun, energetic game master for a kids game called "Memory Race". 
-      Provide a very short (max 10 words) commentary in ${language} language about this event: ${context}.
-      Be encouraging and fun!`,
+    const response = await fetch(`${import.meta.env.VITE_APP_URL}/api/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: context, language })
     });
-    return response.text?.trim() || "";
-  } catch (error) {
-    console.error("Gemini Commentary Error:", error);
-    return "";
+
+    const data = await response.json();
+    return data.result || 'Good luck!';
+  } catch (err) {
+    console.error('Frontend AI fetch error:', err);
+    return 'Good luck!';
   }
 };
+
+
+
 
 const fallbackToBrowserTTS = (text: string, lang: string) => {
   const utterance = new SpeechSynthesisUtterance(text);

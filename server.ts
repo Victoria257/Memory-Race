@@ -7,6 +7,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { generateDeck, CATEGORIES, COLORS } from './src/data/deck';
 import { Card, Player, GameState } from './src/types';
+import bodyParser from 'body-parser';
+import { GoogleGenAI, Modality } from '@google/genai';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -623,6 +625,34 @@ async function startServer() {
       res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     });
   }
+
+// JSON парсер
+app.use(bodyParser.json());
+
+// Ініціалізація генеративного AI
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+// Ендпоінт для генерації коментарів
+app.post('/api/generate', async (req, res) => {
+  try {
+    const { prompt, language = 'uk' } = req.body;
+    const langNameMap: Record<string, string> = { en: 'English', sv: 'Swedish', uk: 'Ukrainian' };
+
+    const response = await genAI.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: `You are a fun, energetic game master for a kids game called "Memory Race". 
+      Provide a very short (max 10 words) commentary in ${language} language about this event: ${prompt}.
+      Be encouraging and fun!`
+    });
+
+    res.json({ result: response.text?.trim() || '' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'AI generation failed' });
+  }
+});
+
+
 
   server.listen(PORT, '0.0.0.0', () => {
     console.log('Server running on http://localhost:' + PORT);
