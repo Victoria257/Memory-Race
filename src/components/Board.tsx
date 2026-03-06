@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStore } from '../store';
 import { motion } from 'framer-motion';
+import { Building2, FerrisWheel, Trees, Building, Car } from 'lucide-react';
 
 export const Board = () => {
   const { gameState } = useStore();
@@ -13,8 +14,9 @@ export const Board = () => {
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const { width } = entry.contentRect;
-        // More compact height for rectangular layout
-        const height = Math.max(180, width * 0.25);
+        // On mobile, use a fixed percentage of viewport height if possible
+        const isMobile = window.innerWidth < 1024;
+        const height = isMobile ? window.innerHeight * 0.7 : Math.max(250, width * 0.5);
         setDimensions({ width, height });
       }
     });
@@ -25,60 +27,50 @@ export const Board = () => {
 
   if (!gameState) return null;
 
-  const cells = Array.from({ length: 30 }, (_, i) => i);
+  const cells = Array.from({ length: 21 }, (_, i) => i);
 
-  // Calculate cell positions for a rectangular track
+  // Path coordinates (0-100 scale) - Optimized for a snake-like winding path
+  const pathPoints = [
+    { x: 10, y: 80 },  // 0: Start
+    { x: 22, y: 85 },  // 1
+    { x: 35, y: 82 },  // 2
+    { x: 42, y: 70 },  // 3
+    { x: 38, y: 55 },  // 4
+    { x: 28, y: 45 },  // 5
+    { x: 18, y: 35 },  // 6
+    { x: 12, y: 22 },  // 7
+    { x: 22, y: 12 },  // 8
+    { x: 38, y: 10 },  // 9
+    { x: 55, y: 12 },  // 10
+    { x: 68, y: 22 },  // 11
+    { x: 75, y: 38 },  // 12
+    { x: 70, y: 55 },  // 13
+    { x: 58, y: 65 },  // 14
+    { x: 45, y: 75 },  // 15
+    { x: 52, y: 88 },  // 16
+    { x: 68, y: 92 },  // 17
+    { x: 82, y: 85 },  // 18
+    { x: 92, y: 70 },  // 19
+    { x: 90, y: 45 },  // 20: Finish
+  ];
+
+  const specialCells: Record<number, string> = {
+    2: "Пропусти хід",
+    5: "Пригадай, що потрібно пожежникам для роботи",
+    9: "Пригадай на який номер треба телефонувати у разі небезпеки",
+    12: "Пропусти хід",
+    15: "Пригадай, що потрібно поліцейським для роботи",
+    19: "Пропусти хід",
+  };
+
   const getCellPosition = (index: number) => {
     const { width, height } = dimensions;
-    const isSmall = width < 500;
-    const cellDiameter = isSmall ? 24 : 40;
-    const maxGap = cellDiameter; // Gap between circles cannot exceed diameter
-    const maxDist = cellDiameter + maxGap;
+    const point = pathPoints[Math.min(index, pathPoints.length - 1)];
     
-    const padding = isSmall ? 25 : 40;
-    
-    // Calculate the maximum width and height we want based on the gap rule
-    // 13 cells top/bottom = 12 intervals
-    // 2 cells side = 3 intervals (from corner to corner)
-    const maxInnerWidth = 12 * maxDist;
-    const maxInnerHeight = 3 * maxDist;
-    
-    const innerWidth = Math.min(width - padding * 2, maxInnerWidth);
-    const innerHeight = Math.min(height - padding * 2, maxInnerHeight);
-    
-    // Centering offsets within the container
-    const offsetX = (width - innerWidth) / 2;
-    const offsetY = (height - innerHeight) / 2;
-    
-    // Distribution: 13 top, 2 right, 13 bottom, 2 left (Total 30)
-    if (index <= 12) {
-      // Top row (0-12)
-      return {
-        x: offsetX + (index / 12) * innerWidth,
-        y: offsetY
-      };
-    } else if (index <= 14) {
-      // Right column (13-14)
-      const i = index - 12;
-      return {
-        x: offsetX + innerWidth,
-        y: offsetY + (i / 3) * innerHeight
-      };
-    } else if (index <= 27) {
-      // Bottom row (15-27)
-      const i = index - 15;
-      return {
-        x: offsetX + innerWidth - (i / 12) * innerWidth,
-        y: offsetY + innerHeight
-      };
-    } else {
-      // Left column (28-29)
-      const i = index - 27;
-      return {
-        x: offsetX,
-        y: offsetY + innerHeight - (i / 3) * innerHeight
-      };
-    }
+    return {
+      x: (point.x / 100) * width,
+      y: (point.y / 100) * height
+    };
   };
 
   const tokenColors: Record<string, string> = {
@@ -90,26 +82,76 @@ export const Board = () => {
     orange: 'bg-orange-400'
   };
 
+  // Generate SVG path string
+  const generatePath = () => {
+    if (pathPoints.length === 0) return '';
+    const { width, height } = dimensions;
+    return pathPoints.reduce((acc, p, i) => {
+      const x = (p.x / 100) * width;
+      const y = (p.y / 100) * height;
+      return i === 0 ? `M ${x} ${y}` : `${acc} L ${x} ${y}`;
+    }, '');
+  };
+
   return (
     <div 
       ref={containerRef}
-      className="w-full bg-sky-100 p-4 rounded-3xl shadow-inner relative overflow-hidden transition-all duration-300 border-4 border-sky-200" 
+      className="w-full bg-[#97C14D] p-4 rounded-3xl shadow-inner relative overflow-hidden transition-all duration-300 border-8 border-[#7DA33C]" 
       style={{ height: `${dimensions.height}px` }}
     >
+      {/* Decorative elements */}
+      <div className="absolute top-4 left-4 text-green-800 opacity-40"><Building2 size={48} /></div>
+      <div className="absolute top-10 right-10 text-green-800 opacity-40"><FerrisWheel size={64} /></div>
+      <div className="absolute bottom-10 left-20 text-green-800 opacity-40"><Trees size={40} /></div>
+      <div className="absolute bottom-4 right-4 text-green-800 opacity-40"><Building size={48} /></div>
+      <div className="absolute top-1/2 left-1/4 text-green-800 opacity-20"><Car size={32} /></div>
+
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        {/* Draw path line - The "Snake" Road */}
+        <svg className="absolute top-0 left-0 w-full h-full">
+          {/* Road shadow/border */}
+          <path
+            d={generatePath()}
+            fill="none"
+            stroke="#7A7A7A"
+            strokeWidth={dimensions.width < 500 ? 30 : 60}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* Road surface */}
+          <path
+            d={generatePath()}
+            fill="none"
+            stroke="#9E9E9E"
+            strokeWidth={dimensions.width < 500 ? 26 : 54}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* Road center line */}
+          <path
+            d={generatePath()}
+            fill="none"
+            stroke="white"
+            strokeWidth={2}
+            strokeDasharray="10,15"
+            className="opacity-40"
+          />
+        </svg>
+
         {cells.map((cell) => {
           const { x, y } = getCellPosition(cell);
           const isStart = cell === 0;
-          const isFinish = cell === 29;
+          const isFinish = cell === 20;
           const isSmall = dimensions.width < 500;
+          const specialText = specialCells[cell];
           
           return (
             <div
               key={cell}
-              className={`absolute rounded-full flex items-center justify-center font-bold shadow-sm
-                ${isStart ? (isSmall ? 'w-10 h-10 text-[10px]' : 'w-16 h-16 text-xs') + ' bg-blue-200 border-2 sm:border-4 border-blue-300 z-10' : 
-                  isFinish ? (isSmall ? 'w-10 h-10 text-[10px]' : 'w-16 h-16 text-xs') + ' bg-red-200 border-2 sm:border-4 border-red-300 z-10' : 
-                  (isSmall ? 'w-6 h-6 text-[8px]' : 'w-10 h-10 text-xs') + ' bg-white border-2 border-sky-100'}
+              className={`absolute rounded-full flex flex-col items-center justify-center font-bold shadow-md transition-all
+                ${isStart ? (isSmall ? 'w-12 h-12 text-[8px]' : 'w-20 h-20 text-[10px]') + ' bg-[#555] text-white border-4 border-[#333] z-10' : 
+                  isFinish ? (isSmall ? 'w-12 h-12 text-[8px]' : 'w-20 h-20 text-[10px]') + ' bg-[#555] text-white border-4 border-[#333] z-10' : 
+                  (isSmall ? 'w-8 h-8 text-[10px]' : 'w-12 h-12 text-sm') + ' bg-[#D9D9D9] text-[#333] border-2 border-[#999]'}
               `}
               style={{
                 left: `${x}px`,
@@ -117,7 +159,16 @@ export const Board = () => {
                 transform: 'translate(-50%, -50%)'
               }}
             >
-              {isStart ? '🚀' : isFinish ? '🏁' : cell}
+              <span className={isStart || isFinish ? "uppercase" : ""}>
+                {isStart ? 'Старт' : isFinish ? 'Фініш' : cell}
+              </span>
+              {specialText && !isSmall && (
+                <div className="absolute top-full mt-2 w-28 text-[9px] leading-tight text-center bg-white/90 p-1.5 rounded-lg border-2 border-gray-300 text-gray-800 font-bold shadow-sm pointer-events-none z-30">
+                  {specialText}
+                </div>
+              )}
+              {isStart && <Car className="mt-1 text-red-500" size={isSmall ? 12 : 18} />}
+              {isFinish && <Building className="mt-1 text-blue-500" size={isSmall ? 12 : 18} />}
             </div>
           );
         })}

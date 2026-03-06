@@ -91,17 +91,17 @@ export const ActionPanel = () => {
   return (
     <div 
       id="action-panel"
-      className={`w-full h-full bg-white text-gray-800 p-6 transition-all duration-500 rounded-3xl shadow-xl border-4 border-indigo-50 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'}`}>
+      className={`w-full h-full min-h-screen sm:min-h-0 bg-[#F1F8E9] text-gray-800 p-6 transition-all duration-500 rounded-none sm:rounded-3xl shadow-xl border-0 sm:border-4 border-[#7DA33C]/20 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'} flex flex-col justify-center`}>
       
-      <div className="max-w-4xl mx-auto relative h-full flex flex-col">
+      <div className="max-w-4xl mx-auto relative h-full flex flex-col justify-center w-full">
         {!isActuallyVisible && isActionPhase && isMyTurn ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-4 py-12">
-            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-            <p className="text-xl font-black text-indigo-600 animate-pulse uppercase tracking-widest">Слухай уважно...</p>
+            <div className="w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
+            <p className="text-xl font-black text-green-600 animate-pulse uppercase tracking-widest">Слухай уважно...</p>
           </div>
         ) : (
           <>
-            <h3 className="text-xl font-black mb-6 text-center text-indigo-600 uppercase tracking-[0.2em]">
+            <h3 className="text-xl font-black mb-6 text-center text-green-800 uppercase tracking-[0.2em]">
               {canAct ? '🚀 Твій хід! Куди їдемо?' : '😴 Чекаємо на хід...'}
             </h3>
 

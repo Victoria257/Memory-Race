@@ -45,22 +45,6 @@ export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk
   fallbackToBrowserTTS(text, langMap[language]);
 };
 
-export const generateGameCommentary = async (context: string, language: string) => {
-  try {
-    const ai = getAI();
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `You are a fun, energetic game master for a kids game called "Memory Race". 
-      Provide a very short (max 10 words) commentary in ${language} language about this event: ${context}.
-      Be encouraging and fun!`,
-    });
-    return response.text?.trim() || "Good luck!";
-  } catch (error) {
-    console.error("Gemini Commentary Error:", error);
-    return "Good luck!";
-  }
-};
-
 const fallbackToBrowserTTS = (text: string, lang: string) => {
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang;

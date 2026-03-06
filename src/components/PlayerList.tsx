@@ -34,7 +34,7 @@ export const PlayerList = () => {
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;
 
   return (
-    <div className="w-full bg-white shadow-md rounded-xl p-6 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="w-full bg-[#F1F8E9]/80 backdrop-blur-sm shadow-md rounded-xl p-4 sm:p-6 mb-0 sm:mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-b sm:border-b-0 border-[#7DA33C]/20">
       <div className="flex gap-4 overflow-x-auto pb-4 pt-2 px-2 w-full sm:w-auto scrollbar-hide">
         {gameState.players.map((player, idx) => {
           const isCurrentTurn = idx === gameState.currentTurnIndex;
@@ -43,7 +43,7 @@ export const PlayerList = () => {
             <div 
               key={player.id}
               className={`flex flex-col items-center p-2 rounded-lg min-w-[100px] transition-all
-                ${isCurrentTurn ? 'bg-indigo-50 border-2 border-indigo-400 shadow-sm scale-105' : 'bg-gray-50 border border-gray-200 opacity-80'}
+                ${isCurrentTurn ? 'bg-green-100 border-2 border-green-400 shadow-sm scale-105' : 'bg-white/30 border border-green-200 opacity-80'}
                 ${player.place !== null ? 'opacity-50 grayscale' : ''}`}
             >
               <div className="relative mb-2">
@@ -65,12 +65,12 @@ export const PlayerList = () => {
                 )}
               </div>
               
-              <span className="text-sm font-bold text-gray-800 truncate w-full text-center">
+              <span className="text-sm font-bold text-green-900 truncate w-full text-center">
                 {player.name} {player.id === playerId ? '(Ви)' : ''}
               </span>
               
               {isCurrentTurn && (
-                <div className="flex items-center gap-1 text-xs text-indigo-600 font-medium mt-1">
+                <div className="flex items-center gap-1 text-xs text-green-700 font-bold mt-1">
                   <Clock size={12} />
                   <span>{Math.floor(timeSinceTurnStart / 1000)}с</span>
                 </div>
@@ -80,11 +80,11 @@ export const PlayerList = () => {
         })}
       </div>
 
-      <div className="flex flex-col gap-2 ml-4 border-l pl-4 border-gray-200">
+      <div className="flex flex-col gap-2 ml-0 sm:ml-4 border-t sm:border-t-0 sm:border-l pt-4 sm:pt-0 sm:pl-4 border-green-200 w-full sm:w-auto">
         {showBell && (
           <button 
             onClick={() => ringBell(gameState.players[gameState.currentTurnIndex].id)}
-            className="flex items-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg hover:bg-yellow-200 transition font-bold text-sm shadow-sm"
+            className="flex items-center justify-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg hover:bg-yellow-200 transition font-bold text-sm shadow-sm"
           >
             <Bell size={16} className="animate-bounce" /> Дзвіночок
           </button>
@@ -93,7 +93,7 @@ export const PlayerList = () => {
         {canGiveUp && (
           <button 
             onClick={giveUp}
-            className="flex items-center gap-2 bg-red-100 text-red-800 px-4 py-2 rounded-lg hover:bg-red-200 transition font-bold text-sm shadow-sm"
+            className="flex items-center justify-center gap-2 bg-red-100 text-red-800 px-4 py-2 rounded-lg hover:bg-red-200 transition font-bold text-sm shadow-sm"
           >
             <Flag size={16} /> Здаюсь
           </button>

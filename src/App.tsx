@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from './store';
 import { Header } from './components/Header';
+import { Download } from 'lucide-react';
 import { JoinGame } from './components/JoinGame';
 import { Lobby } from './components/Lobby';
 import { Board } from './components/Board';
@@ -8,10 +9,35 @@ import { SelectionPanel } from './components/SelectionPanel';
 import { Deck } from './components/Deck';
 import { ActionPanel } from './components/ActionPanel';
 import { PlayerList } from './components/PlayerList';
-import { GameMaster } from './components/GameMaster';
 
 export default function App() {
   const { initSocket, gameState, playerId, reportActivity } = useStore();
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBanner(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setShowInstallBanner(false);
+    }
+  };
 
   useEffect(() => {
     initSocket();
@@ -60,32 +86,64 @@ export default function App() {
   }, [gameState?.currentTurnIndex, gameState?.phase, playerId]);
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-900 flex flex-col">
+    <div className="min-h-screen bg-[#86B03C] font-sans text-gray-900 flex flex-col">
       <Header />
-      <GameMaster />
       
-      <main className="flex-1 container mx-auto p-4 flex flex-col gap-4">
+      {showInstallBanner && (
+        <div className="bg-blue-600 text-white p-4 flex items-center justify-between shadow-lg animate-in slide-in-from-top duration-500">
+          <div className="flex items-center gap-3">
+            <div className="bg-white p-2 rounded-lg">
+              <img src="https://cdn-icons-png.flaticon.com/512/8418/8418425.png" alt="App Icon" className="w-8 h-8" />
+            </div>
+            <div>
+              <p className="font-bold">Встановити Memory Race</p>
+              <p className="text-xs text-blue-100">Додай гру на головний екран для швидкого доступу!</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setShowInstallBanner(false)}
+              className="px-4 py-2 text-sm font-medium hover:bg-blue-700 rounded-lg transition-colors"
+            >
+              Пізніше
+            </button>
+            <button 
+              onClick={handleInstallClick}
+              className="px-4 py-2 bg-white text-blue-600 text-sm font-bold rounded-lg shadow-md hover:bg-blue-50 transition-all flex items-center gap-2"
+            >
+              <Download size={16} />
+              Встановити
+            </button>
+          </div>
+        </div>
+      )}
+      
+      <main className="flex-1 container mx-auto p-0 sm:p-4 flex flex-col gap-0 sm:gap-4">
         {!gameState ? (
-          <JoinGame />
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <JoinGame />
+          </div>
         ) : gameState.status === 'lobby' ? (
-          <Lobby />
+          <div className="min-h-screen p-4">
+            <Lobby />
+          </div>
         ) : gameState.status === 'paused' ? (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="bg-white p-8 rounded-2xl shadow-xl text-center border-2 border-yellow-400">
+          <div className="flex-1 flex items-center justify-center min-h-screen p-4">
+            <div className="bg-[#F1F8E9] p-8 rounded-2xl shadow-xl text-center border-4 border-[#7DA33C]">
               <h2 className="text-3xl font-black text-gray-800 mb-4">Гру призупинено</h2>
               <p className="text-gray-500">Очікуємо, поки хост відновить гру...</p>
             </div>
           </div>
         ) : gameState.status === 'finished' ? (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="bg-white p-8 rounded-2xl shadow-xl text-center border-2 border-green-400 max-w-md w-full">
+          <div className="flex-1 flex items-center justify-center min-h-screen p-4">
+            <div className="bg-[#F1F8E9] p-8 rounded-2xl shadow-xl text-center border-4 border-[#7DA33C] max-w-md w-full">
               <h2 className="text-4xl font-black text-gray-800 mb-6">Гру завершено!</h2>
               <div className="space-y-4">
                 {gameState.players
                   .filter(p => p.place !== null)
                   .sort((a, b) => (a.place || 99) - (b.place || 99))
                   .map((p, i) => (
-                    <div key={p.id} className={`flex justify-between items-center p-4 rounded-xl font-bold ${i === 0 ? 'bg-yellow-100 text-yellow-800 text-xl border-2 border-yellow-400' : 'bg-gray-100'}`}>
+                    <div key={p.id} className={`flex justify-between items-center p-4 rounded-xl font-bold ${i === 0 ? 'bg-yellow-100 text-yellow-800 text-xl border-2 border-yellow-400' : 'bg-white/50'}`}>
                       <span>{i + 1} місце</span>
                       <span>{p.name}</span>
                     </div>
@@ -93,31 +151,35 @@ export default function App() {
               </div>
               <button 
                 onClick={() => window.location.reload()}
-                className="mt-8 w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg transition-transform hover:-translate-y-1"
+                className="mt-8 w-full py-4 bg-[#7DA33C] hover:bg-[#86B03C] text-white rounded-xl font-bold shadow-lg transition-transform hover:-translate-y-1"
               >
                 Нова гра
               </button>
             </div>
           </div>
         ) : (
-          <>
-            <Board />
-            <PlayerList />
+          <div className="flex flex-col gap-0 sm:gap-4">
+            <div className="min-h-screen flex flex-col p-0 sm:p-0">
+              <Board />
+              <div className="p-4 bg-[#86B03C]/20">
+                <PlayerList />
+              </div>
+            </div>
             
-            <div className="flex flex-col lg:flex-row gap-4 mt-4 items-stretch">
-              <div className="flex-1">
+            <div className="flex flex-col lg:flex-row gap-0 sm:gap-4 items-stretch">
+              <div className="flex-1 min-h-screen flex flex-col">
                 <SelectionPanel />
               </div>
-              <div className="flex flex-col sm:flex-row lg:flex-row gap-4 flex-1 items-stretch">
-                <div className="flex-shrink-0">
+              <div className="flex flex-col sm:flex-row lg:flex-row gap-0 sm:gap-4 flex-1 items-stretch">
+                <div className="flex-shrink-0 min-h-screen flex flex-col">
                   <Deck />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-h-screen flex flex-col">
                   <ActionPanel />
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
       </main>
     </div>

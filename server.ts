@@ -256,10 +256,10 @@ if (!card) {
         else { moves = 0; skipNext = true; }
       }
       
-      currentPlayer.position = Math.min(29, currentPlayer.position + moves);
+      currentPlayer.position = Math.min(20, currentPlayer.position + moves);
       currentPlayer.skipNextTurn = skipNext;
       
-      if (currentPlayer.position === 29 && currentPlayer.place === null) {
+      if (currentPlayer.position === 20 && currentPlayer.place === null) {
         game.placesAssigned++;
         currentPlayer.place = game.placesAssigned;
       }
@@ -435,10 +435,10 @@ if (!card) {
           else { moves = 0; skipNext = true; }
         }
         
-        currentP.position = Math.min(29, currentP.position + moves);
+        currentP.position = Math.min(20, currentP.position + moves);
         currentP.skipNextTurn = skipNext;
         
-        if (currentP.position === 29 && currentP.place === null) {
+        if (currentP.position === 20 && currentP.place === null) {
           game.placesAssigned++;
           currentP.place = game.placesAssigned;
         }
@@ -602,10 +602,10 @@ if (!card) {
                 else { moves = 0; skipNext = true; }
               }
               
-              currentPlayer.position = Math.min(29, currentPlayer.position + moves);
+              currentPlayer.position = Math.min(20, currentPlayer.position + moves);
               currentPlayer.skipNextTurn = skipNext;
               
-              if (currentPlayer.position === 29 && currentPlayer.place === null) {
+              if (currentPlayer.position === 20 && currentPlayer.place === null) {
                 game.placesAssigned++;
                 currentPlayer.place = game.placesAssigned;
               }

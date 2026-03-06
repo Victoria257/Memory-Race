@@ -39,12 +39,12 @@ export const Header = () => {
   };
 
   return (
-    <header className="flex flex-col sm:flex-row justify-between items-center p-3 sm:p-4 bg-gray-900 text-white shadow-xl gap-3 border-b-4 border-indigo-500/20">
+    <header className="flex flex-col sm:flex-row justify-between items-center p-3 sm:p-4 bg-[#4D6D1A] text-white shadow-xl gap-3 border-b-4 border-[#7DA33C]/30">
       <div className="flex items-center justify-between w-full sm:w-auto gap-4">
-        <h1 className="text-xl sm:text-2xl font-black whitespace-nowrap bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Memory Race 🏎️</h1>
+        <h1 className="text-xl sm:text-2xl font-black whitespace-nowrap bg-gradient-to-r from-green-200 to-emerald-200 bg-clip-text text-transparent">Memory Race 🏎️</h1>
         {gameState && (
-          <span className="bg-indigo-900/50 border border-indigo-500/30 px-3 py-1 rounded-full text-xs sm:text-sm font-black">
-            Код: <span className="font-mono text-yellow-400">{gameState.roomId}</span>
+          <span className="bg-[#3A5214] border border-[#7DA33C]/30 px-3 py-1 rounded-full text-xs sm:text-sm font-black">
+            Код: <span className="font-mono text-yellow-300">{gameState.roomId}</span>
           </span>
         )}
       </div>
@@ -53,19 +53,19 @@ export const Header = () => {
         <select 
           value={language} 
           onChange={(e) => setLanguage(e.target.value as any)}
-          className="bg-indigo-900/50 border border-indigo-500/30 text-white rounded-full px-3 py-1 text-sm outline-none font-bold"
+          className="bg-[#3A5214] border border-[#7DA33C]/30 text-white rounded-full px-3 py-1 text-sm outline-none font-bold"
         >
           <option value="uk">UA</option>
           <option value="en">EN</option>
           <option value="sv">SV</option>
         </select>
 
-        <button onClick={toggleMute} className="p-2 hover:bg-indigo-800 rounded-full transition-all active:scale-90">
+        <button onClick={toggleMute} className="p-2 hover:bg-[#5A7D1E] rounded-full transition-all active:scale-90">
           {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
         </button>
 
         {gameState?.initiator === playerId && gameState.status !== 'finished' && (
-          <button onClick={handlePause} className="p-2 hover:bg-indigo-800 rounded-full transition-all active:scale-90 text-yellow-400" title={gameState.status === 'paused' ? 'Продовжити' : 'Пауза'}>
+          <button onClick={handlePause} className="p-2 hover:bg-[#5A7D1E] rounded-full transition-all active:scale-90 text-yellow-300" title={gameState.status === 'paused' ? 'Продовжити' : 'Пауза'}>
             {gameState.status === 'paused' ? <Play size={20} fill="currentColor" /> : <Pause size={20} fill="currentColor" />}
           </button>
         )}
@@ -79,11 +79,11 @@ export const Header = () => {
           </button>
 
           {showStats && (
-            <div className="absolute right-0 mt-3 w-56 bg-white text-gray-800 rounded-2xl shadow-2xl p-5 z-50 border-4 border-indigo-50 animate-in fade-in zoom-in duration-200">
-              <h3 className="font-black text-lg border-b-2 border-gray-100 pb-2 mb-3 text-indigo-600">{playerName}</h3>
+            <div className="absolute right-0 mt-3 w-56 bg-[#F1F8E9] text-gray-800 rounded-2xl shadow-2xl p-5 z-50 border-4 border-[#7DA33C]/20 animate-in fade-in zoom-in duration-200">
+              <h3 className="font-black text-lg border-b-2 border-gray-100 pb-2 mb-3 text-green-800">{playerName}</h3>
               <div className="space-y-2">
-                <p className="text-sm font-bold flex justify-between"><span>🏆 Перемог:</span> <span className="text-indigo-500">0</span></p>
-                <p className="text-sm font-bold flex justify-between"><span>🏎️ Заїздів:</span> <span className="text-indigo-500">1</span></p>
+                <p className="text-sm font-bold flex justify-between"><span>🏆 Перемог:</span> <span className="text-green-600">0</span></p>
+                <p className="text-sm font-bold flex justify-between"><span>🏎️ Заїздів:</span> <span className="text-green-600">1</span></p>
               </div>
             </div>
           )}

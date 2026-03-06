@@ -36,8 +36,8 @@ export const Deck = () => {
   }, [gameState.currentCard, language, isMuted, isMyTurn]);
 
   return (
-    <div id="deck-panel" className="w-full lg:w-72 h-full bg-white rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-4 border-indigo-50 transition-all duration-300">
-      <div className="text-xs font-black text-indigo-300 mb-6 uppercase tracking-[0.2em]">📦 Колода ({gameState.deckCount})</div>
+    <div id="deck-panel" className="w-full lg:w-72 h-full min-h-screen sm:min-h-0 bg-[#F1F8E9] rounded-none sm:rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-0 sm:border-4 border-[#7DA33C]/20 transition-all duration-300">
+      <div className="text-xs font-black text-green-600 mb-6 uppercase tracking-[0.2em]">📦 Колода ({gameState.deckCount})</div>
       
       <div className="relative w-44 h-64 sm:w-52 sm:h-80 perspective-1000">
         <AnimatePresence mode="wait">
@@ -49,8 +49,8 @@ export const Deck = () => {
               exit={{ rotateY: -90, opacity: 0 }}
               transition={{ duration: 0.4, type: 'spring' }}
               onClick={handleReveal}
-              className={`absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2rem] border-8 border-white shadow-2xl flex items-center justify-center cursor-pointer overflow-hidden
-                ${canReveal ? 'hover:scale-105 hover:shadow-indigo-200 ring-8 ring-yellow-600' : 'opacity-90'}`}
+              className={`absolute inset-0 bg-gradient-to-br from-green-600 to-emerald-700 rounded-[2rem] border-8 border-white shadow-2xl flex items-center justify-center cursor-pointer overflow-hidden
+                ${canReveal ? 'hover:scale-105 hover:shadow-green-200 ring-8 ring-yellow-600' : 'opacity-90'}`}
             >
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
               <div className="w-28 h-44 sm:w-36 sm:h-56 border-4 border-white/30 rounded-3xl flex items-center justify-center bg-white/10 backdrop-blur-sm">
@@ -90,14 +90,14 @@ export const Deck = () => {
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <h2 className="text-xl sm:text-2xl font-black text-center text-indigo-600 leading-tight drop-shadow-sm px-4">
+                  <h2 className="text-xl sm:text-2xl font-black text-center text-green-800 leading-tight drop-shadow-sm px-4">
                     {gameState.currentCard[`item${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}
                   </h2>
                 )}
               </div>
 
               {/* Bottom Label */}
-              <div className="bg-indigo-500 text-white text-center py-2 sm:py-3 text-sm sm:text-base font-black tracking-wide mx-3 mb-3 rounded-2xl shadow-sm">
+              <div className="bg-green-600 text-white text-center py-2 sm:py-3 text-sm sm:text-base font-black tracking-wide mx-3 mb-3 rounded-2xl shadow-sm">
                 {gameState.currentCard[`item${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}
               </div>
             </motion.div>
@@ -106,7 +106,7 @@ export const Deck = () => {
       </div>
 
       {canReveal && (
-        <div className="mt-6 text-indigo-500 font-black animate-bounce text-center text-sm sm:text-base bg-indigo-50 px-4 py-2 rounded-full shadow-sm border-2 border-indigo-100">
+        <div className="mt-6 text-green-700 font-black animate-bounce text-center text-sm sm:text-base bg-green-50 px-4 py-2 rounded-full shadow-sm border-2 border-green-100">
           👇 Тисни сюди!
         </div>
       )}

@@ -30,17 +30,17 @@ export const JoinGame = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 sm:mt-20 p-4 sm:p-8 bg-white rounded-[2.5rem] shadow-2xl border-8 border-sky-50">
-      <div className="text-center mb-6 sm:mb-8">
-        <h2 className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-2 tracking-tight">Memory Race</h2>
-        <p className="text-sky-400 font-bold text-lg sm:text-xl">Веселі перегони пам'яті! 🏎️</p>
+    <div className="max-w-md mx-auto my-auto p-4 sm:p-6 bg-[#F1F8E9] rounded-[2.5rem] shadow-2xl border-8 border-[#7DA33C]/20 flex flex-col max-h-[90vh] overflow-y-auto">
+      <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600 mb-1 tracking-tight">Memory Race</h2>
+        <p className="text-green-600 font-bold text-base sm:text-lg">Веселі перегони пам'яті! 🏎️</p>
       </div>
 
-      <div className="flex gap-2 mb-8 bg-sky-50 p-2 rounded-2xl">
+      <div className="flex gap-2 mb-4 bg-green-50 p-2 rounded-2xl">
         <button
           onClick={() => { setMode('create'); clearError(); }}
           className={`flex-1 py-3 rounded-xl font-black text-sm transition-all ${
-            mode === 'create' ? 'bg-white text-blue-500 shadow-md scale-105' : 'text-sky-300 hover:text-sky-500'
+            mode === 'create' ? 'bg-white text-green-600 shadow-md scale-105' : 'text-green-300 hover:text-green-500'
           }`}
         >
           Створити гру
@@ -48,48 +48,48 @@ export const JoinGame = () => {
         <button
           onClick={() => { setMode('join'); clearError(); }}
           className={`flex-1 py-3 rounded-xl font-black text-sm transition-all ${
-            mode === 'join' ? 'bg-white text-blue-500 shadow-md scale-105' : 'text-sky-300 hover:text-sky-500'
+            mode === 'join' ? 'bg-white text-green-600 shadow-md scale-105' : 'text-green-300 hover:text-green-500'
           }`}
         >
           Приєднатися
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="p-4 bg-red-50 text-red-500 rounded-2xl text-sm font-black border-4 border-red-100 animate-bounce">
+          <div className="p-3 bg-red-50 text-red-500 rounded-2xl text-xs font-black border-4 border-red-100 animate-bounce">
             {error}
           </div>
         )}
 
         {mode === 'join' && (
           <div>
-            <label className="block text-sm font-black text-sky-600 mb-2 uppercase tracking-widest">Код гри 🔑</label>
+            <label className="block text-[10px] font-black text-green-700 mb-1 uppercase tracking-widest">Код гри 🔑</label>
             <input
               type="text"
               required
               value={roomId}
               onChange={(e) => setRoomId(e.target.value.toUpperCase())}
-              className="w-full px-6 py-4 rounded-2xl border-4 border-sky-100 focus:border-blue-400 focus:ring-8 focus:ring-blue-50 transition-all outline-none font-mono text-2xl text-center uppercase text-blue-600"
+              className="w-full px-4 py-3 rounded-2xl border-4 border-green-100 focus:border-green-400 focus:ring-8 focus:ring-green-50 transition-all outline-none font-mono text-xl text-center uppercase text-green-600"
               placeholder="Введіть код"
             />
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-black text-sky-600 mb-2 uppercase tracking-widest">Твоє ім'я ☀️</label>
+          <label className="block text-[10px] font-black text-green-700 mb-1 uppercase tracking-widest">Твоє ім'я ☀️</label>
           <input
             type="text"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-6 py-4 rounded-2xl border-4 border-sky-100 focus:border-blue-400 focus:ring-8 focus:ring-blue-50 transition-all outline-none text-lg font-bold"
+            className="w-full px-4 py-3 rounded-2xl border-4 border-green-100 focus:border-green-400 focus:ring-8 focus:ring-green-50 transition-all outline-none text-base font-bold"
             placeholder="Як тебе звати?"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-black text-sky-600 mb-2 uppercase tracking-widest">Скільки тобі років? 🎂</label>
+          <label className="block text-[10px] font-black text-green-700 mb-1 uppercase tracking-widest">Скільки тобі років? 🎂</label>
           <input
             type="number"
             required
@@ -97,20 +97,20 @@ export const JoinGame = () => {
             max="120"
             value={age}
             onChange={(e) => setAge(parseInt(e.target.value, 10))}
-            className="w-full px-6 py-4 rounded-2xl border-4 border-sky-100 focus:border-blue-400 focus:ring-8 focus:ring-blue-50 transition-all outline-none text-lg font-bold"
+            className="w-full px-4 py-3 rounded-2xl border-4 border-green-100 focus:border-green-400 focus:ring-8 focus:ring-green-50 transition-all outline-none text-base font-bold"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-black text-sky-600 mb-2 uppercase tracking-widest">Вибери колір 🎨</label>
-          <div className="flex flex-wrap gap-3 justify-center">
+          <label className="block text-[10px] font-black text-green-700 mb-1 uppercase tracking-widest">Вибери колір 🎨</label>
+          <div className="flex flex-nowrap gap-2 justify-between overflow-x-auto pb-2">
             {colors.map((c) => (
               <button
                 key={c.id}
                 type="button"
                 onClick={() => setColor(c.id)}
-                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full border-4 transition-all transform ${
-                  color === c.id ? 'border-blue-400 scale-125 rotate-12 shadow-xl' : 'border-white hover:scale-110'
+                className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full border-4 transition-all transform flex-shrink-0 ${
+                  color === c.id ? 'border-green-400 scale-110 rotate-12 shadow-xl' : 'border-white hover:scale-105'
                 }`}
                 style={{ backgroundColor: c.hex, boxShadow: color === c.id ? '0 0 0 4px white inset' : '0 4px 6px -1px rgba(0,0,0,0.1)' }}
                 title={c.label}
@@ -121,7 +121,7 @@ export const JoinGame = () => {
 
         <button
           type="submit"
-          className="w-full py-5 rounded-2xl font-black text-xl flex items-center justify-center gap-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-xl shadow-blue-100 transform hover:-translate-y-2 active:scale-95 transition-all"
+          className="w-full py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white shadow-xl shadow-green-100 transform hover:-translate-y-1 active:scale-95 transition-all"
         >
           {mode === 'create' ? <UserPlus size={28} strokeWidth={3} /> : <LogIn size={28} strokeWidth={3} />}
           {mode === 'create' ? 'Поїхали!' : 'Зайти в гру'}

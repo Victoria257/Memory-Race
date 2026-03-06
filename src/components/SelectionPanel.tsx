@@ -59,13 +59,13 @@ export const SelectionPanel = () => {
   };
 
   return (
-    <div id="selection-panel" className="flex-grow h-full bg-white rounded-3xl shadow-xl p-6 border-4 border-indigo-50 transition-all duration-300">
-      <h3 className="text-xl font-black mb-6 text-indigo-600 flex items-center gap-2">
+    <div id="selection-panel" className="flex-grow h-full min-h-screen sm:min-h-0 bg-[#F1F8E9] rounded-none sm:rounded-3xl shadow-xl p-6 border-0 sm:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center">
+      <h3 className="text-xl font-black mb-6 text-green-800 flex items-center gap-2">
         {getStatusMessage()}
       </h3>
 
       <div className="mb-8">
-        <h4 className="text-xs font-black text-indigo-300 mb-3 uppercase tracking-[0.2em]">🌈 Категорії</h4>
+        <h4 className="text-xs font-black text-green-600 mb-3 uppercase tracking-[0.2em]">🌈 Категорії</h4>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
           {categories.map(c => (
             <button
@@ -73,7 +73,7 @@ export const SelectionPanel = () => {
               disabled={!canSelect}
               onClick={() => setSelectedCategory(c.id)}
               className={`p-2 sm:p-3 rounded-2xl border-4 flex flex-col items-center justify-center transition-all transform
-                ${selectedCategory === c.id ? 'border-indigo-600 bg-indigo-50 shadow-lg scale-110' : 'border-gray-50 hover:border-indigo-100 hover:bg-gray-50'}
+                ${selectedCategory === c.id ? 'border-green-600 bg-green-50 shadow-lg scale-110' : 'border-white/50 hover:border-green-100 hover:bg-white/30'}
                 ${!canSelect ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'}`}
             >
               <span className="text-2xl sm:text-3xl mb-2">{c.icon}</span>
@@ -84,8 +84,8 @@ export const SelectionPanel = () => {
       </div>
 
       <div className="mb-8">
-        <h4 className="text-xs font-black text-indigo-300 mb-3 uppercase tracking-[0.2em]">🎨 Кольори</h4>
-        <div className="flex flex-row flex-nowrap gap-2 sm:gap-3 justify-between items-center overflow-x-auto pb-4 pt-6 px-4 bg-gray-50/50 rounded-2xl scrollbar-hide">
+        <h4 className="text-xs font-black text-green-600 mb-3 uppercase tracking-[0.2em]">🎨 Кольори</h4>
+        <div className="flex flex-row flex-nowrap gap-2 sm:gap-3 justify-between items-center overflow-x-auto pb-4 pt-6 px-4 bg-white/30 rounded-2xl scrollbar-hide">
           {colors.map(c => (
             <button
               key={c.id}
@@ -108,8 +108,8 @@ export const SelectionPanel = () => {
         disabled={!canSelect || !selectedCategory || !selectedColor}
         className={`w-full py-4 sm:py-5 rounded-2xl font-black text-xl transition-all flex items-center justify-center gap-3 transform
           ${canSelect && selectedCategory && selectedColor 
-            ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95' 
-            : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}
+            ? 'bg-gradient-to-r from-green-600 to-emerald-700 text-white hover:from-green-700 hover:to-emerald-800 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95' 
+            : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
       >
         <Check size={28} strokeWidth={4} /> ГОТОВО!
       </button>
