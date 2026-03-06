@@ -8,6 +8,7 @@ import { SelectionPanel } from './components/SelectionPanel';
 import { Deck } from './components/Deck';
 import { ActionPanel } from './components/ActionPanel';
 import { PlayerList } from './components/PlayerList';
+import { GameMaster } from './components/GameMaster';
 
 export default function App() {
   const { initSocket, gameState, playerId, reportActivity } = useStore();
@@ -61,6 +62,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900 flex flex-col">
       <Header />
+      <GameMaster />
       
       <main className="flex-1 container mx-auto p-4 flex flex-col gap-4">
         {!gameState ? (

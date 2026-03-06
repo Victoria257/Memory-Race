@@ -64,7 +64,7 @@ export const GameMaster = () => {
           exit={{ opacity: 0, scale: 0.8, y: 50 }}
           className="fixed bottom-8 right-8 z-50 max-w-xs"
         >
-          <div className="bg-white rounded-2xl shadow-2xl p-4 border-4 border-indigo-500 relative overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-2xl p-4 border-4 border-indigo-50 relative overflow-hidden">
             <div className="absolute -top-2 -left-2 bg-indigo-500 text-white p-1 rounded-full">
               <Sparkles size={16} />
             </div>

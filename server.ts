@@ -9,7 +9,6 @@ import { generateDeck, CATEGORIES, COLORS } from './src/data/deck';
 import { Card, Player, GameState } from './src/types';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { GoogleGenAI, Modality } from '@google/genai';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -647,62 +646,6 @@ if (!card) {
       res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     });
   }
-
-
-
-// Ініціалізація генеративного AI
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-// Ендпоінт для генерації коментарів
-app.post('/api/generate', async (req, res) => {
-  try {
-    const { prompt, language = 'uk' } = req.body;
-    const langNameMap: Record<string, string> = { en: 'English', sv: 'Swedish', uk: 'Ukrainian' };
-
-    const response = await genAI.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: `You are a fun, energetic game master for a kids game called "Memory Race". 
-      Provide a very short (max 10 words) commentary in ${language} language about this event: ${prompt}.
-      Be encouraging and fun!`
-    });
-
-    res.json({ result: response.text?.trim() || '' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'AI generation failed' });
-  }
-});
-
-app.post('/api/speak', async (req, res) => {
-  try {
-    const { text, language = 'uk' } = req.body;
-    const langNameMap: Record<string,string> = { en:'English', sv:'Swedish', uk:'Ukrainian' };
-
-    const response = await genAI.models.generateContent({
-      model: 'gemini-2.5-flash-preview-tts',
-      contents: [{ parts: [{ text }] }],
-      config: {
-        systemInstruction: `You are a fun, energetic and very friendly game master. Speak in ${langNameMap[language]}.`,
-        responseModalities: [Modality.AUDIO],
-        speechConfig: {
-          voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } }
-        }
-      }
-    });
-
-    const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    if (!base64Audio) return res.status(500).json({ error: 'No audio returned' });
-
-    const audioBuffer = Buffer.from(base64Audio, 'base64');
-    res.json({ audio: Array.from(audioBuffer) });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'TTS generation failed' });
-  }
-});
-
-
 
   server.listen(PORT, '0.0.0.0', () => {
     console.log('Server running on http://localhost:' + PORT);
