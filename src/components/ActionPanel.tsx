@@ -27,7 +27,7 @@ export const ActionPanel = () => {
       const timer = setTimeout(() => {
         setIsLocked(false);
         setIsActuallyVisible(true);
-      }, 4000);
+      }, 2000); // Reduced from 4000 to 2000
       return () => clearTimeout(timer);
     } else {
       setIsLocked(false);

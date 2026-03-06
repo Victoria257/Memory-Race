@@ -81,9 +81,9 @@ export default function App() {
         if (panel) {
           panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      }, 500);
+      }, 800); // Increased delay to ensure rendering is complete
     }
-  }, [gameState?.currentTurnIndex, gameState?.phase, playerId]);
+  }, [gameState?.currentTurnIndex, gameState?.phase, gameState?.status, playerId]);
 
   return (
     <div className="min-h-screen bg-[#86B03C] font-sans text-gray-900 flex flex-col">
@@ -159,9 +159,11 @@ export default function App() {
           </div>
         ) : (
           <div className="flex flex-col gap-0 sm:gap-4">
-            <div className="min-h-screen flex flex-col p-0 sm:p-0">
-              <Board />
-              <div className="p-4 bg-[#86B03C]/20">
+            <div className="h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] flex flex-col lg:flex-row p-0 overflow-hidden">
+              <div className="flex-1 h-full overflow-hidden">
+                <Board />
+              </div>
+              <div className="h-auto lg:h-full lg:w-48 bg-[#86B03C]/20 flex-shrink-0">
                 <PlayerList />
               </div>
             </div>

@@ -13,11 +13,11 @@ export const Board = () => {
 
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        const { width } = entry.contentRect;
-        // On mobile, use a fixed percentage of viewport height if possible
-        const isMobile = window.innerWidth < 1024;
-        const height = isMobile ? window.innerHeight * 0.7 : Math.max(250, width * 0.5);
-        setDimensions({ width, height });
+        const { width, height } = entry.contentRect;
+        // If height is 0 (not yet rendered or container has no height), 
+        // fallback to a reasonable aspect ratio
+        const finalHeight = height > 0 ? height : Math.max(250, width * 0.5);
+        setDimensions({ width, height: finalHeight });
       }
     });
 
@@ -96,8 +96,7 @@ export const Board = () => {
   return (
     <div 
       ref={containerRef}
-      className="w-full bg-[#97C14D] p-4 rounded-3xl shadow-inner relative overflow-hidden transition-all duration-300 border-8 border-[#7DA33C]" 
-      style={{ height: `${dimensions.height}px` }}
+      className="w-full h-full bg-[#97C14D] p-4 rounded-none lg:rounded-3xl shadow-inner relative overflow-hidden transition-all duration-300 border-8 border-[#7DA33C]" 
     >
       {/* Decorative elements */}
       <div className="absolute top-4 left-4 text-green-800 opacity-40"><Building2 size={48} /></div>
@@ -162,11 +161,6 @@ export const Board = () => {
               <span className={isStart || isFinish ? "uppercase" : ""}>
                 {isStart ? 'Старт' : isFinish ? 'Фініш' : cell}
               </span>
-              {specialText && !isSmall && (
-                <div className="absolute top-full mt-2 w-28 text-[9px] leading-tight text-center bg-white/90 p-1.5 rounded-lg border-2 border-gray-300 text-gray-800 font-bold shadow-sm pointer-events-none z-30">
-                  {specialText}
-                </div>
-              )}
               {isStart && <Car className="mt-1 text-red-500" size={isSmall ? 12 : 18} />}
               {isFinish && <Building className="mt-1 text-blue-500" size={isSmall ? 12 : 18} />}
             </div>

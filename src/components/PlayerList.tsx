@@ -34,20 +34,21 @@ export const PlayerList = () => {
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;
 
   return (
-    <div className="w-full bg-[#F1F8E9]/80 backdrop-blur-sm shadow-md rounded-xl p-4 sm:p-6 mb-0 sm:mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-b sm:border-b-0 border-[#7DA33C]/20">
-      <div className="flex gap-4 overflow-x-auto pb-4 pt-2 px-2 w-full sm:w-auto scrollbar-hide">
+    <div className="w-full lg:w-48 bg-[#F1F8E9]/80 backdrop-blur-sm shadow-md rounded-xl lg:rounded-3xl p-4 sm:p-6 mb-0 sm:mb-6 flex flex-col lg:flex-col items-center justify-between lg:justify-start gap-4 border-b lg:border-b-0 lg:border-l border-[#7DA33C]/20 lg:h-full lg:overflow-y-auto">
+      <h3 className="hidden lg:block text-xs font-black text-green-800 uppercase tracking-widest mb-2">Гравці</h3>
+      <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 pt-2 px-2 w-full scrollbar-hide">
         {gameState.players.map((player, idx) => {
           const isCurrentTurn = idx === gameState.currentTurnIndex;
           
           return (
             <div 
               key={player.id}
-              className={`flex flex-col items-center p-2 rounded-lg min-w-[100px] transition-all
-                ${isCurrentTurn ? 'bg-green-100 border-2 border-green-400 shadow-sm scale-105' : 'bg-white/30 border border-green-200 opacity-80'}
+              className={`flex flex-col lg:flex-row items-center lg:items-center p-2 lg:p-3 rounded-xl min-w-[100px] lg:min-w-0 lg:w-full transition-all gap-2
+                ${isCurrentTurn ? 'bg-green-100 border-2 border-green-400 shadow-sm scale-105 z-10' : 'bg-white/30 border border-green-200 opacity-80'}
                 ${player.place !== null ? 'opacity-50 grayscale' : ''}`}
             >
-              <div className="relative mb-2">
-                <div className={`w-10 h-10 rounded-full shadow-inner ${tokenColors[player.tokenColor]}`}></div>
+              <div className="relative flex-shrink-0">
+                <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full shadow-inner ${tokenColors[player.tokenColor]}`}></div>
                 {player.place !== null && (
                   <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
                     {player.place}
@@ -65,22 +66,24 @@ export const PlayerList = () => {
                 )}
               </div>
               
-              <span className="text-sm font-bold text-green-900 truncate w-full text-center">
-                {player.name} {player.id === playerId ? '(Ви)' : ''}
-              </span>
-              
-              {isCurrentTurn && (
-                <div className="flex items-center gap-1 text-xs text-green-700 font-bold mt-1">
-                  <Clock size={12} />
-                  <span>{Math.floor(timeSinceTurnStart / 1000)}с</span>
-                </div>
-              )}
+              <div className="flex flex-col items-center lg:items-start min-w-0 flex-1">
+                <span className="text-sm font-bold text-green-900 truncate w-full text-center lg:text-left">
+                  {player.name} {player.id === playerId ? '(Ви)' : ''}
+                </span>
+                
+                {isCurrentTurn && (
+                  <div className="flex items-center gap-1 text-xs text-green-700 font-bold mt-1">
+                    <Clock size={12} />
+                    <span>{Math.floor(timeSinceTurnStart / 1000)}с</span>
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
       </div>
 
-      <div className="flex flex-col gap-2 ml-0 sm:ml-4 border-t sm:border-t-0 sm:border-l pt-4 sm:pt-0 sm:pl-4 border-green-200 w-full sm:w-auto">
+      <div className="flex flex-col gap-2 border-t lg:border-t-0 pt-4 lg:pt-0 border-green-200 w-full lg:mt-auto">
         {showBell && (
           <button 
             onClick={() => ringBell(gameState.players[gameState.currentTurnIndex].id)}
