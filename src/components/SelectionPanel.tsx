@@ -59,7 +59,7 @@ export const SelectionPanel = () => {
   };
 
   return (
-    <div id="selection-panel" className="flex-grow h-full bg-[#F1F8E9] rounded-none sm:rounded-3xl shadow-xl p-6 border-0 sm:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center">
+    <div id="selection-panel" className="flex-grow h-full min-h-screen sm:min-h-0 bg-[#F1F8E9] rounded-none sm:rounded-3xl shadow-xl p-6 border-0 sm:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center">
       <h3 className="text-xl font-black mb-6 text-green-800 flex items-center gap-2">
         {getStatusMessage()}
       </h3>
