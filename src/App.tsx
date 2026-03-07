@@ -118,13 +118,13 @@ export default function App() {
         </div>
       )}
       
-      <main className="flex-1 container mx-auto p-0 tablet-p:p-4 flex flex-col gap-0 tablet-p:gap-4">
+      <main className="flex-1 container mx-auto p-0 tablet-p:p-4 flex flex-col gap-0 tablet-p:gap-4 overflow-x-hidden">
         {!gameState ? (
-          <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="flex-1 flex items-center justify-center p-4">
             <JoinGame />
           </div>
         ) : gameState.status === 'lobby' ? (
-          <div className="min-h-screen p-4">
+          <div className="flex-1 flex items-center justify-center p-4">
             <Lobby />
           </div>
         ) : gameState.status === 'paused' ? (
@@ -159,7 +159,7 @@ export default function App() {
           </div>
         ) : (
           <div className="flex flex-col gap-0 tablet-p:gap-4">
-            <div className="h-[calc(100vh-64px)] tablet-p:h-[calc(100vh-80px)] flex flex-col tablet-l:flex-row p-0 overflow-hidden">
+            <div className="h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-112px)] flex flex-col tablet-l:flex-row p-0 overflow-hidden">
               <div className="flex-1 h-full overflow-hidden">
                 <Board />
               </div>
@@ -168,7 +168,7 @@ export default function App() {
               </div>
             </div>
             
-            <div className="flex flex-col tablet-l:flex-row gap-0 tablet-p:gap-4 items-stretch">
+            <div className="flex flex-col tablet-l:flex-row gap-0 tablet-p:gap-4 items-stretch min-h-[calc(100vh-112px)]">
               <div className="flex-1 min-h-screen flex flex-col">
                 <SelectionPanel />
               </div>
