@@ -29,29 +29,29 @@ export const Lobby = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto my-auto p-4 tablet-p:p-6 bg-[#F1F8E9] rounded-2xl shadow-xl border-4 border-[#7DA33C]/20 flex flex-col max-h-full tablet-p:max-h-[85vh] overflow-y-auto">
-      <div className="text-center mb-4 tablet-p:mb-6">
-        <h2 className="text-xl tablet-p:text-2xl font-black text-green-800 mb-1">Кімната очікування</h2>
-        <p className="text-green-600 text-xs tablet-p:text-sm font-bold">Запросіть друзів за кодом гри</p>
+    <div className="max-w-2xl mx-auto my-auto p-3 tablet-p:p-5 bg-[#F1F8E9] rounded-2xl shadow-xl border-4 border-[#7DA33C]/20 flex flex-col max-h-full tablet-p:max-h-[85vh] overflow-y-auto">
+      <div className="text-center mb-2 tablet-p:mb-4">
+        <h2 className="text-xl tablet-p:text-2xl font-black text-green-800 mb-0.5">Кімната очікування</h2>
+        <p className="text-green-600 text-[10px] tablet-p:text-xs font-bold">Запросіть друзів за кодом гри</p>
       </div>
 
-      <div className="flex justify-center mb-4 tablet-p:mb-6">
-        <div className="flex items-center gap-2 tablet-p:gap-3 bg-white/50 p-2 tablet-p:p-3 rounded-xl border-2 border-dashed border-green-300">
-          <span className="text-xl tablet-p:text-3xl font-mono font-bold tracking-widest text-green-700">
+      <div className="flex justify-center mb-3 tablet-p:mb-5">
+        <div className="flex items-center gap-2 tablet-p:gap-3 bg-white/50 p-1.5 tablet-p:p-2.5 rounded-xl border-2 border-dashed border-green-300">
+          <span className="text-xl tablet-p:text-2xl font-mono font-bold tracking-widest text-green-700">
             {gameState.roomId}
           </span>
           <button
             onClick={handleCopy}
-            className="p-1.5 tablet-p:p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition-all text-gray-600 hover:text-green-600"
+            className="p-1 tablet-p:p-1.5 bg-white rounded-lg shadow-sm hover:shadow-md transition-all text-gray-600 hover:text-green-600"
             title="Копіювати код"
           >
-            {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+            {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
           </button>
         </div>
       </div>
 
-      <div className="mb-4 tablet-p:mb-6 flex-1 overflow-y-auto min-h-0">
-        <div className="flex flex-col tablet-p:flex-row items-center justify-between mb-3 gap-2">
+      <div className="mb-3 tablet-p:mb-5 flex-1 overflow-y-auto min-h-0">
+        <div className="flex flex-col tablet-p:flex-row items-center justify-between mb-2 gap-2">
           <h3 className="text-base tablet-p:text-lg font-bold flex items-center gap-2 text-green-800">
             <Users size={18} className="text-green-600" />
             Гравці ({gameState.players.length}/6)
