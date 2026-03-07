@@ -125,13 +125,13 @@ export default function App() {
         </div>
       )}
       
-      <main className={`flex-1 container mx-auto p-0 tablet-p:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory scroll-smooth overflow-y-auto ${gameState ? 'h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)]' : 'h-screen tablet-l:h-screen'}`}>
+      <main className={`flex-1 container mx-auto p-0 tablet-p:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory scroll-smooth overflow-y-auto ${gameState ? 'h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)]' : 'h-screen'}`}>
         {!gameState ? (
-          <div className="min-h-full flex items-center justify-center p-4 snap-start">
+          <div className="h-screen tablet-l:h-screen flex items-center justify-center p-2 tablet-p:p-4 snap-start">
             <JoinGame />
           </div>
         ) : gameState.status === 'lobby' ? (
-          <div className="min-h-full flex items-center justify-center p-4 snap-start">
+          <div className="h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] flex items-center justify-center p-2 tablet-p:p-4 snap-start">
             <Lobby />
           </div>
         ) : gameState.status === 'paused' ? (
@@ -175,17 +175,18 @@ export default function App() {
               </div>
             </div>
             
-            <div className="flex flex-col gap-0 tablet-p:gap-4 items-stretch min-h-[calc(100vh-80px)] py-4 tablet-p:py-8 snap-start">
-              <div className="flex-1 flex flex-col">
+            <div className="flex flex-col gap-0 items-stretch h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] snap-start overflow-hidden" id="selection-panel-section">
+              <div className="flex-1 flex flex-col p-2 tablet-p:p-4 overflow-hidden">
                 <SelectionPanel />
               </div>
-              <div className="flex flex-col tablet-p:flex-row gap-4 w-full">
-                <div className="flex-shrink-0 flex flex-col tablet-p:w-72">
-                  <Deck />
-                </div>
-                <div className="flex-1 flex flex-col">
-                  <ActionPanel />
-                </div>
+            </div>
+
+            <div className="flex flex-col tablet-p:flex-row gap-4 w-full h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] p-4 snap-start overflow-hidden">
+              <div className="flex-shrink-0 flex flex-col tablet-p:w-72 h-full overflow-hidden">
+                <Deck />
+              </div>
+              <div className="flex-1 flex flex-col h-full overflow-hidden">
+                <ActionPanel />
               </div>
             </div>
           </div>
