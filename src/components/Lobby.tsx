@@ -3,14 +3,15 @@ import { useStore } from '../store';
 import { Play, Users, Copy, Check, Bot } from 'lucide-react';
 
 export const Lobby = () => {
-  const { gameState, playerId, startGame, addBot } = useStore();
+  const { gameState, playerId, startGame, addBot, removeBot } = useStore();
   const [copied, setCopied] = useState(false);
 
   if (!gameState || gameState.status !== 'lobby') return null;
 
   const isInitiator = gameState.initiator === playerId;
   const canStart = isInitiator && gameState.players.length >= 2;
-  const canAddBot = isInitiator && gameState.players.length < 6;
+  const hasBot = gameState.players.some(p => p.isBot);
+  const canAddBot = isInitiator && gameState.players.length < 6 && !hasBot;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(gameState.roomId);
@@ -62,6 +63,15 @@ export const Lobby = () => {
             >
               <Bot size={18} />
               Додати бота
+            </button>
+          )}
+          {isInitiator && hasBot && (
+            <button
+              onClick={removeBot}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-3 py-1.5 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg font-bold text-sm transition-colors"
+            >
+              <Bot size={18} />
+              Видалити бота
             </button>
           )}
         </div>

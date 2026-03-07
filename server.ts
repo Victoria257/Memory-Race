@@ -123,6 +123,10 @@ app.use(cors());
       if (!game || game.status !== 'lobby') return;
       if (game.initiator !== playerId) return;
       if (game.players.length >= 6) return;
+      
+      // Limit to 1 bot
+      const botCount = game.players.filter(p => p.isBot).length;
+      if (botCount >= 1) return;
 
       const botColors = COLORS.filter(c => !game.players.some(p => p.tokenColor === c));
       if (botColors.length === 0) return;
@@ -148,6 +152,18 @@ app.use(cors());
       });
 
       io.to(roomId).emit('game_update', getPublicGameState(game));
+    });
+
+    socket.on('remove_bot', ({ roomId, playerId }) => {
+      const game = games[roomId];
+      if (!game || game.status !== 'lobby') return;
+      if (game.initiator !== playerId) return;
+
+      const botIndex = game.players.findIndex(p => p.isBot);
+      if (botIndex !== -1) {
+        game.players.splice(botIndex, 1);
+        io.to(roomId).emit('game_update', getPublicGameState(game));
+      }
     });
 
     socket.on('start_game', ({ roomId }) => {

@@ -105,11 +105,11 @@ export const ActionPanel = () => {
               {canAct ? '🚀 Твій хід! Куди їдемо?' : '😴 Чекаємо на хід...'}
             </h3>
 
-            <div className="flex flex-col sm:flex-row lg:flex-col justify-center gap-4">
+            <div className="flex flex-col justify-center gap-3 sm:gap-4">
               <button
                 disabled={!canAct || showPenalty || isLocked}
                 onClick={() => handleAction('pass')}
-                className={`px-6 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all transform
+                className={`px-4 sm:px-6 py-4 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all transform
                   ${canAct && !showPenalty && !isLocked ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 active:scale-95 shadow-md' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-gray-200 w-full`}
               >
@@ -119,7 +119,7 @@ export const ActionPanel = () => {
               <button
                 disabled={!canAct || showPenalty || isLocked}
                 onClick={() => handleAction('move1')}
-                className={`px-6 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all transform
+                className={`px-4 sm:px-6 py-4 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all transform
                   ${canAct && !showPenalty && !isLocked ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-blue-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-blue-300 w-full`}
               >
@@ -129,7 +129,7 @@ export const ActionPanel = () => {
               <button
                 disabled={!canAct || showPenalty || isLocked}
                 onClick={() => handleAction('move2')}
-                className={`px-6 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all transform
+                className={`px-4 sm:px-6 py-4 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-3 transition-all transform
                   ${canAct && !showPenalty && !isLocked ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-emerald-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-emerald-300 w-full`}
               >

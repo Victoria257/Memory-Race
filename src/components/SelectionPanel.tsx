@@ -85,13 +85,13 @@ export const SelectionPanel = () => {
 
       <div className="mb-8">
         <h4 className="text-xs font-black text-green-600 mb-3 uppercase tracking-[0.2em]">🎨 Кольори</h4>
-        <div className="flex flex-row flex-nowrap gap-2 sm:gap-3 justify-between items-center overflow-x-auto pb-4 pt-6 px-4 bg-white/30 rounded-2xl scrollbar-hide">
+        <div className="grid grid-cols-4 sm:flex sm:flex-row sm:flex-nowrap gap-3 sm:gap-3 justify-items-center sm:justify-between items-center py-6 px-4 bg-white/30 rounded-2xl overflow-x-auto scrollbar-hide">
           {colors.map(c => (
             <button
               key={c.id}
               disabled={!canSelect}
               onClick={() => setSelectedColor(c.id)}
-              className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full shadow-md transition-all flex-shrink-0 flex items-center justify-center transform
+              className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full shadow-md transition-all flex items-center justify-center transform flex-shrink-0
                 ${c.bg} 
                 ${selectedColor === c.id ? `ring-4 ring-offset-4 ${c.ring} scale-110 shadow-xl` : 'hover:scale-110'}
                 ${!canSelect ? 'opacity-50 cursor-not-allowed' : 'active:scale-90'}`}

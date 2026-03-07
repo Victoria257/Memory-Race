@@ -34,8 +34,8 @@ export const PlayerList = () => {
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;
 
   return (
-    <div className="w-full lg:w-48 bg-[#F1F8E9]/80 backdrop-blur-sm shadow-md rounded-xl lg:rounded-3xl p-4 sm:p-6 mb-0 sm:mb-6 flex flex-col lg:flex-col items-center justify-between lg:justify-start gap-4 border-b lg:border-b-0 lg:border-l border-[#7DA33C]/20 lg:h-full lg:overflow-y-auto">
-      <h3 className="hidden lg:block text-xs font-black text-green-800 uppercase tracking-widest mb-2">Гравці</h3>
+    <div className="w-full lg:w-48 bg-[#3A5214] backdrop-blur-sm shadow-md rounded-xl lg:rounded-3xl p-4 sm:p-6 mb-0 sm:mb-6 flex flex-col lg:flex-col items-center justify-between lg:justify-start gap-4 border-b lg:border-b-0 lg:border-l border-[#7DA33C]/40 lg:h-full lg:overflow-y-auto">
+      <h3 className="hidden lg:block text-xs font-black text-green-300 uppercase tracking-widest mb-2">Гравці</h3>
       <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 pt-2 px-2 w-full scrollbar-hide">
         {gameState.players.map((player, idx) => {
           const isCurrentTurn = idx === gameState.currentTurnIndex;
@@ -44,7 +44,7 @@ export const PlayerList = () => {
             <div 
               key={player.id}
               className={`flex flex-col lg:flex-row items-center lg:items-center p-2 lg:p-3 rounded-xl min-w-[100px] lg:min-w-0 lg:w-full transition-all gap-2
-                ${isCurrentTurn ? 'bg-green-100 border-2 border-green-400 shadow-sm scale-105 z-10' : 'bg-white/30 border border-green-200 opacity-80'}
+                ${isCurrentTurn ? 'bg-green-800 border-2 border-yellow-400 shadow-sm scale-105 z-10' : 'bg-green-900/40 border border-green-700/50 opacity-80'}
                 ${player.place !== null ? 'opacity-50 grayscale' : ''}`}
             >
               <div className="relative flex-shrink-0">
@@ -67,12 +67,12 @@ export const PlayerList = () => {
               </div>
               
               <div className="flex flex-col items-center lg:items-start min-w-0 flex-1">
-                <span className="text-sm font-bold text-green-900 truncate w-full text-center lg:text-left">
+                <span className="text-sm font-bold text-green-50 truncate w-full text-center lg:text-left">
                   {player.name} {player.id === playerId ? '(Ви)' : ''}
                 </span>
                 
                 {isCurrentTurn && (
-                  <div className="flex items-center gap-1 text-xs text-green-700 font-bold mt-1">
+                  <div className="flex items-center gap-1 text-xs text-green-300 font-bold mt-1">
                     <Clock size={12} />
                     <span>{Math.floor(timeSinceTurnStart / 1000)}с</span>
                   </div>
@@ -83,11 +83,11 @@ export const PlayerList = () => {
         })}
       </div>
 
-      <div className="flex flex-col gap-2 border-t lg:border-t-0 pt-4 lg:pt-0 border-green-200 w-full lg:mt-auto">
+      <div className="flex flex-col gap-2 border-t lg:border-t-0 pt-4 lg:pt-0 border-green-700/50 w-full lg:mt-auto">
         {showBell && (
           <button 
             onClick={() => ringBell(gameState.players[gameState.currentTurnIndex].id)}
-            className="flex items-center justify-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg hover:bg-yellow-200 transition font-bold text-sm shadow-sm"
+            className="flex items-center justify-center gap-2 bg-yellow-400 text-green-900 px-4 py-2 rounded-lg hover:bg-yellow-500 transition font-bold text-sm shadow-md"
           >
             <Bell size={16} className="animate-bounce" /> Дзвіночок
           </button>
@@ -96,7 +96,7 @@ export const PlayerList = () => {
         {canGiveUp && (
           <button 
             onClick={giveUp}
-            className="flex items-center justify-center gap-2 bg-red-100 text-red-800 px-4 py-2 rounded-lg hover:bg-red-200 transition font-bold text-sm shadow-sm"
+            className="flex items-center justify-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition font-bold text-sm shadow-md"
           >
             <Flag size={16} /> Здаюсь
           </button>

@@ -172,7 +172,7 @@ export default function App() {
               <div className="flex-1 min-h-screen flex flex-col">
                 <SelectionPanel />
               </div>
-              <div className="flex flex-col sm:flex-row lg:flex-row gap-0 sm:gap-4 flex-1 items-stretch">
+              <div className="flex flex-col md:flex-row gap-0 sm:gap-4 flex-1 items-stretch">
                 <div className="flex-shrink-0 min-h-screen flex flex-col">
                   <Deck />
                 </div>

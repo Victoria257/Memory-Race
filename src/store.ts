@@ -28,6 +28,7 @@ interface AppState {
   pauseGame: () => void;
   ringBell: (targetPlayerId: string) => void;
   addBot: () => void;
+  removeBot: () => void;
   reportActivity: () => void;
   clearError: () => void;
 }
@@ -183,6 +184,12 @@ export const useStore = create<AppState>((set, get) => ({
     const { socket, gameState, playerId } = get();
     if (!socket || !gameState || !playerId) return;
     socket.emit('add_bot', { roomId: gameState.roomId, playerId });
+  },
+
+  removeBot: () => {
+    const { socket, gameState, playerId } = get();
+    if (!socket || !gameState || !playerId) return;
+    socket.emit('remove_bot', { roomId: gameState.roomId, playerId });
   },
 
   reportActivity: () => {

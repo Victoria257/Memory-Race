@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useStore } from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { speakText } from '../services/geminiService';
+import { Dog, Cat, Rabbit, Bird, Fish, Turtle } from 'lucide-react';
 
 export const Deck = () => {
   const { gameState, playerId, revealCard, language, isMuted } = useStore();
@@ -36,10 +37,20 @@ export const Deck = () => {
   }, [gameState.currentCard, language, isMuted, isMyTurn]);
 
   return (
-    <div id="deck-panel" className="w-full lg:w-72 h-full min-h-screen sm:min-h-0 bg-[#F1F8E9] rounded-none sm:rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-0 sm:border-4 border-[#7DA33C]/20 transition-all duration-300">
-      <div className="text-xs font-black text-green-600 mb-6 uppercase tracking-[0.2em]">📦 Колода ({gameState.deckCount})</div>
+    <div id="deck-panel" className="w-full lg:w-72 h-full min-h-screen sm:min-h-0 bg-[#F1F8E9] rounded-none sm:rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-0 sm:border-4 border-[#7DA33C]/20 transition-all duration-300 overflow-hidden">
+      {/* Background Decorations */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.07] overflow-hidden">
+        <Dog className="absolute top-10 left-10 rotate-12" size={48} />
+        <Cat className="absolute bottom-20 right-10 -rotate-12" size={56} />
+        <Rabbit className="absolute top-1/2 left-5 -rotate-45" size={40} />
+        <Bird className="absolute top-20 right-20 rotate-45" size={44} />
+        <Fish className="absolute bottom-10 left-20 rotate-180" size={52} />
+        <Turtle className="absolute bottom-1/3 right-5 rotate-12" size={48} />
+      </div>
+
+      <div className="text-xs font-black text-green-600 mb-6 uppercase tracking-[0.2em] relative z-10">📦 Колода ({gameState.deckCount})</div>
       
-      <div className="relative w-44 h-64 sm:w-52 sm:h-80 perspective-1000">
+      <div className="relative w-[65vw] h-[95vw] max-w-[220px] max-h-[340px] sm:w-52 sm:h-80 perspective-1000">
         <AnimatePresence mode="wait">
           {!gameState.currentCard ? (
             <motion.div

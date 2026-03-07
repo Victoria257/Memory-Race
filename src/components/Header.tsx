@@ -79,11 +79,11 @@ export const Header = () => {
           </button>
 
           {showStats && (
-            <div className="absolute right-0 mt-3 w-56 bg-[#F1F8E9] text-gray-800 rounded-2xl shadow-2xl p-5 z-50 border-4 border-[#7DA33C]/20 animate-in fade-in zoom-in duration-200">
-              <h3 className="font-black text-lg border-b-2 border-gray-100 pb-2 mb-3 text-green-800">{playerName}</h3>
+            <div className="absolute right-0 mt-3 w-56 bg-[#3A5214] text-green-50 rounded-2xl shadow-2xl p-5 z-50 border-4 border-[#7DA33C]/40 animate-in fade-in zoom-in duration-200">
+              <h3 className="font-black text-lg border-b-2 border-green-700/30 pb-2 mb-3 text-green-50">{playerName}</h3>
               <div className="space-y-2">
-                <p className="text-sm font-bold flex justify-between"><span>🏆 Перемог:</span> <span className="text-green-600">0</span></p>
-                <p className="text-sm font-bold flex justify-between"><span>🏎️ Заїздів:</span> <span className="text-green-600">1</span></p>
+                <p className="text-sm font-bold flex justify-between"><span>🏆 Перемог:</span> <span className="text-yellow-300">0</span></p>
+                <p className="text-sm font-bold flex justify-between"><span>🏎️ Заїздів:</span> <span className="text-yellow-300">1</span></p>
               </div>
             </div>
           )}
@@ -98,10 +98,10 @@ export const Header = () => {
 
       {/* Exit Confirmation Modal */}
       {showExitConfirm && (
-        <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl border-8 border-indigo-50 text-center animate-in fade-in zoom-in duration-300">
+        <div className="fixed inset-0 bg-green-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-[#F1F8E9] rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl border-8 border-[#7DA33C]/20 text-center animate-in fade-in zoom-in duration-300">
             <div className="text-6xl mb-4">🚪</div>
-            <h2 className="text-2xl font-black text-gray-800 mb-6">Вийти з гри?</h2>
+            <h2 className="text-2xl font-black text-green-800 mb-6">Вийти з гри?</h2>
             <div className="flex flex-col gap-3">
               <button 
                 onClick={handleConfirmLeave}
@@ -111,7 +111,7 @@ export const Header = () => {
               </button>
               <button 
                 onClick={() => setShowExitConfirm(false)}
-                className="w-full py-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-2xl font-black text-lg transition-all active:scale-95"
+                className="w-full py-4 bg-green-100 hover:bg-green-200 text-green-700 rounded-2xl font-black text-lg transition-all active:scale-95"
               >
                 ЗАЛИШИТИСЬ
               </button>
