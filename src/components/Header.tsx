@@ -39,17 +39,17 @@ export const Header = () => {
   };
 
   return (
-    <header className="flex flex-col sm:flex-row justify-between items-center p-3 sm:p-4 bg-[#4D6D1A] text-white shadow-xl gap-3 border-b-4 border-[#7DA33C]/30">
-      <div className="flex items-center justify-between w-full sm:w-auto gap-4">
-        <h1 className="text-xl sm:text-2xl font-black whitespace-nowrap bg-gradient-to-r from-green-200 to-emerald-200 bg-clip-text text-transparent">Memory Race 🏎️</h1>
+    <header className="flex flex-col tablet-p:flex-row justify-between items-center p-3 tablet-p:p-4 bg-[#4D6D1A] text-white shadow-xl gap-3 border-b-4 border-[#7DA33C]/30">
+      <div className="flex items-center justify-between w-full tablet-p:w-auto gap-4">
+        <h1 className="text-xl tablet-p:text-2xl font-black whitespace-nowrap bg-gradient-to-r from-green-200 to-emerald-200 bg-clip-text text-transparent">Memory Race 🏎️</h1>
         {gameState && (
-          <span className="bg-[#3A5214] border border-[#7DA33C]/30 px-3 py-1 rounded-full text-xs sm:text-sm font-black">
+          <span className="bg-[#3A5214] border border-[#7DA33C]/30 px-3 py-1 rounded-full text-xs tablet-p:text-sm font-black">
             Код: <span className="font-mono text-yellow-300">{gameState.roomId}</span>
           </span>
         )}
       </div>
 
-      <div className="flex items-center justify-center sm:justify-end gap-2 sm:gap-4 w-full sm:w-auto">
+      <div className="flex items-center justify-center tablet-p:justify-end gap-2 tablet-p:gap-4 w-full tablet-p:w-auto">
         <select 
           value={language} 
           onChange={(e) => setLanguage(e.target.value as any)}

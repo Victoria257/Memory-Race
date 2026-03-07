@@ -59,25 +59,25 @@ export const SelectionPanel = () => {
   };
 
   return (
-    <div id="selection-panel" className="flex-grow h-full min-h-screen sm:min-h-0 bg-[#F1F8E9] rounded-none sm:rounded-3xl shadow-xl p-6 border-0 sm:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center">
+    <div id="selection-panel" className="flex-grow h-full min-h-screen tablet-p:min-h-0 bg-[#F1F8E9] rounded-none tablet-p:rounded-3xl shadow-xl p-6 border-0 tablet-p:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center">
       <h3 className="text-xl font-black mb-6 text-green-800 flex items-center gap-2">
         {getStatusMessage()}
       </h3>
 
       <div className="mb-8">
         <h4 className="text-xs font-black text-green-600 mb-3 uppercase tracking-[0.2em]">🌈 Категорії</h4>
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 tablet-p:grid-cols-4 gap-3">
           {categories.map(c => (
             <button
               key={c.id}
               disabled={!canSelect}
               onClick={() => setSelectedCategory(c.id)}
-              className={`p-2 sm:p-3 rounded-2xl border-4 flex flex-col items-center justify-center transition-all transform
+              className={`p-2 tablet-p:p-3 rounded-2xl border-4 flex flex-col items-center justify-center transition-all transform
                 ${selectedCategory === c.id ? 'border-green-600 bg-green-50 shadow-lg scale-110' : 'border-white/50 hover:border-green-100 hover:bg-white/30'}
                 ${!canSelect ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'}`}
             >
-              <span className="text-2xl sm:text-3xl mb-2">{c.icon}</span>
-              <span className="text-[10px] sm:text-xs font-black text-center leading-tight text-gray-700">{c.name[language]}</span>
+              <span className="text-2xl tablet-p:text-3xl mb-2">{c.icon}</span>
+              <span className="text-[10px] tablet-p:text-xs font-black text-center leading-tight text-gray-700">{c.name[language]}</span>
             </button>
           ))}
         </div>
@@ -85,13 +85,13 @@ export const SelectionPanel = () => {
 
       <div className="mb-8">
         <h4 className="text-xs font-black text-green-600 mb-3 uppercase tracking-[0.2em]">🎨 Кольори</h4>
-        <div className="grid grid-cols-4 sm:flex sm:flex-row sm:flex-nowrap gap-3 sm:gap-3 justify-items-center sm:justify-between items-center py-6 px-4 bg-white/30 rounded-2xl overflow-x-auto scrollbar-hide">
+        <div className="grid grid-cols-4 tablet-p:flex tablet-p:flex-row tablet-p:flex-nowrap gap-3 tablet-p:gap-3 justify-items-center tablet-p:justify-between items-center py-6 px-4 bg-white/30 rounded-2xl overflow-x-auto scrollbar-hide">
           {colors.map(c => (
             <button
               key={c.id}
               disabled={!canSelect}
               onClick={() => setSelectedColor(c.id)}
-              className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full shadow-md transition-all flex items-center justify-center transform flex-shrink-0
+              className={`w-10 h-10 tablet-p:w-14 tablet-p:h-14 rounded-full shadow-md transition-all flex items-center justify-center transform flex-shrink-0
                 ${c.bg} 
                 ${selectedColor === c.id ? `ring-4 ring-offset-4 ${c.ring} scale-110 shadow-xl` : 'hover:scale-110'}
                 ${!canSelect ? 'opacity-50 cursor-not-allowed' : 'active:scale-90'}`}
@@ -106,7 +106,7 @@ export const SelectionPanel = () => {
       <button
         onClick={handleRemember}
         disabled={!canSelect || !selectedCategory || !selectedColor}
-        className={`w-full py-4 sm:py-5 rounded-2xl font-black text-xl transition-all flex items-center justify-center gap-3 transform
+        className={`w-full py-4 tablet-p:py-5 rounded-2xl font-black text-xl transition-all flex items-center justify-center gap-3 transform
           ${canSelect && selectedCategory && selectedColor 
             ? 'bg-gradient-to-r from-green-600 to-emerald-700 text-white hover:from-green-700 hover:to-emerald-800 shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95' 
             : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}

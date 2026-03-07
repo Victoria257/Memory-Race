@@ -30,10 +30,10 @@ export const JoinGame = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto my-auto p-4 sm:p-6 bg-[#F1F8E9] rounded-[2.5rem] shadow-2xl border-8 border-[#7DA33C]/20 flex flex-col max-h-[90vh] overflow-y-auto">
-      <div className="text-center mb-4 sm:mb-6">
-        <h2 className="text-3xl sm:text-4xl font-black text-green-800 mb-1 tracking-tight">Memory Race</h2>
-        <p className="text-green-600 font-bold text-base sm:text-lg">Веселі перегони пам'яті! 🏎️</p>
+    <div className="max-w-md mx-auto my-auto p-4 tablet-p:p-6 bg-[#F1F8E9] rounded-[2.5rem] shadow-2xl border-8 border-[#7DA33C]/20 flex flex-col max-h-[90vh] overflow-y-auto">
+      <div className="text-center mb-4 tablet-p:mb-6">
+        <h2 className="text-3xl tablet-p:text-4xl font-black text-green-800 mb-1 tracking-tight">Memory Race</h2>
+        <p className="text-green-600 font-bold text-base tablet-p:text-lg">Веселі перегони пам'яті! 🏎️</p>
       </div>
 
       <div className="flex gap-2 mb-4 bg-green-100/50 p-2 rounded-2xl">
@@ -109,7 +109,7 @@ export const JoinGame = () => {
                 key={c.id}
                 type="button"
                 onClick={() => setColor(c.id)}
-                className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full border-4 transition-all transform flex-shrink-0 ${
+                className={`w-10 h-10 tablet-p:w-11 tablet-p:h-11 rounded-full border-4 transition-all transform flex-shrink-0 ${
                   color === c.id ? 'border-green-600 scale-110 rotate-12 shadow-xl' : 'border-white hover:scale-105 shadow-sm'
                 }`}
                 style={{ backgroundColor: c.hex }}
