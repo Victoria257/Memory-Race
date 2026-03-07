@@ -127,22 +127,22 @@ export default function App() {
       
       <main className={`flex-1 container mx-auto p-0 tablet-p:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory scroll-smooth overflow-y-auto ${gameState ? 'h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)]' : 'h-screen'}`}>
         {!gameState ? (
-          <div className="h-screen tablet-l:h-screen flex items-center justify-center p-2 tablet-p:p-4 snap-start">
+          <div className="h-full flex items-center justify-center p-2 tablet-p:p-4 snap-start snap-always">
             <JoinGame />
           </div>
         ) : gameState.status === 'lobby' ? (
-          <div className="h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] flex items-center justify-center p-2 tablet-p:p-4 snap-start">
+          <div className="h-full flex items-center justify-center p-2 tablet-p:p-4 snap-start snap-always">
             <Lobby />
           </div>
         ) : gameState.status === 'paused' ? (
-          <div className="flex-1 flex items-center justify-center min-h-screen p-4">
+          <div className="h-full flex items-center justify-center p-4 snap-start snap-always">
             <div className="bg-[#F1F8E9] p-8 rounded-2xl shadow-xl text-center border-4 border-[#7DA33C]">
               <h2 className="text-3xl font-black text-gray-800 mb-4">Гру призупинено</h2>
               <p className="text-gray-500">Очікуємо, поки хост відновить гру...</p>
             </div>
           </div>
         ) : gameState.status === 'finished' ? (
-          <div className="flex-1 flex items-center justify-center min-h-screen p-4">
+          <div className="h-full flex items-center justify-center p-4 snap-start snap-always">
             <div className="bg-[#F1F8E9] p-8 rounded-2xl shadow-xl text-center border-4 border-[#7DA33C] max-w-md w-full">
               <h2 className="text-4xl font-black text-gray-800 mb-6">Гру завершено!</h2>
               <div className="space-y-4">
@@ -165,8 +165,8 @@ export default function App() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col">
-            <div className="h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] flex flex-col tablet-l:flex-row p-0 overflow-hidden snap-start">
+          <div className="flex flex-col h-full">
+            <div className="h-full flex flex-col tablet-l:flex-row p-0 overflow-hidden snap-start snap-always flex-shrink-0">
               <div className="flex-1 h-full overflow-hidden">
                 <Board />
               </div>
@@ -175,13 +175,13 @@ export default function App() {
               </div>
             </div>
             
-            <div className="flex flex-col gap-0 items-stretch h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] snap-start overflow-hidden" id="selection-panel-section">
-              <div className="flex-1 flex flex-col p-2 tablet-p:p-4 overflow-hidden">
+            <div className="flex flex-col gap-0 items-stretch h-full snap-start snap-always overflow-hidden flex-shrink-0" id="selection-panel-section">
+              <div className="flex-1 flex flex-col p-4 tablet-p:p-8 overflow-hidden">
                 <SelectionPanel />
               </div>
             </div>
 
-            <div className="flex flex-col tablet-p:flex-row gap-4 w-full h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] p-4 snap-start overflow-hidden">
+            <div className="flex flex-col tablet-p:flex-row gap-4 w-full h-full p-4 tablet-p:p-6 snap-start snap-always overflow-hidden flex-shrink-0">
               <div className="flex-shrink-0 flex flex-col tablet-p:w-72 h-full overflow-hidden">
                 <Deck />
               </div>

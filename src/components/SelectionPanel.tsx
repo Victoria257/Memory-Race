@@ -59,41 +59,41 @@ export const SelectionPanel = () => {
   };
 
   return (
-    <div id="selection-panel" className="flex-grow h-full bg-[#F1F8E9] rounded-none tablet-p:rounded-3xl shadow-xl p-4 tablet-p:p-6 border-0 tablet-p:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center overflow-y-auto">
-      <h3 className="text-lg tablet-p:text-xl font-black mb-2 tablet-p:mb-4 text-green-800 flex items-center gap-2">
+    <div id="selection-panel" className="flex-grow h-full bg-[#F1F8E9] rounded-none tablet-p:rounded-3xl shadow-xl p-4 tablet-p:p-5 border-0 tablet-p:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center overflow-y-auto">
+      <h3 className="text-lg tablet-p:text-xl font-black mb-3 tablet-p:mb-4 text-green-800 flex items-center gap-2">
         {getStatusMessage()}
       </h3>
 
-      <div className="mb-4 tablet-p:mb-8">
-        <h4 className="text-[10px] tablet-p:text-xs font-black text-green-600 mb-2 tablet-p:mb-3 uppercase tracking-[0.2em]">🌈 Категорії</h4>
-        <div className="grid grid-cols-4 tablet-p:grid-cols-4 gap-2 tablet-p:gap-3">
+      <div className="mb-4 tablet-p:mb-5">
+        <h4 className="text-[10px] tablet-p:text-xs font-black text-green-600 mb-1.5 tablet-p:mb-2 uppercase tracking-[0.2em]">🌈 Категорії</h4>
+        <div className="grid grid-cols-3 tablet-p:grid-cols-4 gap-2 tablet-p:gap-3">
           {categories.map(c => (
             <button
               key={c.id}
               disabled={!canSelect}
               onClick={() => setSelectedCategory(c.id)}
-              className={`p-1.5 tablet-p:p-3 rounded-xl tablet-p:rounded-2xl border-2 tablet-p:border-4 flex flex-col items-center justify-center transition-all transform
+              className={`p-1.5 tablet-p:p-2.5 rounded-xl tablet-p:rounded-2xl border-2 tablet-p:border-4 flex flex-col items-center justify-center transition-all transform
                 ${selectedCategory === c.id ? 'border-green-600 bg-green-50 shadow-lg scale-105' : 'border-white/50 hover:border-green-100 hover:bg-white/30'}
                 ${!canSelect ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'}`}
             >
-              <span className="text-xl tablet-p:text-3xl mb-1 tablet-p:mb-2">{c.icon}</span>
-              <span className="text-[8px] tablet-p:text-xs font-black text-center leading-tight text-gray-700">{c.name[language]}</span>
+              <span className="text-xl tablet-p:text-2xl mb-1 tablet-p:mb-1.5">{c.icon}</span>
+              <span className="text-[9px] tablet-p:text-[11px] font-black text-center leading-tight text-gray-700">{c.name[language]}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="mb-4 tablet-p:mb-8">
-        <h4 className="text-[10px] tablet-p:text-xs font-black text-green-600 mb-2 tablet-p:mb-3 uppercase tracking-[0.2em]">🎨 Кольори</h4>
-        <div className="grid grid-cols-4 tablet-p:flex tablet-p:flex-row tablet-p:flex-nowrap gap-2 tablet-p:gap-3 justify-items-center tablet-p:justify-between items-center py-3 tablet-p:py-6 px-3 tablet-p:px-4 bg-white/30 rounded-2xl overflow-x-auto scrollbar-hide">
+      <div className="mb-4 tablet-p:mb-5">
+        <h4 className="text-[10px] tablet-p:text-xs font-black text-green-600 mb-1.5 tablet-p:mb-2 uppercase tracking-[0.2em]">🎨 Кольори</h4>
+        <div className="grid grid-cols-4 tablet-p:flex tablet-p:flex-row tablet-p:flex-nowrap gap-2 tablet-p:gap-3 justify-items-center tablet-p:justify-between items-center py-3 tablet-p:py-4 px-3 tablet-p:px-4 bg-white/30 rounded-2xl overflow-x-auto scrollbar-hide">
           {colors.map(c => (
             <button
               key={c.id}
               disabled={!canSelect}
               onClick={() => setSelectedColor(c.id)}
-              className={`w-8 h-8 tablet-p:w-14 tablet-p:h-14 rounded-full shadow-md transition-all flex items-center justify-center transform flex-shrink-0
+              className={`w-8 h-8 tablet-p:w-12 tablet-p:h-12 rounded-full shadow-md transition-all flex items-center justify-center transform flex-shrink-0
                 ${c.bg} 
-                ${selectedColor === c.id ? `ring-2 tablet-p:ring-4 ring-offset-2 tablet-p:ring-offset-4 ${c.ring} scale-110 shadow-xl` : 'hover:scale-110'}
+                ${selectedColor === c.id ? `ring-2 tablet-p:ring-4 ring-offset-2 tablet-p:ring-offset-2 ${c.ring} scale-110 shadow-xl` : 'hover:scale-110'}
                 ${!canSelect ? 'opacity-50 cursor-not-allowed' : 'active:scale-90'}`}
               title={c.name[language]}
             >
@@ -106,7 +106,7 @@ export const SelectionPanel = () => {
       <button
         onClick={handleRemember}
         disabled={!canSelect || !selectedCategory || !selectedColor}
-        className={`w-full py-3 tablet-p:py-5 rounded-xl tablet-p:rounded-2xl font-black text-lg tablet-p:text-xl transition-all flex items-center justify-center gap-2 tablet-p:gap-3 transform
+        className={`w-full py-3 tablet-p:py-4 rounded-xl tablet-p:rounded-2xl font-black text-lg tablet-p:text-xl transition-all flex items-center justify-center gap-2 tablet-p:gap-3 transform
           ${canSelect && selectedCategory && selectedColor 
             ? 'bg-gradient-to-r from-green-600 to-emerald-700 text-white hover:from-green-700 hover:to-emerald-800 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 active:scale-95' 
             : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
