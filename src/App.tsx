@@ -166,22 +166,22 @@ export default function App() {
           </div>
         ) : (
           <div className="flex flex-col h-full">
-            <div className="h-full flex flex-col tablet-l:flex-row p-0 overflow-hidden snap-start snap-always flex-shrink-0">
+            <div className="h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] flex flex-col tablet-l:flex-row p-0 overflow-hidden snap-start snap-always flex-shrink-0">
               <div className="flex-1 h-full overflow-hidden">
                 <Board />
               </div>
-              <div className="h-auto tablet-l:h-full tablet-l:w-48 bg-[#86B03C]/20 flex-shrink-0">
+              <div className="h-auto tablet-l:h-full tablet-l:w-64 bg-[#86B03C]/20 flex-shrink-0">
                 <PlayerList />
               </div>
             </div>
             
-            <div className="flex flex-col gap-0 items-stretch h-full snap-start snap-always overflow-hidden flex-shrink-0" id="selection-panel-section">
+            <div className="flex flex-col gap-0 items-stretch h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] snap-start snap-always overflow-hidden flex-shrink-0" id="selection-panel-section">
               <div className="flex-1 flex flex-col p-4 tablet-p:p-8 overflow-hidden">
                 <SelectionPanel />
               </div>
             </div>
 
-            <div className="flex flex-col tablet-p:flex-row gap-4 w-full h-full p-4 tablet-p:p-6 snap-start snap-always overflow-hidden flex-shrink-0">
+            <div className="flex flex-col tablet-p:flex-row gap-4 w-full h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] p-4 tablet-p:p-6 snap-start snap-always overflow-hidden flex-shrink-0">
               <div className="flex-shrink-0 flex flex-col tablet-p:w-72 h-full overflow-hidden">
                 <Deck />
               </div>

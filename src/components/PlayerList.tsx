@@ -34,7 +34,7 @@ export const PlayerList = () => {
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;
 
   return (
-    <div className="w-full tablet-l:w-48 bg-[#3A5214] backdrop-blur-sm shadow-md rounded-xl tablet-l:rounded-3xl p-4 tablet-p:p-6 mb-0 tablet-p:mb-6 flex flex-col tablet-l:flex-col items-center justify-between tablet-l:justify-start gap-4 border-b tablet-l:border-b-0 tablet-l:border-l border-[#7DA33C]/40 tablet-l:h-full tablet-l:overflow-y-auto">
+    <div className="w-full tablet-l:w-64 bg-[#3A5214] backdrop-blur-sm shadow-md rounded-xl tablet-l:rounded-3xl p-4 tablet-p:p-6 mb-0 tablet-p:mb-6 flex flex-col tablet-l:flex-col items-center justify-between tablet-l:justify-start gap-4 border-b tablet-l:border-b-0 tablet-l:border-l border-[#7DA33C]/40 tablet-l:h-full tablet-l:overflow-y-auto">
       <h3 className="hidden tablet-l:block text-xs font-black text-green-300 uppercase tracking-widest mb-2">Гравці</h3>
       <div className="flex tablet-l:flex-col gap-4 overflow-x-auto tablet-l:overflow-x-visible pb-2 tablet-l:pb-0 pt-2 px-2 w-full scrollbar-hide">
         {gameState.players.map((player, idx) => {
