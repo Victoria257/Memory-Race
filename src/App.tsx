@@ -118,13 +118,13 @@ export default function App() {
         </div>
       )}
       
-      <main className="flex-1 container mx-auto p-0 tablet-p:p-4 flex flex-col gap-0 tablet-p:gap-4 overflow-x-hidden">
+      <main className="flex-1 container mx-auto p-0 tablet-p:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] overflow-y-auto scroll-smooth">
         {!gameState ? (
-          <div className="flex-1 flex items-center justify-center p-4">
+          <div className="min-h-full flex items-center justify-center p-4 snap-start">
             <JoinGame />
           </div>
         ) : gameState.status === 'lobby' ? (
-          <div className="flex-1 flex items-center justify-center p-4">
+          <div className="min-h-full flex items-center justify-center p-4 snap-start">
             <Lobby />
           </div>
         ) : gameState.status === 'paused' ? (
@@ -158,8 +158,8 @@ export default function App() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-0 tablet-p:gap-4">
-            <div className="h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-112px)] flex flex-col tablet-l:flex-row p-0 overflow-hidden">
+          <div className="flex flex-col">
+            <div className="h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] flex flex-col tablet-l:flex-row p-0 overflow-hidden snap-start">
               <div className="flex-1 h-full overflow-hidden">
                 <Board />
               </div>
@@ -168,7 +168,7 @@ export default function App() {
               </div>
             </div>
             
-            <div className="flex flex-col tablet-l:flex-row gap-0 tablet-p:gap-4 items-stretch min-h-[calc(100vh-112px)]">
+            <div className="flex flex-col tablet-l:flex-row gap-0 tablet-p:gap-4 items-stretch min-h-[calc(100vh-80px)] py-4 tablet-p:py-8 snap-start">
               <div className="flex-1 min-h-screen flex flex-col">
                 <SelectionPanel />
               </div>
