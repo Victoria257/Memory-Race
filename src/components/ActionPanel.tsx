@@ -91,7 +91,7 @@ export const ActionPanel = () => {
   return (
     <div 
       id="action-panel"
-      className={`w-full h-full min-h-screen sm:min-h-0 bg-[#F1F8E9] text-gray-800 p-6 transition-all duration-500 rounded-none sm:rounded-3xl shadow-xl border-0 sm:border-4 border-[#7DA33C]/20 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'} flex flex-col justify-center`}>
+      className={`w-full h-full bg-[#F1F8E9] text-gray-800 p-6 transition-all duration-500 rounded-none sm:rounded-3xl shadow-xl border-0 sm:border-4 border-[#7DA33C]/20 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'} flex flex-col justify-center`}>
       
       <div className="max-w-4xl mx-auto relative h-full flex flex-col justify-center w-full">
         {!isActuallyVisible && isActionPhase && isMyTurn ? (

@@ -37,7 +37,7 @@ export const Deck = () => {
   }, [gameState.currentCard, language, isMuted, isMyTurn]);
 
   return (
-    <div id="deck-panel" className="w-full lg:w-72 h-full min-h-screen sm:min-h-0 bg-[#F1F8E9] rounded-none sm:rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-0 sm:border-4 border-[#7DA33C]/20 transition-all duration-300 overflow-hidden">
+    <div id="deck-panel" className="w-full sm:w-64 lg:w-72 h-full bg-[#F1F8E9] rounded-none sm:rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-0 sm:border-4 border-[#7DA33C]/20 transition-all duration-300 overflow-hidden">
       {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.07] overflow-hidden">
         <Dog className="absolute top-10 left-10 rotate-12" size={48} />
