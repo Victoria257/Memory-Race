@@ -86,16 +86,9 @@ export default function App() {
   }, [gameState?.currentTurnIndex, gameState?.phase, gameState?.status, playerId]);
 
   return (
-    <div className="min-h-screen bg-[#86B03C] font-sans text-gray-900 flex flex-col overflow-hidden">
-      {/* Hide header on registration page for tablet-l to save space */}
-      {gameState ? (
-        <Header />
-      ) : (
-        <div className="tablet-l:hidden">
-          <Header />
-        </div>
-      )}
-
+    <div className="min-h-screen bg-[#86B03C] font-sans text-gray-900 flex flex-col">
+      <Header />
+      
       {showInstallBanner && (
         <div className="bg-blue-600 text-white p-4 flex items-center justify-between shadow-lg animate-in slide-in-from-top duration-500">
           <div className="flex items-center gap-3">
@@ -125,7 +118,7 @@ export default function App() {
         </div>
       )}
       
-      <main className={`flex-1 container mx-auto p-0 tablet-p:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory scroll-smooth overflow-y-auto ${gameState ? 'h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)]' : 'h-screen tablet-l:h-screen'}`}>
+      <main className="flex-1 container mx-auto p-0 tablet-p:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] overflow-y-auto scroll-smooth">
         {!gameState ? (
           <div className="min-h-full flex items-center justify-center p-4 snap-start">
             <JoinGame />
@@ -175,15 +168,15 @@ export default function App() {
               </div>
             </div>
             
-            <div className="flex flex-col gap-0 tablet-p:gap-4 items-stretch min-h-[calc(100vh-80px)] py-4 tablet-p:py-8 snap-start">
-              <div className="flex-1 flex flex-col">
+            <div className="flex flex-col tablet-l:flex-row gap-0 tablet-p:gap-4 items-stretch min-h-[calc(100vh-80px)] py-4 tablet-p:py-8 snap-start">
+              <div className="flex-1 min-h-screen flex flex-col">
                 <SelectionPanel />
               </div>
-              <div className="flex flex-col tablet-p:flex-row gap-4 w-full">
-                <div className="flex-shrink-0 flex flex-col tablet-p:w-72">
+              <div className="flex flex-col tablet-p:flex-row gap-0 tablet-p:gap-4 flex-1 items-stretch">
+                <div className="flex-shrink-0 min-h-screen flex flex-col">
                   <Deck />
                 </div>
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 min-h-screen flex flex-col">
                   <ActionPanel />
                 </div>
               </div>
