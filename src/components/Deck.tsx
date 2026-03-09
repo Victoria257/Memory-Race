@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { speakText } from '../services/geminiService';
@@ -7,12 +7,28 @@ import { Dog, Cat, Rabbit, Bird, Fish, Turtle } from 'lucide-react';
 export const Deck = () => {
   const { gameState, playerId, revealCard, language, isMuted } = useStore();
   const lastSpokenCardId = useRef<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState(40);
 
   if (!gameState) return null;
 
   const isMyTurn = gameState.players[gameState.currentTurnIndex].id === playerId;
   const isRevealPhase = gameState.phase === 'reveal';
   const canReveal = isMyTurn && isRevealPhase;
+
+  useEffect(() => {
+    if (!gameState || gameState.status !== 'playing') return;
+    
+    const updateTimer = () => {
+      const now = Date.now();
+      const elapsed = Math.floor((now - gameState.turnStartTime) / 1000);
+      const remaining = Math.max(0, 40 - elapsed);
+      setTimeLeft(remaining);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [gameState?.turnStartTime, gameState?.status]);
 
   const handleReveal = () => {
     if (canReveal) {
@@ -38,6 +54,14 @@ export const Deck = () => {
 
   return (
     <div id="deck-panel" className="w-full desktop:w-72 h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] rounded-none tablet:rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-0 tablet:border-4 border-[#7DA33C]/20 transition-all duration-300 overflow-hidden">
+      {isRevealPhase && isMyTurn && (
+        <div className="absolute top-4 right-4 flex items-center gap-2 bg-white/80 px-3 py-1 rounded-full border-2 border-green-200 shadow-sm z-20">
+          <div className={`w-3 h-3 rounded-full ${timeLeft < 10 ? 'bg-red-500 animate-ping' : 'bg-green-500'}`}></div>
+          <span className={`font-black text-sm ${timeLeft < 10 ? 'text-red-600' : 'text-green-700'}`}>
+            {timeLeft}с
+          </span>
+        </div>
+      )}
       {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.07] overflow-hidden">
         <Dog className="absolute top-10 left-10 rotate-12" size={48} />

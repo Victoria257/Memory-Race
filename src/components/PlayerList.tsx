@@ -80,7 +80,7 @@ export const PlayerList = () => {
                 )}
                 {player.missedTurns > 0 && player.place === null && (
                   <div className="text-[10px] font-bold text-orange-400 mt-1">
-                    ⚠️ Пропущено: {player.missedTurns}/2
+                    ⚠️ {player.missedTurns}/2
                   </div>
                 )}
                 {player.place === 99 && (

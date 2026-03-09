@@ -357,9 +357,9 @@ if (!card) {
       const game = games[roomId];
       if (!game || game.status !== 'playing') return;
       
-      const currentPlayer = game.players[game.currentTurnIndex];
-      if (currentPlayer.id === playerId) {
-        game.turnStartTime = Date.now();
+      const player = game.players.find(p => p.id === playerId);
+      if (player) {
+        player.lastActive = Date.now();
       }
     });
 

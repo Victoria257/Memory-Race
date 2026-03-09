@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '../store';
 import { Check } from 'lucide-react';
 
@@ -6,12 +6,28 @@ export const SelectionPanel = () => {
   const { gameState, playerId, selectAttributes, language } = useStore();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState(40);
 
   if (!gameState) return null;
 
   const isMyTurn = gameState.players[gameState.currentTurnIndex].id === playerId;
   const isSelectPhase = gameState.phase === 'select';
   const canSelect = isMyTurn && isSelectPhase;
+
+  useEffect(() => {
+    if (!gameState || gameState.status !== 'playing') return;
+    
+    const updateTimer = () => {
+      const now = Date.now();
+      const elapsed = Math.floor((now - gameState.turnStartTime) / 1000);
+      const remaining = Math.max(0, 40 - elapsed);
+      setTimeLeft(remaining);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [gameState?.turnStartTime, gameState?.status]);
 
   const getStatusMessage = () => {
     if (!isMyTurn) return '⏳ Чекаємо на друзів...';
@@ -59,7 +75,15 @@ export const SelectionPanel = () => {
   };
 
   return (
-    <div id="selection-panel" className="flex-grow h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] rounded-none tablet:rounded-3xl shadow-xl p-6 border-0 tablet:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center">
+    <div id="selection-panel" className="flex-grow h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] rounded-none tablet:rounded-3xl shadow-xl p-6 border-0 tablet:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center relative">
+      {isSelectPhase && isMyTurn && (
+        <div className="absolute top-4 right-4 flex items-center gap-2 bg-white/80 px-3 py-1 rounded-full border-2 border-green-200 shadow-sm z-20">
+          <div className={`w-3 h-3 rounded-full ${timeLeft < 10 ? 'bg-red-500 animate-ping' : 'bg-green-500'}`}></div>
+          <span className={`font-black text-sm ${timeLeft < 10 ? 'text-red-600' : 'text-green-700'}`}>
+            {timeLeft}с
+          </span>
+        </div>
+      )}
       <h3 className="text-xl font-black mb-6 text-green-800 flex items-center gap-2">
         {getStatusMessage()}
       </h3>
