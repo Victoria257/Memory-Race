@@ -1,12 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../store';
-import { Bell, Clock, Flag } from 'lucide-react';
+import { Bell, Clock, Flag, Video, VideoOff } from 'lucide-react';
+import { VideoAvatar } from './VideoAvatar';
 
 export const PlayerList = () => {
   const { gameState, playerId, ringBell, giveUp } = useStore();
   const [timeLeft, setTimeLeft] = useState(40);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
 
   if (!gameState) return null;
+
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+    
+    const startCamera = async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        setLocalStream(stream);
+        setCameraError(null);
+      } catch (err) {
+        console.error("Camera error:", err);
+        setCameraError("Камера недоступна");
+      }
+    };
+
+    startCamera();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -44,14 +70,14 @@ export const PlayerList = () => {
           return (
             <div 
               key={player.id}
-              className={`flex flex-col desktop:flex-row items-center desktop:items-center p-2 desktop:p-3 rounded-xl min-w-[100px] desktop:min-w-0 desktop:w-full transition-all gap-2
+              className={`flex flex-col desktop:flex-col items-center p-3 desktop:p-4 rounded-2xl min-w-[120px] desktop:min-w-0 desktop:w-full transition-all gap-3
                 ${isCurrentTurn ? 'bg-green-800 border-2 border-yellow-400 shadow-sm scale-105 z-10' : 'bg-green-900/40 border border-green-700/50 opacity-80'}
                 ${player.place !== null ? 'opacity-50 grayscale' : ''}`}
             >
               <div className="relative flex-shrink-0">
-                <div className={`w-10 h-10 desktop:w-12 desktop:h-12 rounded-full shadow-inner ${tokenColors[player.tokenColor]}`}></div>
+                <VideoAvatar player={player} localStream={localStream} />
                 {player.place !== null && (
-                  <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                  <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-md z-20">
                     {player.place === 99 ? 'X' : player.place}
                   </div>
                 )}
@@ -67,8 +93,8 @@ export const PlayerList = () => {
                 )}
               </div>
               
-              <div className="flex flex-col items-center desktop:items-start min-w-0 flex-1">
-                <span className="text-sm font-bold text-green-50 truncate w-full text-center desktop:text-left">
+              <div className="flex flex-col items-center min-w-0 flex-1">
+                <span className="text-sm font-black text-green-50 truncate w-full text-center">
                   {player.name} {player.id === playerId ? '(Ви)' : ''}
                 </span>
                 
@@ -109,6 +135,12 @@ export const PlayerList = () => {
           >
             <Flag size={16} /> Здаюсь
           </button>
+        )}
+
+        {cameraError && (
+          <div className="flex items-center justify-center gap-1 text-[10px] text-red-300 font-bold bg-red-900/40 py-1 rounded">
+            <VideoOff size={10} /> {cameraError}
+          </div>
         )}
       </div>
     </div>

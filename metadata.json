@@ -1,5 +1,8 @@
 {
-  "name": "Funny Owl Math Race",
+  "name": "Memory Race",
   "description": "Весела математична гра з совами, де потрібно вгадувати карти та вирішувати приклади.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
 }

@@ -39,6 +39,7 @@ app.use(cors());
 
     socket.on('create_room', ({ name, tokenColor, age, playerId }, callback) => {
       const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+      console.log(`[Room Created] ID: ${roomId}, Initiator: ${name}`);
       const pId = playerId || uuidv4();
       
       games[roomId] = {
@@ -76,7 +77,9 @@ app.use(cors());
     });
 
     socket.on('join_room', ({ roomId, name, tokenColor, age, playerId }, callback) => {
-      const game = games[roomId];
+      const normalizedRoomId = roomId?.trim().toUpperCase();
+      console.log(`[Join Attempt] Original: ${roomId}, Normalized: ${normalizedRoomId}, Active Rooms: ${Object.keys(games).join(', ') || 'none'}`);
+      const game = games[normalizedRoomId];
       if (!game) return callback({ success: false, error: 'Game not found' });
       if (game.status !== 'lobby' && game.status !== 'paused') {
         // Check if reconnecting
@@ -85,9 +88,9 @@ app.use(cors());
           existingPlayer.socketId = socket.id;
           existingPlayer.connected = true;
           existingPlayer.lastActive = Date.now();
-          socket.join(roomId);
+          socket.join(normalizedRoomId);
           callback({ success: true, playerId });
-          io.to(roomId).emit('game_update', getPublicGameState(game));
+          io.to(normalizedRoomId).emit('game_update', getPublicGameState(game));
           return;
         }
         return callback({ success: false, error: 'Game already started' });
@@ -113,9 +116,9 @@ app.use(cors());
         isBot: false
       });
       
-      socket.join(roomId);
+      socket.join(normalizedRoomId);
       callback({ success: true, playerId: pId });
-      io.to(roomId).emit('game_update', getPublicGameState(game));
+      io.to(normalizedRoomId).emit('game_update', getPublicGameState(game));
     });
 
     socket.on('add_bot', ({ roomId, playerId }) => {
@@ -361,6 +364,14 @@ if (!card) {
       if (player) {
         player.lastActive = Date.now();
       }
+    });
+
+    socket.on('webrtc_signal', ({ roomId, targetId, signal, senderId }) => {
+      io.to(roomId).emit('webrtc_signal', {
+        senderId,
+        targetId,
+        signal
+      });
     });
 
     socket.on('disconnect', () => {
