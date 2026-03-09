@@ -97,15 +97,26 @@ app.use(cors());
       }
       
       if (game.players.length >= 6) return callback({ success: false, error: 'Room full' });
-      if (game.players.some(p => p.tokenColor === tokenColor)) return callback({ success: false, error: 'Color taken' });
       if (game.players.some(p => p.name === name)) return callback({ success: false, error: 'Name taken' });
+
+      let finalTokenColor = tokenColor;
+      if (game.players.some(p => p.tokenColor === tokenColor)) {
+        const allColors = ['blue', 'yellow', 'green', 'purple', 'white', 'orange'];
+        const takenColors = game.players.map(p => p.tokenColor);
+        const availableColor = allColors.find(c => !takenColors.includes(c));
+        if (availableColor) {
+          finalTokenColor = availableColor;
+        } else {
+          return callback({ success: false, error: 'Room full' });
+        }
+      }
 
       const pId = playerId || uuidv4();
       game.players.push({
         id: pId,
         socketId: socket.id,
         name,
-        tokenColor,
+        tokenColor: finalTokenColor,
         age,
         position: 0,
         skipNextTurn: false,

@@ -28,18 +28,25 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
     // We only want one peer connection between two players.
     // Convention: player with "smaller" ID initiates.
     const shouldInitiate = playerId! < player.id;
+    console.log(`[WebRTC] Initializing peer for ${player.name}, initiator: ${shouldInitiate}`);
 
-    const peer = new Peer({
-      initiator: shouldInitiate,
-      trickle: false,
-      stream: localStream,
-      config: {
-        iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' },
-        ]
-      }
-    });
+    let peer: Peer.Instance;
+    try {
+      peer = new Peer({
+        initiator: shouldInitiate,
+        trickle: false,
+        stream: localStream,
+        config: {
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+          ]
+        }
+      });
+    } catch (err) {
+      console.error('[WebRTC] Failed to create Peer instance:', err);
+      return;
+    }
 
     peer.on('signal', (signal) => {
       socket.emit('webrtc_signal', {
