@@ -29,15 +29,15 @@ export const Lobby = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto my-auto p-4 tablet:p-6 tablet-landscape:p-4 bg-[#F1F8E9] rounded-2xl shadow-xl border-4 border-[#7DA33C]/20 flex flex-col max-h-full tablet:max-h-[85vh] tablet-landscape:max-h-[95vh] overflow-y-auto">
-      <div className="text-center mb-4 tablet:mb-6 tablet-landscape:mb-2">
-        <h2 className="text-xl tablet:text-2xl tablet-landscape:text-lg font-black text-green-800 mb-1">Кімната очікування</h2>
+    <div className="max-w-2xl mx-auto my-auto p-4 tablet:p-6 tablet-landscape:p-3 bg-[#F1F8E9] rounded-2xl shadow-xl border-4 border-[#7DA33C]/20 flex flex-col max-h-full tablet:max-h-[85vh] tablet-landscape:max-h-[98vh] overflow-y-auto">
+      <div className="text-center mb-4 tablet:mb-6 tablet-landscape:mb-1">
+        <h2 className="text-xl tablet:text-2xl tablet-landscape:text-base font-black text-green-800 mb-0">Кімната очікування</h2>
         <p className="text-green-600 text-xs tablet:text-sm font-bold">Запросіть друзів за кодом гри</p>
       </div>
 
-      <div className="flex justify-center mb-4 tablet:mb-6 tablet-landscape:mb-2">
-        <div className="flex items-center gap-2 tablet:gap-3 bg-white/50 p-2 tablet:p-3 tablet-landscape:p-2 rounded-xl border-2 border-dashed border-green-300">
-          <span className="text-xl tablet:text-3xl tablet-landscape:text-xl font-mono font-bold tracking-widest text-green-700">
+      <div className="flex justify-center mb-4 tablet:mb-6 tablet-landscape:mb-1">
+        <div className="flex items-center gap-2 tablet:gap-3 bg-white/50 p-2 tablet:p-3 tablet-landscape:p-1.5 rounded-xl border-2 border-dashed border-green-300">
+          <span className="text-xl tablet:text-3xl tablet-landscape:text-lg font-mono font-bold tracking-widest text-green-700">
             {gameState.roomId}
           </span>
           <button
