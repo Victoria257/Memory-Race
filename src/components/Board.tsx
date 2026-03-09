@@ -54,15 +54,6 @@ export const Board = () => {
     { x: 90, y: 45 },  // 20: Finish
   ];
 
-  const specialCells: Record<number, string> = {
-    2: "Пропусти хід",
-    5: "Пригадай, що потрібно пожежникам для роботи",
-    9: "Пригадай на який номер треба телефонувати у разі небезпеки",
-    12: "Пропусти хід",
-    15: "Пригадай, що потрібно поліцейським для роботи",
-    19: "Пропусти хід",
-  };
-
   const getCellPosition = (index: number) => {
     const { width, height } = dimensions;
     const point = pathPoints[Math.min(index, pathPoints.length - 1)];
@@ -142,7 +133,6 @@ export const Board = () => {
           const isStart = cell === 0;
           const isFinish = cell === 20;
           const isSmall = dimensions.width < 500;
-          const specialText = specialCells[cell];
           
           return (
             <div

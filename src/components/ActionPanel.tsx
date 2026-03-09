@@ -5,7 +5,6 @@ import { ArrowRight, FastForward, SkipForward } from 'lucide-react';
 
 export const ActionPanel = () => {
   const { gameState, playerId, performAction } = useStore();
-  const [showPenalty, setShowPenalty] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [isActuallyVisible, setIsActuallyVisible] = useState(false);
 
@@ -19,8 +18,6 @@ export const ActionPanel = () => {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isMyTurn) setShowPenalty(false);
-    
     if (isActionPhase && isMyTurn) {
       setIsLocked(true);
       setIsActuallyVisible(false);
@@ -36,8 +33,6 @@ export const ActionPanel = () => {
   }, [isActionPhase, isMyTurn]);
 
   useEffect(() => {
-    if (!isMyTurn) setShowPenalty(false);
-    
     if (!prevIsMyTurn.current && isMyTurn) {
       // Turn started, scroll to the selection panel (where categories are)
       setTimeout(() => {
@@ -107,30 +102,30 @@ export const ActionPanel = () => {
 
             <div className="flex flex-col justify-center gap-3 tablet:gap-4">
               <button
-                disabled={!canAct || showPenalty || isLocked}
+                disabled={!canAct || isLocked}
                 onClick={() => handleAction('pass')}
                 className={`px-4 tablet:px-6 py-4 rounded-2xl font-black text-base tablet:text-lg flex items-center justify-center gap-3 transition-all transform
-                  ${canAct && !showPenalty && !isLocked ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 active:scale-95 shadow-md' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
+                  ${canAct && !isLocked ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 active:scale-95 shadow-md' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-gray-200 w-full`}
               >
                 <SkipForward size={24} strokeWidth={3} /> <span className="whitespace-nowrap">Пропустити</span>
               </button>
 
               <button
-                disabled={!canAct || showPenalty || isLocked}
+                disabled={!canAct || isLocked}
                 onClick={() => handleAction('move1')}
                 className={`px-4 tablet:px-6 py-4 rounded-2xl font-black text-base tablet:text-lg flex items-center justify-center gap-3 transition-all transform
-                  ${canAct && !showPenalty && !isLocked ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-blue-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
+                  ${canAct && !isLocked ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-blue-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-blue-300 w-full`}
               >
                 <ArrowRight size={24} strokeWidth={3} /> <span className="whitespace-nowrap">1 крок</span>
               </button>
 
               <button
-                disabled={!canAct || showPenalty || isLocked}
+                disabled={!canAct || isLocked}
                 onClick={() => handleAction('move2')}
                 className={`px-4 tablet:px-6 py-4 rounded-2xl font-black text-base tablet:text-lg flex items-center justify-center gap-3 transition-all transform
-                  ${canAct && !showPenalty && !isLocked ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-emerald-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
+                  ${canAct && !isLocked ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-emerald-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-emerald-300 w-full`}
               >
                 <FastForward size={24} strokeWidth={3} /> <span className="whitespace-nowrap">2 кроки!</span>
@@ -138,22 +133,6 @@ export const ActionPanel = () => {
             </div>
           </>
         )}
-
-        <AnimatePresence>
-          {showPenalty && (
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.9 }}
-              className="absolute inset-0 flex items-center justify-center bg-red-600/90 rounded-xl backdrop-blur-sm z-10 p-4"
-            >
-              <div className="text-xl tablet:text-3xl font-black text-white uppercase tracking-widest drop-shadow-lg flex items-center gap-2 tablet:gap-4 text-center">
-                <span className="text-3xl tablet:text-5xl">⚠️</span>
-                Не вгадав! Пропускаєш хід
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );
