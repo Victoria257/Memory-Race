@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --breakpoint-tablet-p: (min-width: 600px) and (orientation: portrait);
-  --breakpoint-tablet-l: (min-width: 600px) and (orientation: landscape);
+  --breakpoint-tablet: 600px;
   --breakpoint-desktop: 1024px;
 }
+
+@variant tablet-portrait (@media (min-width: 600px) and (orientation: portrait));
+@variant tablet-landscape (@media (min-width: 600px) and (orientation: landscape));
