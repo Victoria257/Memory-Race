@@ -363,6 +363,14 @@ if (!card) {
       }
     });
 
+    socket.on('webrtc_signal', ({ roomId, targetId, signal, senderId }) => {
+      io.to(roomId).emit('webrtc_signal', {
+        senderId,
+        targetId,
+        signal
+      });
+    });
+
     socket.on('disconnect', () => {
       console.log('User disconnected:', socket.id);
       // Find player and mark disconnected
