@@ -30,13 +30,13 @@ export const JoinGame = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto my-auto p-4 tablet:p-6 bg-[#F1F8E9] rounded-[2.5rem] shadow-2xl border-8 border-[#7DA33C]/20 flex flex-col max-h-full tablet:max-h-[85vh] overflow-y-auto">
-      <div className="text-center mb-4 tablet:mb-6">
-        <h2 className="text-3xl tablet:text-4xl font-black text-green-800 mb-1 tracking-tight">Memory Race</h2>
-        <p className="text-green-600 font-bold text-base tablet:text-lg">Веселі перегони пам'яті! 🏎️</p>
+    <div className="max-w-md mx-auto my-auto p-4 tablet:p-6 tablet-landscape:p-4 bg-[#F1F8E9] rounded-[2.5rem] shadow-2xl border-8 border-[#7DA33C]/20 flex flex-col max-h-full tablet:max-h-[85vh] tablet-landscape:max-h-[95vh] overflow-y-auto">
+      <div className="text-center mb-4 tablet:mb-6 tablet-landscape:mb-2">
+        <h2 className="text-3xl tablet:text-4xl tablet-landscape:text-2xl font-black text-green-800 mb-1 tracking-tight">Memory Race</h2>
+        <p className="text-green-600 font-bold text-base tablet:text-lg tablet-landscape:text-sm">Веселі перегони пам'яті! 🏎️</p>
       </div>
 
-      <div className="flex gap-2 mb-4 bg-green-100/50 p-2 rounded-2xl">
+      <div className="flex gap-2 mb-4 tablet-landscape:mb-2 bg-green-100/50 p-2 rounded-2xl">
         <button
           onClick={() => { setMode('create'); clearError(); }}
           className={`flex-1 py-3 rounded-xl font-black text-sm transition-all ${
@@ -55,7 +55,7 @@ export const JoinGame = () => {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 tablet-landscape:space-y-2">
         {error && (
           <div className="p-3 bg-red-50 text-red-600 rounded-2xl text-xs font-black border-4 border-red-100 animate-bounce">
             {error}
@@ -70,7 +70,7 @@ export const JoinGame = () => {
               required
               value={roomId}
               onChange={(e) => setRoomId(e.target.value.toUpperCase())}
-              className="w-full px-4 py-3 rounded-2xl border-4 border-green-100 focus:border-green-400 focus:ring-8 focus:ring-green-100 transition-all outline-none font-mono text-xl text-center uppercase text-green-800 bg-white"
+              className="w-full px-4 py-2 tablet:py-3 tablet-landscape:py-2 rounded-2xl border-4 border-green-100 focus:border-green-400 focus:ring-8 focus:ring-green-100 transition-all outline-none font-mono text-xl text-center uppercase text-green-800 bg-white"
               placeholder="Введіть код"
             />
           </div>
@@ -83,7 +83,7 @@ export const JoinGame = () => {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-3 rounded-2xl border-4 border-green-100 focus:border-green-400 focus:ring-8 focus:ring-green-100 transition-all outline-none text-base font-bold bg-white text-gray-800"
+            className="w-full px-4 py-2 tablet:py-3 tablet-landscape:py-2 rounded-2xl border-4 border-green-100 focus:border-green-400 focus:ring-8 focus:ring-green-100 transition-all outline-none text-base font-bold bg-white text-gray-800"
             placeholder="Як тебе звати?"
           />
         </div>
@@ -97,7 +97,7 @@ export const JoinGame = () => {
             max="120"
             value={age}
             onChange={(e) => setAge(parseInt(e.target.value, 10))}
-            className="w-full px-4 py-3 rounded-2xl border-4 border-green-100 focus:border-green-400 focus:ring-8 focus:ring-green-100 transition-all outline-none text-base font-bold bg-white text-gray-800"
+            className="w-full px-4 py-2 tablet:py-3 tablet-landscape:py-2 rounded-2xl border-4 border-green-100 focus:border-green-400 focus:ring-8 focus:ring-green-100 transition-all outline-none text-base font-bold bg-white text-gray-800"
           />
         </div>
 
@@ -109,7 +109,7 @@ export const JoinGame = () => {
                 key={c.id}
                 type="button"
                 onClick={() => setColor(c.id)}
-                className={`w-10 h-10 tablet:w-11 tablet:h-11 rounded-full border-4 transition-all transform flex-shrink-0 ${
+                className={`w-10 h-10 tablet:w-11 tablet:h-11 tablet-landscape:w-8 tablet-landscape:h-8 rounded-full border-4 transition-all transform flex-shrink-0 ${
                   color === c.id ? 'border-green-600 scale-110 rotate-12 shadow-xl' : 'border-white hover:scale-105 shadow-sm'
                 }`}
                 style={{ backgroundColor: c.hex }}
@@ -121,7 +121,7 @@ export const JoinGame = () => {
 
         <button
           type="submit"
-          className="w-full py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 bg-gradient-to-r from-[#7DA33C] to-[#86B03C] hover:from-[#86B03C] hover:to-[#97C14D] text-white shadow-xl shadow-green-900/10 transform hover:-translate-y-1 active:scale-95 transition-all"
+          className="w-full py-3 tablet:py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 bg-gradient-to-r from-[#7DA33C] to-[#86B03C] hover:from-[#86B03C] hover:to-[#97C14D] text-white shadow-xl shadow-green-900/10 transform hover:-translate-y-1 active:scale-95 transition-all"
         >
           {mode === 'create' ? <UserPlus size={28} strokeWidth={3} /> : <LogIn size={28} strokeWidth={3} />}
           {mode === 'create' ? 'Поїхали!' : 'Зайти в гру'}

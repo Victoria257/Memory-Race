@@ -35,7 +35,7 @@ export const PlayerList = () => {
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;
 
   return (
-    <div className="w-full desktop:w-48 bg-[#3A5214] backdrop-blur-sm shadow-md rounded-xl desktop:rounded-3xl p-4 tablet:p-6 mb-0 tablet:mb-6 flex flex-col desktop:flex-col items-center justify-between desktop:justify-start gap-4 border-b desktop:border-b-0 desktop:border-l border-[#7DA33C]/40 desktop:h-full desktop:overflow-y-auto">
+    <div className="w-full desktop:w-48 bg-[#3A5214] backdrop-blur-sm shadow-md rounded-xl desktop:rounded-3xl p-4 tablet:p-6 tablet-landscape:p-2 mb-0 tablet:mb-6 tablet-landscape:mb-1 flex flex-col desktop:flex-col items-center justify-between desktop:justify-start gap-4 border-b tablet-landscape:border-b-0 desktop:border-b-0 desktop:border-l border-[#7DA33C]/40 desktop:h-full desktop:overflow-y-auto">
       <h3 className="hidden desktop:block text-xs font-black text-green-300 uppercase tracking-widest mb-2">Гравці</h3>
       <div className="flex desktop:flex-col gap-4 overflow-x-auto desktop:overflow-x-visible pb-2 desktop:pb-0 pt-2 px-2 w-full scrollbar-hide">
         {gameState.players.map((player, idx) => {
@@ -92,7 +92,7 @@ export const PlayerList = () => {
         })}
       </div>
 
-      <div className="flex flex-col gap-2 border-t desktop:border-t-0 pt-4 desktop:pt-0 border-green-700/50 w-full desktop:mt-auto">
+      <div className="flex flex-col gap-2 border-t tablet-landscape:border-t-0 desktop:border-t-0 pt-4 desktop:pt-0 border-green-700/50 w-full desktop:mt-auto">
         {showBell && (
           <button 
             onClick={() => ringBell(gameState.players[gameState.currentTurnIndex].id)}

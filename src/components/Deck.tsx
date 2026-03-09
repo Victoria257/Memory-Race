@@ -53,7 +53,7 @@ export const Deck = () => {
   }, [gameState.currentCard, language, isMuted, isMyTurn]);
 
   return (
-    <div id="deck-panel" className="w-full desktop:w-72 h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] rounded-none tablet:rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-0 tablet:border-4 border-[#7DA33C]/20 transition-all duration-300 overflow-hidden">
+    <div id="deck-panel" className="w-full desktop:w-72 h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] rounded-none tablet:rounded-3xl shadow-xl p-6 tablet-landscape:p-4 flex flex-col items-center justify-center relative border-0 tablet:border-4 border-[#7DA33C]/20 transition-all duration-300 overflow-hidden">
       {isRevealPhase && isMyTurn && (
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-white/80 px-3 py-1 rounded-full border-2 border-green-200 shadow-sm z-20">
           <div className={`w-3 h-3 rounded-full ${timeLeft < 10 ? 'bg-red-500 animate-ping' : 'bg-green-500'}`}></div>
@@ -72,9 +72,9 @@ export const Deck = () => {
         <Turtle className="absolute bottom-1/3 right-5 rotate-12" size={48} />
       </div>
 
-      <div className="text-xs font-black text-green-600 mb-6 uppercase tracking-[0.2em] relative z-10">📦 Колода ({gameState.deckCount})</div>
+      <div className="text-xs font-black text-green-600 mb-6 tablet-landscape:mb-2 uppercase tracking-[0.2em] relative z-10">📦 Колода ({gameState.deckCount})</div>
       
-      <div className="relative w-[65vw] h-[95vw] max-w-[220px] max-h-[340px] tablet:w-52 tablet:h-80 perspective-1000">
+      <div className="relative w-[65vw] h-[95vw] max-w-[220px] max-h-[340px] tablet:w-52 tablet:h-80 tablet-landscape:w-40 tablet-landscape:h-60 perspective-1000">
         <AnimatePresence mode="wait">
           {!gameState.currentCard ? (
             <motion.div

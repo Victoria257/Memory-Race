@@ -103,7 +103,7 @@ export const ActionPanel = () => {
   return (
     <div 
       id="action-panel"
-      className={`w-full h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] text-gray-800 p-6 transition-all duration-500 rounded-none tablet:rounded-3xl shadow-xl border-0 tablet:border-4 border-[#7DA33C]/20 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'} flex flex-col justify-center relative`}>
+      className={`w-full h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] text-gray-800 p-6 tablet-landscape:p-4 transition-all duration-500 rounded-none tablet:rounded-3xl shadow-xl border-0 tablet:border-4 border-[#7DA33C]/20 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'} flex flex-col justify-center relative`}>
       
       {isActionPhase && isMyTurn && (
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-white/80 px-3 py-1 rounded-full border-2 border-green-200 shadow-sm z-20">
@@ -122,15 +122,15 @@ export const ActionPanel = () => {
           </div>
         ) : (
           <>
-            <h3 className="text-xl font-black mb-6 text-center text-green-800 uppercase tracking-[0.2em]">
+            <h3 className="text-xl tablet-landscape:text-lg font-black mb-6 tablet-landscape:mb-3 text-center text-green-800 uppercase tracking-[0.2em]">
               {canAct ? '🚀 Твій хід! Куди їдемо?' : '😴 Чекаємо на хід...'}
             </h3>
 
-            <div className="flex flex-col justify-center gap-3 tablet:gap-4">
+            <div className="flex flex-col justify-center gap-3 tablet:gap-4 tablet-landscape:gap-2">
               <button
                 disabled={!canAct || isLocked}
                 onClick={() => handleAction('pass')}
-                className={`px-4 tablet:px-6 py-4 rounded-2xl font-black text-base tablet:text-lg flex items-center justify-center gap-3 transition-all transform
+                className={`px-4 tablet:px-6 tablet-landscape:px-4 py-4 tablet-landscape:py-2 rounded-2xl font-black text-base tablet:text-lg tablet-landscape:text-sm flex items-center justify-center gap-3 transition-all transform
                   ${canAct && !isLocked ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 active:scale-95 shadow-md' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-gray-200 w-full`}
               >
@@ -140,7 +140,7 @@ export const ActionPanel = () => {
               <button
                 disabled={!canAct || isLocked}
                 onClick={() => handleAction('move1')}
-                className={`px-4 tablet:px-6 py-4 rounded-2xl font-black text-base tablet:text-lg flex items-center justify-center gap-3 transition-all transform
+                className={`px-4 tablet:px-6 tablet-landscape:px-4 py-4 tablet-landscape:py-2 rounded-2xl font-black text-base tablet:text-lg tablet-landscape:text-sm flex items-center justify-center gap-3 transition-all transform
                   ${canAct && !isLocked ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-blue-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-blue-300 w-full`}
               >
@@ -150,7 +150,7 @@ export const ActionPanel = () => {
               <button
                 disabled={!canAct || isLocked}
                 onClick={() => handleAction('move2')}
-                className={`px-4 tablet:px-6 py-4 rounded-2xl font-black text-base tablet:text-lg flex items-center justify-center gap-3 transition-all transform
+                className={`px-4 tablet:px-6 tablet-landscape:px-4 py-4 tablet-landscape:py-2 rounded-2xl font-black text-base tablet:text-lg tablet-landscape:text-sm flex items-center justify-center gap-3 transition-all transform
                   ${canAct && !isLocked ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-emerald-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-emerald-300 w-full`}
               >
