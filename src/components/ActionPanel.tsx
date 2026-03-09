@@ -83,10 +83,36 @@ export const ActionPanel = () => {
     performAction(action);
   };
 
+  const [timeLeft, setTimeLeft] = useState(40);
+
+  useEffect(() => {
+    if (!gameState || gameState.status !== 'playing') return;
+    
+    const updateTimer = () => {
+      const now = Date.now();
+      const elapsed = Math.floor((now - gameState.turnStartTime) / 1000);
+      const remaining = Math.max(0, 40 - elapsed);
+      setTimeLeft(remaining);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [gameState?.turnStartTime, gameState?.status]);
+
   return (
     <div 
       id="action-panel"
-      className={`w-full h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] text-gray-800 p-6 transition-all duration-500 rounded-none tablet:rounded-3xl shadow-xl border-0 tablet:border-4 border-[#7DA33C]/20 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'} flex flex-col justify-center`}>
+      className={`w-full h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] text-gray-800 p-6 transition-all duration-500 rounded-none tablet:rounded-3xl shadow-xl border-0 tablet:border-4 border-[#7DA33C]/20 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'} flex flex-col justify-center relative`}>
+      
+      {isActionPhase && isMyTurn && (
+        <div className="absolute top-4 right-4 flex items-center gap-2 bg-white/80 px-3 py-1 rounded-full border-2 border-green-200 shadow-sm z-20">
+          <div className={`w-3 h-3 rounded-full ${timeLeft < 10 ? 'bg-red-500 animate-ping' : 'bg-green-500'}`}></div>
+          <span className={`font-black text-sm ${timeLeft < 10 ? 'text-red-600' : 'text-green-700'}`}>
+            {timeLeft}с
+          </span>
+        </div>
+      )}
       
       <div className="max-w-4xl mx-auto relative h-full flex flex-col justify-center w-full">
         {!isActuallyVisible && isActionPhase && isMyTurn ? (

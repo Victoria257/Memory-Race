@@ -4,7 +4,7 @@ import { Bell, Clock, Flag } from 'lucide-react';
 
 export const PlayerList = () => {
   const { gameState, playerId, ringBell, giveUp } = useStore();
-  const [timeSinceTurnStart, setTimeSinceTurnStart] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(40);
 
   if (!gameState) return null;
 
@@ -12,7 +12,8 @@ export const PlayerList = () => {
     let interval: NodeJS.Timeout;
     if (gameState.status === 'playing') {
       interval = setInterval(() => {
-        setTimeSinceTurnStart(Date.now() - gameState.turnStartTime);
+        const elapsed = Math.floor((Date.now() - gameState.turnStartTime) / 1000);
+        setTimeLeft(Math.max(0, 40 - elapsed));
       }, 1000);
     }
     return () => clearInterval(interval);
@@ -28,7 +29,7 @@ export const PlayerList = () => {
   };
 
   const isMyTurn = gameState.players[gameState.currentTurnIndex].id === playerId;
-  const showBell = !isMyTurn && timeSinceTurnStart > 30000;
+  const showBell = !isMyTurn && timeLeft < 10;
   const anyPlayerFinished = gameState.players.some(p => p.place !== null);
   const myPlayer = gameState.players.find(p => p.id === playerId);
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;
@@ -51,7 +52,7 @@ export const PlayerList = () => {
                 <div className={`w-10 h-10 desktop:w-12 desktop:h-12 rounded-full shadow-inner ${tokenColors[player.tokenColor]}`}></div>
                 {player.place !== null && (
                   <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
-                    {player.place}
+                    {player.place === 99 ? 'X' : player.place}
                   </div>
                 )}
                 {player.skipNextTurn && (
@@ -72,10 +73,18 @@ export const PlayerList = () => {
                 </span>
                 
                 {isCurrentTurn && (
-                  <div className="flex items-center gap-1 text-xs text-green-300 font-bold mt-1">
+                  <div className={`flex items-center gap-1 text-xs font-bold mt-1 ${timeLeft < 10 ? 'text-red-400 animate-pulse' : 'text-green-300'}`}>
                     <Clock size={12} />
-                    <span>{Math.floor(timeSinceTurnStart / 1000)}с</span>
+                    <span>{timeLeft}с</span>
                   </div>
+                )}
+                {player.missedTurns > 0 && player.place === null && (
+                  <div className="text-[10px] font-bold text-orange-400 mt-1">
+                    ⚠️ Пропущено: {player.missedTurns}/2
+                  </div>
+                )}
+                {player.place === 99 && (
+                  <div className="text-[10px] font-bold text-red-400 uppercase mt-1">Вибув</div>
                 )}
               </div>
             </div>

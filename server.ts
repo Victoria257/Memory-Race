@@ -525,21 +525,23 @@ if (!card) {
       const game = games[roomId];
       if (game.status === 'playing') {
         const currentPlayer = game.players[game.currentTurnIndex];
-        if (now - game.turnStartTime > 45000) {
+        if (now - game.turnStartTime > 40000) {
           // Auto skip turn
           currentPlayer.missedTurns++;
           if (currentPlayer.missedTurns >= 2) {
             // Kick player
-            currentPlayer.place = 99; // Kicked
+            currentPlayer.place = 99; // Kicked/Last place
+            console.log(`[Game ${roomId}] Player ${currentPlayer.name} kicked for inactivity`);
           } else {
             currentPlayer.skipNextTurn = true;
+            console.log(`[Game ${roomId}] Player ${currentPlayer.name} turn skipped for inactivity`);
           }
           nextTurn(game);
           io.to(roomId).emit('game_update', getPublicGameState(game));
         }
       }
     }
-  }, 5000);
+  }, 1000);
 
   // Bot logic interval
   setInterval(() => {

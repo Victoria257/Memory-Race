@@ -143,8 +143,8 @@ export default function App() {
                   .filter(p => p.place !== null)
                   .sort((a, b) => (a.place || 99) - (b.place || 99))
                   .map((p, i) => (
-                    <div key={p.id} className={`flex justify-between items-center p-4 rounded-xl font-bold ${i === 0 ? 'bg-yellow-100 text-yellow-800 text-xl border-2 border-yellow-400' : 'bg-white/50'}`}>
-                      <span>{i + 1} місце</span>
+                    <div key={p.id} className={`flex justify-between items-center p-4 rounded-xl font-bold ${i === 0 && p.place !== 99 ? 'bg-yellow-100 text-yellow-800 text-xl border-2 border-yellow-400' : 'bg-white/50'}`}>
+                      <span>{p.place === 99 ? 'Вибув' : `${i + 1} місце`}</span>
                       <span>{p.name}</span>
                     </div>
                   ))}
