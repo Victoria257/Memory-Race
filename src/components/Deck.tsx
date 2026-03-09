@@ -37,7 +37,7 @@ export const Deck = () => {
   }, [gameState.currentCard, language, isMuted, isMyTurn]);
 
   return (
-    <div id="deck-panel" className="w-full tablet-l:w-72 h-full min-h-screen tablet-p:min-h-0 bg-[#F1F8E9] rounded-none tablet-p:rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-0 tablet-p:border-4 border-[#7DA33C]/20 transition-all duration-300 overflow-hidden">
+    <div id="deck-panel" className="w-full desktop:w-72 h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] rounded-none tablet:rounded-3xl shadow-xl p-6 flex flex-col items-center justify-center relative border-0 tablet:border-4 border-[#7DA33C]/20 transition-all duration-300 overflow-hidden">
       {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.07] overflow-hidden">
         <Dog className="absolute top-10 left-10 rotate-12" size={48} />
@@ -50,7 +50,7 @@ export const Deck = () => {
 
       <div className="text-xs font-black text-green-600 mb-6 uppercase tracking-[0.2em] relative z-10">📦 Колода ({gameState.deckCount})</div>
       
-      <div className="relative w-[65vw] h-[95vw] max-w-[220px] max-h-[340px] tablet-p:w-52 tablet-p:h-80 perspective-1000">
+      <div className="relative w-[65vw] h-[95vw] max-w-[220px] max-h-[340px] tablet:w-52 tablet:h-80 perspective-1000">
         <AnimatePresence mode="wait">
           {!gameState.currentCard ? (
             <motion.div
@@ -64,8 +64,8 @@ export const Deck = () => {
                 ${canReveal ? 'hover:scale-105 hover:shadow-green-200 ring-8 ring-yellow-600' : 'opacity-90'}`}
             >
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
-              <div className="w-28 h-44 tablet-p:w-36 tablet-p:h-56 border-4 border-white/30 rounded-3xl flex items-center justify-center bg-white/10 backdrop-blur-sm">
-                <span className="text-white font-black text-3xl tablet-p:text-5xl transform -rotate-12 drop-shadow-lg">?</span>
+              <div className="w-28 h-44 tablet:w-36 tablet:h-56 border-4 border-white/30 rounded-3xl flex items-center justify-center bg-white/10 backdrop-blur-sm">
+                <span className="text-white font-black text-3xl tablet:text-5xl transform -rotate-12 drop-shadow-lg">?</span>
               </div>
             </motion.div>
           ) : (
@@ -80,7 +80,7 @@ export const Deck = () => {
               {/* Top Right Color Circle */}
               <div className="absolute top-3 right-3 flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-gray-50">
                 <div 
-                  className="w-5 h-5 tablet-p:w-6 tablet-p:h-6 rounded-full shadow-inner border-2 border-white"
+                  className="w-5 h-5 tablet:w-6 tablet:h-6 rounded-full shadow-inner border-2 border-white"
                   style={{ backgroundColor: gameState.currentCard.color === 'gray' ? '#94a3b8' : 
                                         gameState.currentCard.color === 'black' ? '#0f172a' : 
                                         gameState.currentCard.color === 'blue' ? '#60a5fa' : 
@@ -101,14 +101,14 @@ export const Deck = () => {
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <h2 className="text-xl tablet-p:text-2xl font-black text-center text-green-800 leading-tight drop-shadow-sm px-4">
+                  <h2 className="text-xl tablet:text-2xl font-black text-center text-green-800 leading-tight drop-shadow-sm px-4">
                     {gameState.currentCard[`item${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}
                   </h2>
                 )}
               </div>
 
               {/* Bottom Label */}
-              <div className="bg-green-600 text-white text-center py-2 tablet-p:py-3 text-sm tablet-p:text-base font-black tracking-wide mx-3 mb-3 rounded-2xl shadow-sm">
+              <div className="bg-green-600 text-white text-center py-2 tablet:py-3 text-sm tablet:text-base font-black tracking-wide mx-3 mb-3 rounded-2xl shadow-sm">
                 {gameState.currentCard[`item${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}
               </div>
             </motion.div>
@@ -117,7 +117,7 @@ export const Deck = () => {
       </div>
 
       {canReveal && (
-        <div className="mt-6 text-green-700 font-black animate-bounce text-center text-sm tablet-p:text-base bg-green-50 px-4 py-2 rounded-full shadow-sm border-2 border-green-100">
+        <div className="mt-6 text-green-700 font-black animate-bounce text-center text-sm tablet:text-base bg-green-50 px-4 py-2 rounded-full shadow-sm border-2 border-green-100">
           👇 Тисни сюди!
         </div>
       )}

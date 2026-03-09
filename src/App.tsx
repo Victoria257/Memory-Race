@@ -118,7 +118,7 @@ export default function App() {
         </div>
       )}
       
-      <main className="flex-1 container mx-auto p-0 tablet-p:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] overflow-y-auto scroll-smooth">
+      <main className="flex-1 container mx-auto p-0 tablet:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] overflow-y-auto scroll-smooth">
         {!gameState ? (
           <div className="min-h-full flex items-center justify-center p-4 snap-start">
             <JoinGame />
@@ -159,20 +159,20 @@ export default function App() {
           </div>
         ) : (
           <div className="flex flex-col">
-            <div className="h-[calc(100vh-72px)] tablet-p:h-[calc(100vh-80px)] flex flex-col tablet-l:flex-row p-0 overflow-hidden snap-start">
+            <div className="h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] flex flex-col desktop:flex-row p-0 overflow-hidden snap-start">
               <div className="flex-1 h-full overflow-hidden">
                 <Board />
               </div>
-              <div className="h-auto tablet-l:h-full tablet-l:w-48 bg-[#86B03C]/20 flex-shrink-0">
+              <div className="h-auto desktop:h-full desktop:w-48 bg-[#86B03C]/20 flex-shrink-0">
                 <PlayerList />
               </div>
             </div>
             
-            <div className="flex flex-col tablet-l:flex-row gap-0 tablet-p:gap-4 items-stretch min-h-[calc(100vh-80px)] py-4 tablet-p:py-8 snap-start">
+            <div className="flex flex-col desktop:flex-row gap-0 tablet:gap-4 items-stretch min-h-[calc(100vh-80px)] py-4 tablet:py-8 snap-start">
               <div className="flex-1 min-h-screen flex flex-col">
                 <SelectionPanel />
               </div>
-              <div className="flex flex-col tablet-p:flex-row gap-0 tablet-p:gap-4 flex-1 items-stretch">
+              <div className="flex flex-col tablet:flex-row gap-0 tablet:gap-4 flex-1 items-stretch">
                 <div className="flex-shrink-0 min-h-screen flex flex-col">
                   <Deck />
                 </div>

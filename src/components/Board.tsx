@@ -96,7 +96,7 @@ export const Board = () => {
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full bg-[#97C14D] p-4 rounded-none tablet-l:rounded-3xl shadow-inner relative overflow-hidden transition-all duration-300 border-8 border-[#7DA33C]" 
+      className="w-full h-full bg-[#97C14D] p-4 rounded-none desktop:rounded-3xl shadow-inner relative overflow-hidden transition-all duration-300 border-8 border-[#7DA33C]" 
     >
       {/* Decorative elements */}
       <div className="absolute top-4 left-4 text-green-800 opacity-40"><Building2 size={48} /></div>

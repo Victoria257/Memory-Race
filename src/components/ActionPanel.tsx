@@ -91,7 +91,7 @@ export const ActionPanel = () => {
   return (
     <div 
       id="action-panel"
-      className={`w-full h-full min-h-screen tablet-p:min-h-0 bg-[#F1F8E9] text-gray-800 p-6 transition-all duration-500 rounded-none tablet-p:rounded-3xl shadow-xl border-0 tablet-p:border-4 border-[#7DA33C]/20 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'} flex flex-col justify-center`}>
+      className={`w-full h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] text-gray-800 p-6 transition-all duration-500 rounded-none tablet:rounded-3xl shadow-xl border-0 tablet:border-4 border-[#7DA33C]/20 ${isActionPhase ? 'opacity-100' : 'opacity-50 grayscale pointer-events-none'} flex flex-col justify-center`}>
       
       <div className="max-w-4xl mx-auto relative h-full flex flex-col justify-center w-full">
         {!isActuallyVisible && isActionPhase && isMyTurn ? (
@@ -105,11 +105,11 @@ export const ActionPanel = () => {
               {canAct ? '🚀 Твій хід! Куди їдемо?' : '😴 Чекаємо на хід...'}
             </h3>
 
-            <div className="flex flex-col justify-center gap-3 tablet-p:gap-4">
+            <div className="flex flex-col justify-center gap-3 tablet:gap-4">
               <button
                 disabled={!canAct || showPenalty || isLocked}
                 onClick={() => handleAction('pass')}
-                className={`px-4 tablet-p:px-6 py-4 rounded-2xl font-black text-base tablet-p:text-lg flex items-center justify-center gap-3 transition-all transform
+                className={`px-4 tablet:px-6 py-4 rounded-2xl font-black text-base tablet:text-lg flex items-center justify-center gap-3 transition-all transform
                   ${canAct && !showPenalty && !isLocked ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 active:scale-95 shadow-md' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-gray-200 w-full`}
               >
@@ -119,7 +119,7 @@ export const ActionPanel = () => {
               <button
                 disabled={!canAct || showPenalty || isLocked}
                 onClick={() => handleAction('move1')}
-                className={`px-4 tablet-p:px-6 py-4 rounded-2xl font-black text-base tablet-p:text-lg flex items-center justify-center gap-3 transition-all transform
+                className={`px-4 tablet:px-6 py-4 rounded-2xl font-black text-base tablet:text-lg flex items-center justify-center gap-3 transition-all transform
                   ${canAct && !showPenalty && !isLocked ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-blue-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-blue-300 w-full`}
               >
@@ -129,7 +129,7 @@ export const ActionPanel = () => {
               <button
                 disabled={!canAct || showPenalty || isLocked}
                 onClick={() => handleAction('move2')}
-                className={`px-4 tablet-p:px-6 py-4 rounded-2xl font-black text-base tablet-p:text-lg flex items-center justify-center gap-3 transition-all transform
+                className={`px-4 tablet:px-6 py-4 rounded-2xl font-black text-base tablet:text-lg flex items-center justify-center gap-3 transition-all transform
                   ${canAct && !showPenalty && !isLocked ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:scale-110 active:scale-95 shadow-xl shadow-emerald-100' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}
                   border-4 border-emerald-300 w-full`}
               >
@@ -147,8 +147,8 @@ export const ActionPanel = () => {
               exit={{ opacity: 0, y: -20, scale: 0.9 }}
               className="absolute inset-0 flex items-center justify-center bg-red-600/90 rounded-xl backdrop-blur-sm z-10 p-4"
             >
-              <div className="text-xl tablet-p:text-3xl font-black text-white uppercase tracking-widest drop-shadow-lg flex items-center gap-2 tablet-p:gap-4 text-center">
-                <span className="text-3xl tablet-p:text-5xl">⚠️</span>
+              <div className="text-xl tablet:text-3xl font-black text-white uppercase tracking-widest drop-shadow-lg flex items-center gap-2 tablet:gap-4 text-center">
+                <span className="text-3xl tablet:text-5xl">⚠️</span>
                 Не вгадав! Пропускаєш хід
               </div>
             </motion.div>
