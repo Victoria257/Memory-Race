@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Peer from 'simple-peer/simplepeer.min.js';
+import _Peer from 'simple-peer';
 import { useStore } from '../store';
 import { Player } from '../types';
+
+const Peer = (_Peer as any).default || _Peer;
 
 interface VideoAvatarProps {
   player: Player;
@@ -25,12 +27,21 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
   }, [isMe, localStream]);
 
   useEffect(() => {
+    if (videoRef.current && remoteStream && !isMe) {
+      console.log(`[WebRTC] Setting remote stream for ${player.name}`);
+      videoRef.current.srcObject = remoteStream;
+      videoRef.current.play().catch(e => console.error("[WebRTC] Play error:", e));
+    }
+  }, [remoteStream, isMe, player.name]);
+
+  useEffect(() => {
     const roomId = gameState?.roomId;
     if (isMe || !localStream || !socket || !roomId || !playerId || player.isBot || !player.connected) {
       setIsConnected(false);
       return;
     }
 
+    let diagInterval: any;
     // Small delay to ensure both sides are ready
     const timeoutId = setTimeout(() => {
       // We only want one peer connection between two players.
@@ -83,6 +94,12 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
         setIsConnected(true);
       });
 
+      diagInterval = setInterval(() => {
+        if (peer && peer._pc) {
+          console.log(`[WebRTC] ${player.name} ICE: ${peer._pc.iceConnectionState}, Connection: ${peer._pc.connectionState}`);
+        }
+      }, 5000);
+
       peer.on('error', (err: any) => {
         console.error(`[WebRTC] Peer error with ${player.name}:`, err);
         setIsConnected(false);
@@ -96,7 +113,11 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
       const handleSignal = (data: any) => {
         if (data.targetId === playerId && data.senderId === player.id) {
           console.log(`[WebRTC] Received signal from ${player.name}, applying to peer`);
-          peer.signal(data.signal);
+          try {
+            peer.signal(data.signal);
+          } catch (err) {
+            console.error(`[WebRTC] Error applying signal from ${player.name}:`, err);
+          }
         }
       };
 
@@ -107,6 +128,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
     return () => {
       console.log(`[WebRTC] Cleaning up peer for ${player.name}`);
       clearTimeout(timeoutId);
+      if (diagInterval) clearInterval(diagInterval);
       if (peerRef.current) {
         socket.off('webrtc_signal'); // Remove all signal listeners for this peer
         peerRef.current.destroy();
@@ -135,6 +157,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
         autoPlay
         playsInline
         muted={isMe}
+        onLoadedMetadata={(e) => (e.target as HTMLVideoElement).play()}
         className={`w-full h-full object-cover ${isMe ? 'scale-x-[-1]' : ''}`}
       />
       

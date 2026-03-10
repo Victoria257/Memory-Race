@@ -29,7 +29,7 @@ export const Lobby = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto my-auto p-4 tablet:p-6 tablet-landscape:p-3 bg-[#F1F8E9] rounded-2xl shadow-xl border-4 border-[#7DA33C]/20 flex flex-col max-h-full tablet:max-h-[85vh] tablet-landscape:max-h-[98vh] overflow-y-auto">
+    <div className="max-w-2xl desktop:max-w-3xl mx-auto my-auto p-4 tablet:p-6 tablet-landscape:p-3 bg-[#F1F8E9] rounded-2xl shadow-xl border-4 border-[#7DA33C]/20 flex flex-col max-h-full tablet:max-h-[85vh] tablet-landscape:max-h-[98vh] overflow-y-auto">
       <div className="text-center mb-4 tablet:mb-6 tablet-landscape:mb-1">
         <h2 className="text-xl tablet:text-2xl tablet-landscape:text-base font-black text-green-800 mb-0">Кімната очікування</h2>
         <p className="text-green-600 text-xs tablet:text-sm font-bold">Запросіть друзів за кодом гри</p>

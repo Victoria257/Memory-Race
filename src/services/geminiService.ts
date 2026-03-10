@@ -1,4 +1,5 @@
 import { GoogleGenAI, Modality } from "@google/genai";
+import { useStore } from "../store";
 
 // Ініціалізація Gemini у фронтенді
 const getAI = () => {
@@ -24,6 +25,9 @@ export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk
 
   try {
     const ai = getAI();
+    const isMuted = useStore.getState().isMuted;
+    if (isMuted) return;
+
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-preview-tts',
       contents: [{ parts: [{ text }] }],
@@ -48,6 +52,9 @@ export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk
   }
   
   // fallback
+  const isMuted = useStore.getState().isMuted;
+  if (isMuted) return;
+  
   fallbackToBrowserTTS(text, langMap[language]);
 };
 

@@ -30,7 +30,7 @@ export const JoinGame = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto my-auto p-4 tablet:p-6 tablet-landscape:p-3 bg-[#F1F8E9] rounded-[2.5rem] shadow-2xl border-8 border-[#7DA33C]/20 flex flex-col max-h-full tablet:max-h-[85vh] tablet-landscape:max-h-[98vh] overflow-y-auto">
+    <div className="max-w-md desktop:max-w-lg mx-auto my-auto p-4 tablet:p-6 tablet-landscape:p-3 bg-[#F1F8E9] rounded-[2.5rem] shadow-2xl border-8 border-[#7DA33C]/20 flex flex-col max-h-full tablet:max-h-[85vh] tablet-landscape:max-h-[98vh] overflow-y-auto">
       <div className="text-center mb-4 tablet:mb-6 tablet-landscape:mb-1">
         <h2 className="text-3xl tablet:text-4xl tablet-landscape:text-xl font-black text-green-800 mb-0 tracking-tight">Memory Race</h2>
         <p className="text-green-600 font-bold text-base tablet:text-lg tablet-landscape:text-xs">Веселі перегони пам'яті! 🏎️</p>
