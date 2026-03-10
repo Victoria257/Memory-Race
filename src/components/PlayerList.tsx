@@ -34,6 +34,21 @@ export const PlayerList = () => {
     };
   }, []);
 
+  const refreshCamera = async () => {
+    try {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      setLocalStream(stream);
+      setCameraError(null);
+      console.log("[WebRTC] Camera refreshed");
+    } catch (err) {
+      console.error("Camera error:", err);
+      setCameraError("Камера недоступна");
+    }
+  };
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (gameState.status === 'playing') {
@@ -138,9 +153,26 @@ export const PlayerList = () => {
         )}
 
         {cameraError && (
-          <div className="flex items-center justify-center gap-1 text-[10px] text-red-300 font-bold bg-red-900/40 py-1 rounded">
-            <VideoOff size={10} /> {cameraError}
+          <div className="flex flex-col gap-1 items-center justify-center text-[10px] text-red-300 font-bold bg-red-900/40 py-2 rounded">
+            <div className="flex items-center gap-1">
+              <VideoOff size={10} /> {cameraError}
+            </div>
+            <button 
+              onClick={refreshCamera}
+              className="mt-1 px-2 py-0.5 bg-red-700 hover:bg-red-600 rounded text-[8px] uppercase"
+            >
+              Спробувати знову
+            </button>
           </div>
+        )}
+        
+        {!cameraError && (
+          <button 
+            onClick={refreshCamera}
+            className="flex items-center justify-center gap-1 text-[8px] text-green-300/60 hover:text-green-300 font-bold py-1"
+          >
+            <Video size={10} /> Оновити камеру
+          </button>
         )}
       </div>
     </div>

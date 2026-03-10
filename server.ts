@@ -378,6 +378,7 @@ if (!card) {
     });
 
     socket.on('webrtc_signal', ({ roomId, targetId, signal, senderId }) => {
+      console.log(`[WebRTC] Signal from ${senderId} to ${targetId} in room ${roomId}`);
       io.to(roomId).emit('webrtc_signal', {
         senderId,
         targetId,

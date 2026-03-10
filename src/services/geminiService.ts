@@ -1,7 +1,13 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
 // Ініціалізація Gemini у фронтенді
-const getAI = () => new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const getAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('An API Key must be set when running in a browser');
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export const speakText = async (text: string, language: 'en' | 'sv' | 'uk' = 'uk') => {
   const langMap = {

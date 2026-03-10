@@ -13,6 +13,11 @@ if (typeof window !== 'undefined') {
   (window as any).Buffer = Buffer;
   (window as any).EventEmitter = EventEmitter;
   (window as any).util = util;
+  
+  // Ensure process has necessary methods for simple-peer
+  if (!process.nextTick) {
+    (process as any).nextTick = (fn: any, ...args: any[]) => setTimeout(() => fn(...args), 0);
+  }
   (window as any).process = process;
 }
 
