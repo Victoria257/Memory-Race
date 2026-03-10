@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { speakText } from '../services/geminiService';
-import { Dog, Cat, Rabbit, Bird, Fish, Turtle } from 'lucide-react';
+import { Dog, Cat, Rabbit, Bird, Fish, Turtle, Volume2 } from 'lucide-react';
 
 export const Deck = () => {
   const { gameState, playerId, revealCard, language, isMuted } = useStore();
@@ -41,6 +41,7 @@ export const Deck = () => {
       if (isMyTurn && !isMuted) {
         // Play sound based on language and card content using Gemini TTS
         const textToSpeak = `${gameState.currentCard[`item${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}. ${gameState.currentCard[`color${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}`;
+        console.log(`[Deck] Card revealed, speaking: "${textToSpeak}"`);
         speakText(textToSpeak, language);
         
         // Scroll to card on mobile
@@ -103,6 +104,17 @@ export const Deck = () => {
             >
               {/* Top Right Color Circle */}
               <div className="absolute top-3 right-3 flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-full shadow-md z-10 border-2 border-gray-50">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const textToSpeak = `${gameState.currentCard?.[`item${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}. ${gameState.currentCard?.[`color${language.charAt(0).toUpperCase() + language.slice(1)}` as keyof typeof gameState.currentCard]}`;
+                    speakText(textToSpeak, language);
+                  }}
+                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                  title="Озвучити"
+                >
+                  <Volume2 size={16} className="text-green-600" />
+                </button>
                 <div 
                   className="w-5 h-5 tablet:w-6 tablet:h-6 rounded-full shadow-inner border-2 border-white"
                   style={{ backgroundColor: gameState.currentCard.color === 'gray' ? '#94a3b8' : 

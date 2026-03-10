@@ -22,6 +22,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
 
   useEffect(() => {
     if (isMe && localStream && videoRef.current) {
+      console.log(`[WebRTC] Setting local stream for myself. Tracks:`, localStream.getTracks().map(t => `${t.kind}:${t.enabled}`));
       videoRef.current.srcObject = localStream;
     }
   }, [isMe, localStream]);
@@ -42,14 +43,16 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
     }
 
     let diagInterval: any;
+    let peer: any;
     // Small delay to ensure both sides are ready
     const timeoutId = setTimeout(() => {
-      // We only want one peer connection between two players.
-      // Convention: player with "smaller" ID initiates.
       const shouldInitiate = playerId < player.id;
-      console.log(`[WebRTC] Initializing peer for ${player.name}, initiator: ${shouldInitiate}, retry: ${retryCount}`);
+      console.log(`[WebRTC] Initializing peer for ${player.name}, initiator: ${shouldInitiate}, retry: ${retryCount}, myId: ${playerId}, targetId: ${player.id}`);
 
-      let peer: any;
+      if (!localStream) {
+        console.warn(`[WebRTC] No local stream available for ${player.name}`);
+        return;
+      }
       try {
         peer = new Peer({
           initiator: shouldInitiate,
@@ -71,21 +74,27 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
       }
 
       peer.on('signal', (signal: any) => {
-        console.log(`[WebRTC] Generated signal for ${player.name}`);
-        socket.emit('webrtc_signal', {
-          roomId,
-          targetId: player.id,
-          senderId: playerId,
-          signal,
-        });
+        console.log(`[WebRTC] Generated signal for ${player.name} (type: ${signal.type || 'candidate'})`);
+        if (socket && socket.connected) {
+          socket.emit('webrtc_signal', {
+            roomId,
+            targetId: player.id,
+            senderId: playerId,
+            signal,
+          });
+        } else {
+          console.warn(`[WebRTC] Socket not connected, cannot send signal to ${player.name}`);
+        }
       });
 
       peer.on('stream', (stream: any) => {
-        console.log(`[WebRTC] Received remote stream from ${player.name}`);
+        console.log(`[WebRTC] Received remote stream from ${player.name}. Tracks:`, stream.getTracks().map((t: any) => `${t.kind}:${t.enabled}`));
         setRemoteStream(stream);
         setIsConnected(true);
         if (videoRef.current) {
+          console.log(`[WebRTC] Attaching stream to video element for ${player.name}`);
           videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(e => console.error(`[WebRTC] Play error for ${player.name}:`, e));
         }
       });
 
@@ -112,9 +121,11 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
 
       const handleSignal = (data: any) => {
         if (data.targetId === playerId && data.senderId === player.id) {
-          console.log(`[WebRTC] Received signal from ${player.name}, applying to peer`);
+          console.log(`[WebRTC] Received signal from ${player.name} (type: ${data.signal.type || 'candidate'}), applying to peer`);
           try {
-            peer.signal(data.signal);
+            if (peer && !peer.destroyed) {
+              peer.signal(data.signal);
+            }
           } catch (err) {
             console.error(`[WebRTC] Error applying signal from ${player.name}:`, err);
           }
@@ -138,6 +149,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
   }, [isMe, localStream, socket, gameState?.roomId, player.id, playerId, player.isBot, player.connected, retryCount]);
 
   const handleReconnect = () => {
+    console.log(`[WebRTC] Manual reconnect triggered for ${player.name}`);
     setRetryCount(prev => prev + 1);
   };
 

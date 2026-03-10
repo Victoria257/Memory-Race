@@ -54,7 +54,11 @@ export const useStore = create<AppState>((set, get) => ({
     const socket = io(socketUrl);
     
     socket.on('connect', () => {
-      console.log('Connected to server');
+      console.log('Connected to server, socketId:', socket.id);
+    });
+    
+    socket.on('connect_error', (err) => {
+      console.error('Socket connection error:', err);
     });
 
     socket.on('game_update', (state: GameState) => {

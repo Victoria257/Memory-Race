@@ -40,8 +40,9 @@ export default function App() {
   };
 
   useEffect(() => {
+    console.log('[App] Player ID:', playerId);
     initSocket();
-  }, [initSocket]);
+  }, [initSocket, playerId]);
 
   useEffect(() => {
     if (!gameState || gameState.status !== 'playing') return;
