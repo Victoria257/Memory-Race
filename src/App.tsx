@@ -40,7 +40,11 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log('[App] Player ID:', playerId);
+    if (playerId) {
+      console.log('[App] Player ID initialized:', playerId);
+    } else {
+      console.log('[App] Player ID is not yet set');
+    }
     initSocket();
   }, [initSocket, playerId]);
 

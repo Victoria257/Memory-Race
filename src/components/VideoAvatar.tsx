@@ -21,9 +21,15 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
   const isMe = player.id === playerId;
 
   useEffect(() => {
-    if (isMe && localStream && videoRef.current) {
-      console.log(`[WebRTC] Setting local stream for myself. Tracks:`, localStream.getTracks().map(t => `${t.kind}:${t.enabled}`));
-      videoRef.current.srcObject = localStream;
+    const video = videoRef.current;
+    if (isMe && localStream) {
+      if (video) {
+        console.log(`[WebRTC] Setting local stream for myself. Tracks:`, localStream.getTracks().map(t => `${t.kind}:${t.enabled}`));
+        video.srcObject = localStream;
+        video.play().catch(e => console.warn("[WebRTC] Local video play error:", e));
+      } else {
+        console.warn("[WebRTC] videoRef.current is null when trying to set local stream");
+      }
     }
   }, [isMe, localStream]);
 
@@ -44,6 +50,20 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
 
     let diagInterval: any;
     let peer: any;
+
+    const handleSignal = (data: any) => {
+      if (data.targetId === playerId && data.senderId === player.id) {
+        console.log(`[WebRTC] Received signal from ${player.name} (type: ${data.signal.type || 'candidate'}), applying to peer`);
+        try {
+          if (peer && !peer.destroyed) {
+            peer.signal(data.signal);
+          }
+        } catch (err) {
+          console.error(`[WebRTC] Error applying signal from ${player.name}:`, err);
+        }
+      }
+    };
+
     // Small delay to ensure both sides are ready
     const timeoutId = setTimeout(() => {
       const shouldInitiate = playerId < player.id;
@@ -119,19 +139,6 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
         setIsConnected(false);
       });
 
-      const handleSignal = (data: any) => {
-        if (data.targetId === playerId && data.senderId === player.id) {
-          console.log(`[WebRTC] Received signal from ${player.name} (type: ${data.signal.type || 'candidate'}), applying to peer`);
-          try {
-            if (peer && !peer.destroyed) {
-              peer.signal(data.signal);
-            }
-          } catch (err) {
-            console.error(`[WebRTC] Error applying signal from ${player.name}:`, err);
-          }
-        }
-      };
-
       socket.on('webrtc_signal', handleSignal);
       peerRef.current = peer;
     }, 1000);
@@ -140,9 +147,10 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
       console.log(`[WebRTC] Cleaning up peer for ${player.name}`);
       clearTimeout(timeoutId);
       if (diagInterval) clearInterval(diagInterval);
+      socket.off('webrtc_signal', handleSignal); 
       if (peerRef.current) {
-        socket.off('webrtc_signal'); // Remove all signal listeners for this peer
         peerRef.current.destroy();
+        peerRef.current = null;
       }
       setIsConnected(false);
     };
@@ -164,37 +172,10 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
 
   return (
     <div className={`relative w-16 h-16 desktop:w-24 desktop:h-24 rounded-xl overflow-hidden shadow-inner border-2 border-white/50 ${tokenColors[player.tokenColor]} group`}>
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted={isMe}
-        onLoadedMetadata={(e) => (e.target as HTMLVideoElement).play()}
-        className={`w-full h-full object-cover ${isMe ? 'scale-x-[-1]' : ''}`}
-      />
-      
-      {!isMe && !isConnected && !player.isBot && player.connected && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[1px]">
-          <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse mb-1" />
-          <button 
-            onClick={handleReconnect}
-            className="text-[8px] font-bold text-white bg-green-600 px-1 rounded hover:bg-green-500 transition-colors"
-          >
-            ОНОВИТИ
-          </button>
-        </div>
-      )}
-
-      {!player.connected && !player.isBot && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-          <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Offline</span>
-        </div>
-      )}
-      
       {player.isBot ? (
-         <div className="w-full h-full flex items-center justify-center text-white font-bold text-lg">
-           {player.name.charAt(0).toUpperCase()}
-         </div>
+        <div className="w-full h-full flex items-center justify-center text-white font-bold text-lg">
+          {player.name.charAt(0).toUpperCase()}
+        </div>
       ) : (
         <>
           <video
@@ -202,16 +183,31 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
             autoPlay
             playsInline
             muted={isMe}
-            className="w-full h-full object-cover scale-x-[-1]"
+            onLoadedMetadata={(e) => (e.target as HTMLVideoElement).play()}
+            className={`w-full h-full object-cover ${isMe ? 'scale-x-[-1]' : ''}`}
           />
-          {!isMe && !remoteStream && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white">
-              <div className="w-1 h-1 bg-white rounded-full animate-ping"></div>
+          
+          {!isMe && !isConnected && player.connected && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[1px]">
+              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse mb-1" />
+              <button 
+                onClick={handleReconnect}
+                className="text-[8px] font-bold text-white bg-green-600 px-1 rounded hover:bg-green-500 transition-colors"
+              >
+                ОНОВИТИ
+              </button>
             </div>
           )}
+
           {!player.connected && (
-            <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[8px] text-white font-bold uppercase">
-              Offline
+            <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+              <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Offline</span>
+            </div>
+          )}
+          
+          {!isMe && !remoteStream && player.connected && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white">
+              <div className="w-1 h-1 bg-white rounded-full animate-ping"></div>
             </div>
           )}
         </>

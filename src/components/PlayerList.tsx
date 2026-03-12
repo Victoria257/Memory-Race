@@ -90,7 +90,7 @@ export const PlayerList = () => {
                 ${player.place !== null ? 'opacity-50 grayscale' : ''}`}
             >
               <div className="relative flex-shrink-0">
-                <VideoAvatar player={player} localStream={localStream} />
+                <VideoAvatar key={`${player.id}-${playerId}`} player={player} localStream={localStream} />
                 {player.place !== null && (
                   <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-md z-20">
                     {player.place === 99 ? 'X' : player.place}
