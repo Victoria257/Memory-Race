@@ -50,29 +50,31 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
 
     let diagInterval: any;
     let peer: any;
+    const signalBuffer: any[] = [];
 
     const handleSignal = (data: any) => {
       if (data.targetId === playerId && data.senderId === player.id) {
-        console.log(`[WebRTC] Received signal from ${player.name} (type: ${data.signal.type || 'candidate'}), applying to peer`);
-        try {
-          if (peer && !peer.destroyed) {
+        console.log(`[WebRTC] Received signal from ${player.name} (type: ${data.signal.type || 'candidate'})`);
+        if (peer && !peer.destroyed) {
+          try {
             peer.signal(data.signal);
+          } catch (err) {
+            console.error(`[WebRTC] Error applying signal from ${player.name}:`, err);
           }
-        } catch (err) {
-          console.error(`[WebRTC] Error applying signal from ${player.name}:`, err);
+        } else {
+          console.log(`[WebRTC] Peer not ready for ${player.name}, buffering signal`);
+          signalBuffer.push(data.signal);
         }
       }
     };
 
-    // Small delay to ensure both sides are ready
+    socket.on('webrtc_signal', handleSignal);
+
+    // Small delay to ensure both sides have the listener active
     const timeoutId = setTimeout(() => {
       const shouldInitiate = playerId < player.id;
-      console.log(`[WebRTC] Initializing peer for ${player.name}, initiator: ${shouldInitiate}, retry: ${retryCount}, myId: ${playerId}, targetId: ${player.id}`);
+      console.log(`[WebRTC] Initializing peer for ${player.name}, initiator: ${shouldInitiate}, retry: ${retryCount}`);
 
-      if (!localStream) {
-        console.warn(`[WebRTC] No local stream available for ${player.name}`);
-        return;
-      }
       try {
         peer = new Peer({
           initiator: shouldInitiate,
@@ -83,18 +85,22 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
               { urls: 'stun:stun.l.google.com:19302' },
               { urls: 'stun:stun1.l.google.com:19302' },
               { urls: 'stun:stun2.l.google.com:19302' },
-              { urls: 'stun:stun3.l.google.com:19302' },
-              { urls: 'stun:stun4.l.google.com:19302' },
             ]
           }
         });
+
+        // Apply buffered signals
+        while (signalBuffer.length > 0) {
+          const sig = signalBuffer.shift();
+          console.log(`[WebRTC] Applying buffered signal to ${player.name}`);
+          peer.signal(sig);
+        }
       } catch (err) {
         console.error('[WebRTC] Failed to create Peer instance:', err);
         return;
       }
 
       peer.on('signal', (signal: any) => {
-        console.log(`[WebRTC] Generated signal for ${player.name} (type: ${signal.type || 'candidate'})`);
         if (socket && socket.connected) {
           socket.emit('webrtc_signal', {
             roomId,
@@ -102,19 +108,16 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
             senderId: playerId,
             signal,
           });
-        } else {
-          console.warn(`[WebRTC] Socket not connected, cannot send signal to ${player.name}`);
         }
       });
 
       peer.on('stream', (stream: any) => {
-        console.log(`[WebRTC] Received remote stream from ${player.name}. Tracks:`, stream.getTracks().map((t: any) => `${t.kind}:${t.enabled}`));
+        console.log(`[WebRTC] Received remote stream from ${player.name}`);
         setRemoteStream(stream);
         setIsConnected(true);
         if (videoRef.current) {
-          console.log(`[WebRTC] Attaching stream to video element for ${player.name}`);
           videoRef.current.srcObject = stream;
-          videoRef.current.play().catch(e => console.error(`[WebRTC] Play error for ${player.name}:`, e));
+          videoRef.current.play().catch(e => console.warn(`[WebRTC] Remote play error:`, e));
         }
       });
 
@@ -125,26 +128,23 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
 
       diagInterval = setInterval(() => {
         if (peer && peer._pc) {
-          console.log(`[WebRTC] ${player.name} ICE: ${peer._pc.iceConnectionState}, Connection: ${peer._pc.connectionState}`);
+          const state = peer._pc.iceConnectionState;
+          if (state === 'failed' || state === 'disconnected') {
+            console.warn(`[WebRTC] Connection ${state} for ${player.name}, retrying...`);
+            handleReconnect();
+          }
         }
-      }, 5000);
+      }, 10000);
 
       peer.on('error', (err: any) => {
         console.error(`[WebRTC] Peer error with ${player.name}:`, err);
         setIsConnected(false);
       });
 
-      peer.on('close', () => {
-        console.log(`[WebRTC] Peer connection closed with ${player.name}`);
-        setIsConnected(false);
-      });
-
-      socket.on('webrtc_signal', handleSignal);
       peerRef.current = peer;
-    }, 1000);
+    }, 500); // Reduced delay
 
     return () => {
-      console.log(`[WebRTC] Cleaning up peer for ${player.name}`);
       clearTimeout(timeoutId);
       if (diagInterval) clearInterval(diagInterval);
       socket.off('webrtc_signal', handleSignal); 
@@ -153,6 +153,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
         peerRef.current = null;
       }
       setIsConnected(false);
+      setRemoteStream(null);
     };
   }, [isMe, localStream, socket, gameState?.roomId, player.id, playerId, player.isBot, player.connected, retryCount]);
 
