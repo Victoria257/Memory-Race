@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '../store';
-import { LogIn, UserPlus } from 'lucide-react';
+import { LogIn, UserPlus, Video, Mic, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export const JoinGame = () => {
   const { createGame, joinGame, setPlayerInfo, playerName, playerAge, playerTokenColor, error, clearError } = useStore();
@@ -9,6 +9,8 @@ export const JoinGame = () => {
   const [name, setName] = useState(playerName);
   const [age, setAge] = useState(playerAge);
   const [color, setColor] = useState(playerTokenColor);
+  const [permStatus, setPermStatus] = useState<{video: boolean, audio: boolean}>({video: false, audio: false});
+  const [permError, setPermError] = useState<string | null>(null);
 
   const colors = [
     { id: 'blue', label: 'Синій', hex: '#60a5fa' },
@@ -18,6 +20,43 @@ export const JoinGame = () => {
     { id: 'pink', label: 'Рожевий', hex: '#f472b6' },
     { id: 'orange', label: 'Помаранчевий', hex: '#fb923c' }
   ];
+
+  useEffect(() => {
+    // Check if permissions were already granted
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        const hasVideo = devices.some(d => d.kind === 'videoinput' && d.label !== '');
+        const hasAudio = devices.some(d => d.kind === 'audioinput' && d.label !== '');
+        setPermStatus({ video: hasVideo, audio: hasAudio });
+      });
+    }
+  }, []);
+
+  const requestPermissions = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: true, 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      });
+      setPermStatus({ video: true, audio: true });
+      setPermError(null);
+      // Stop tracks immediately after check
+      stream.getTracks().forEach(t => t.stop());
+    } catch (err: any) {
+      console.error("Permission request failed:", err);
+      if (err.name === 'NotAllowedError') {
+        setPermError("Доступ до камери/мікрофона відхилено. Будь ласка, дозвольте їх у налаштуваннях браузера.");
+      } else if (err.name === 'NotFoundError') {
+        setPermError("Камеру або мікрофон не знайдено на цьому пристрої.");
+      } else {
+        setPermError("Не вдалося отримати доступ до камери. Перевірте налаштування пристрою.");
+      }
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,6 +156,48 @@ export const JoinGame = () => {
               />
             ))}
           </div>
+        </div>
+
+        <div className="bg-white/40 p-3 rounded-2xl border-2 border-green-100/50">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-black text-green-700 uppercase tracking-wider">Перевірка зв'язку 📡</span>
+            {permStatus.video && permStatus.audio ? (
+              <span className="text-[10px] font-bold text-green-600 flex items-center gap-1">
+                <CheckCircle2 size={12} /> Готово
+              </span>
+            ) : (
+              <span className="text-[10px] font-bold text-orange-500 flex items-center gap-1">
+                <AlertCircle size={12} /> Потрібен дозвіл
+              </span>
+            )}
+          </div>
+          
+          <div className="flex gap-2">
+            <div className={`flex-1 flex items-center gap-2 p-2 rounded-xl border ${permStatus.video ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+              <Video size={14} />
+              <span className="text-[10px] font-bold">Камера</span>
+            </div>
+            <div className={`flex-1 flex items-center gap-2 p-2 rounded-xl border ${permStatus.audio ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+              <Mic size={14} />
+              <span className="text-[10px] font-bold">Мікрофон</span>
+            </div>
+          </div>
+
+          {(!permStatus.video || !permStatus.audio) && (
+            <button
+              type="button"
+              onClick={requestPermissions}
+              className="mt-2 w-full py-2 bg-white hover:bg-green-50 text-[#7DA33C] border-2 border-[#7DA33C] rounded-xl text-[10px] font-black transition-all active:scale-95"
+            >
+              УВІМКНУТИ КАМЕРУ ТА МІКРОФОН
+            </button>
+          )}
+
+          {permError && (
+            <p className="mt-2 text-[9px] font-bold text-red-500 leading-tight">
+              {permError}
+            </p>
+          )}
         </div>
 
         <button

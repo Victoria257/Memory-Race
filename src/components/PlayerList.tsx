@@ -16,7 +16,14 @@ export const PlayerList = () => {
     
     const startCamera = async () => {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: true, 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          } 
+        });
         setLocalStream(stream);
         setCameraError(null);
       } catch (err) {
@@ -39,7 +46,14 @@ export const PlayerList = () => {
       if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
       }
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: true, 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      });
       setLocalStream(stream);
       setCameraError(null);
       console.log("[WebRTC] Camera refreshed");
