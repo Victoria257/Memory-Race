@@ -8,6 +8,7 @@ export const PlayerList = () => {
   const [timeLeft, setTimeLeft] = useState(40);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [isCameraStarting, setIsCameraStarting] = useState(false);
 
   if (!gameState) return null;
 
@@ -15,6 +16,8 @@ export const PlayerList = () => {
     let stream: MediaStream | null = null;
     
     const startCamera = async () => {
+      if (isCameraStarting) return;
+      setIsCameraStarting(true);
       try {
         stream = await navigator.mediaDevices.getUserMedia({ 
           video: true, 
@@ -29,6 +32,8 @@ export const PlayerList = () => {
       } catch (err) {
         console.error("Camera error:", err);
         setCameraError("Камера недоступна");
+      } finally {
+        setIsCameraStarting(false);
       }
     };
 
@@ -42,6 +47,8 @@ export const PlayerList = () => {
   }, []);
 
   const refreshCamera = async () => {
+    if (isCameraStarting) return;
+    setIsCameraStarting(true);
     try {
       if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
@@ -60,6 +67,8 @@ export const PlayerList = () => {
     } catch (err) {
       console.error("Camera error:", err);
       setCameraError("Камера недоступна");
+    } finally {
+      setIsCameraStarting(false);
     }
   };
 
