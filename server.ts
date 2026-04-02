@@ -4,16 +4,17 @@ import { Server } from 'socket.io';
 import http from 'http';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { generateDeck, CATEGORIES, COLORS } from './src/data/deck';
 import { Card, Player, GameState } from './src/types';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(new URL(import.meta.url));
+const __dirname = dirname(__filename);
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 const games: Record<string, GameState> = {};
 
