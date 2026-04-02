@@ -8,6 +8,7 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { generateDeck, CATEGORIES, COLORS } from './src/data/deck';
 import { Card, Player, GameState } from './src/types';
+import bodyParser from 'body-parser';
 import cors from 'cors';
 
 const __filename = fileURLToPath(new URL(import.meta.url));
@@ -25,7 +26,7 @@ async function startServer() {
   });
 
 // JSON парсер
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors());
 
   app.get('/favicon.ico', (req, res) => res.status(204).end());
