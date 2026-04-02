@@ -23,15 +23,28 @@ const games: Record<string, GameState> = {};
 async function startServer() {
   const app = express();
   const server = http.createServer(app);
+  // const io = new Server(server, {
+  //   cors: { origin: '*' }
+  // });
   const io = new Server(server, {
-    cors: { origin: '*' }
-  });
+  cors: {
+    origin: ["https://memory-race.vercel.app"],
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
 
 // JSON парсер
 // app.use(bodyParser.json());
 app.use(express.json());
 
-app.use(cors());
+app.use(cors({
+  origin: ["https://memory-race.vercel.app"],
+  methods: ["GET", "POST"],
+  credentials: true
+}));
+
 
   app.get('/favicon.ico', (req, res) => res.status(204).end());
 
