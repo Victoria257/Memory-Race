@@ -15,6 +15,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
   const videoRef = useRef<HTMLVideoElement>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [iceState, setIceState] = useState<string>('new');
   const [retryCount, setRetryCount] = useState(0);
   const peerRef = useRef<any>(null);
 
@@ -88,7 +89,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
       try {
         peer = new Peer({
           initiator: shouldInitiate,
-          trickle: true,
+          trickle: false, // Disable trickle for better stability on some networks
           stream: localStream,
           config: {
             iceServers: [
@@ -99,12 +100,16 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
               { urls: 'stun:stun4.l.google.com:19302' },
               { urls: 'stun:global.stun.twilio.com:3478' },
               { urls: 'stun:stun.services.mozilla.com' },
+              { urls: 'stun:stun.l.google.com:19305' },
+              { urls: 'stun:stun2.l.google.com:19305' },
             ],
-            iceCandidatePoolSize: 10
+            iceCandidatePoolSize: 10,
+            bundlePolicy: 'max-bundle',
+            rtcpMuxPolicy: 'require'
           }
         });
 
-        // Apply buffered signals with a tiny delay to ensure peer is ready
+        // Apply buffered signals
         if (signalBuffer.length > 0) {
           setTimeout(() => {
             while (signalBuffer.length > 0) {
@@ -118,7 +123,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
                 }
               }
             }
-          }, 100);
+          }, 200);
         }
       } catch (err) {
         console.error('[WebRTC] Failed to create Peer instance:', err);
@@ -150,12 +155,13 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
       diagInterval = setInterval(() => {
         if (peer && peer._pc) {
           const state = peer._pc.iceConnectionState;
+          setIceState(state);
           if (state === 'failed' || state === 'disconnected') {
             console.warn(`[WebRTC] Connection ${state} for ${player.name}, retrying...`);
             handleReconnect();
           }
         }
-      }, 10000);
+      }, 5000); // More frequent checks
 
       peer.on('error', (err: any) => {
         console.error(`[WebRTC] Peer error with ${player.name}:`, err);
@@ -208,11 +214,18 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
           />
           
           {!isMe && !isConnected && player.connected && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[1px]">
-              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse mb-1" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-[1px] p-1 text-center">
+              <div className={`w-2 h-2 rounded-full animate-pulse mb-1 ${
+                iceState === 'failed' ? 'bg-red-500' : 
+                iceState === 'checking' ? 'bg-yellow-400' : 'bg-blue-400'
+              }`} />
+              <span className="text-[7px] text-white/70 font-bold uppercase mb-1">
+                {iceState === 'failed' ? 'Збій' : 
+                 iceState === 'checking' ? 'Пошук...' : 'Зв\'язок...'}
+              </span>
               <button 
                 onClick={handleReconnect}
-                className="text-[8px] font-bold text-white bg-green-600 px-1 rounded hover:bg-green-500 transition-colors"
+                className="text-[8px] font-black text-white bg-green-600 px-2 py-0.5 rounded-full hover:bg-green-500 transition-all active:scale-95 shadow-lg"
               >
                 ОНОВИТИ
               </button>
