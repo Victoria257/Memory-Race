@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
+     "types": ["node", "express"],
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
     "esModuleInterop": true,
@@ -10,3 +11,4 @@
   },
   "include": ["server.ts", "src/**/*.ts"]
 }
+

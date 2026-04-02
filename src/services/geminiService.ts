@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality } from "@google/genai";
-import { useStore } from "../store";
+import { useStore } from "../store.js";
 
 // Ініціалізація Gemini у фронтенді
 const getAI = () => {

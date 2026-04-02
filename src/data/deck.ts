@@ -1,5 +1,5 @@
-import { cardDataCsv } from './cardData';
-import { Card } from '../types';
+import { cardDataCsv } from './cardData.js';
+import { Card } from '../types.js';
 
 export const CATEGORIES = ['furniture', 'appliances', 'transport', 'animals', 'food', 'clothing', 'dishes'];
 export const COLORS = ['gray', 'black', 'blue', 'yellow', 'green', 'red', 'brown', 'white'];

@@ -1,18 +1,20 @@
-import express from 'express';
+// import express from 'express';
+import express, { Express } from 'express';
 import { createServer as createViteServer } from 'vite';
 import { Server } from 'socket.io';
 import http from 'http';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
-// import { dirname } from 'path';
-// import { fileURLToPath } from 'url';
-import { generateDeck, CATEGORIES, COLORS } from './src/data/deck';
-import { Card, Player, GameState } from './src/types';
-import bodyParser from 'body-parser';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { generateDeck, CATEGORIES, COLORS } from './src/data/deck.js';
+import { Card, Player, GameState } from './src/types.js';
+// import bodyParser from 'body-parser';
 import cors from 'cors';
 
-// const __filename = fileURLToPath(new URL(import.meta.url));
-const __dirname = path.resolve();
+const app: Express = express();
+const __filename = fileURLToPath(new URL(import.meta.url));
+const __dirname = path.dirname(__filename);
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -26,7 +28,9 @@ async function startServer() {
   });
 
 // JSON парсер
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+app.use(express.json());
+
 app.use(cors());
 
   app.get('/favicon.ico', (req, res) => res.status(204).end());

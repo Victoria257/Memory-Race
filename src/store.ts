@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
-import { Player, Card, GameState } from './types';
+import { Player, Card, GameState } from './types.js';
 
 interface AppState {
   socket: Socket | null;
