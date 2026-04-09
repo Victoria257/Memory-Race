@@ -118,7 +118,8 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
             iceServers,
             iceCandidatePoolSize: 10,
             bundlePolicy: 'max-bundle',
-            rtcpMuxPolicy: 'require'
+            rtcpMuxPolicy: 'require',
+            iceTransportPolicy: 'all' // Explicitly allow P2P and use TURN only as fallback
           }
         });
 

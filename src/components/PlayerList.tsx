@@ -20,7 +20,11 @@ export const PlayerList = () => {
       setIsCameraStarting(true);
       try {
         stream = await navigator.mediaDevices.getUserMedia({ 
-          video: true, 
+          video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            frameRate: { ideal: 20 }
+          }, 
           audio: {
             echoCancellation: true,
             noiseSuppression: true,
@@ -54,7 +58,11 @@ export const PlayerList = () => {
         localStream.getTracks().forEach(track => track.stop());
       }
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: true, 
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          frameRate: { ideal: 20 }
+        }, 
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
