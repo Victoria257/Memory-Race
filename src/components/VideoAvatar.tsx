@@ -86,9 +86,10 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
       console.log(`[WebRTC] Initializing peer for ${player.name}, initiator: ${shouldInitiate}, retry: ${retryCount}`);
 
       try {
-        const turnUrl = import.meta.env.VITE_TURN_URL;
-        const turnUser = import.meta.env.VITE_TURN_USERNAME;
-        const turnPass = import.meta.env.VITE_TURN_PASSWORD;
+        // TURN server configuration provided by user
+        const turnUrl = "turn:standard.relay.metered.ca:80?transport=tcp";
+        const turnUser = "9ecb38a92a21f037d126933c";
+        const turnPass = "LnYRqT7U7wCRB09W";
 
         const iceServers: any[] = [
           { urls: 'stun:stun.l.google.com:19302' },
@@ -102,15 +103,12 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
           { urls: 'stun:stun.ideasip.com' },
           { urls: 'stun:stun.schlund.de' },
           { urls: 'stun:global.stun.twilio.com:3478' },
-        ];
-
-        if (turnUrl) {
-          iceServers.push({
+          {
             urls: turnUrl,
             username: turnUser,
             credential: turnPass
-          });
-        }
+          }
+        ];
 
         peer = new Peer({
           initiator: shouldInitiate,
