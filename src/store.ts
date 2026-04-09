@@ -51,7 +51,10 @@ export const useStore = create<AppState>((set, get) => ({
   initSocket: () => {
     if (get().socket) return;
     
-    const socket = io(socketUrl);
+    const socket = io(socketUrl, {
+      transports: ['websocket'],
+      upgrade: false
+    });
     
     socket.on('connect', () => {
       console.log('Connected to server, socketId:', socket.id);

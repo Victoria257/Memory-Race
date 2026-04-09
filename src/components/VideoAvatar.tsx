@@ -86,21 +86,41 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
       console.log(`[WebRTC] Initializing peer for ${player.name}, initiator: ${shouldInitiate}, retry: ${retryCount}`);
 
       try {
+        const turnUrl = import.meta.env.VITE_TURN_URL;
+        const turnUser = import.meta.env.VITE_TURN_USERNAME;
+        const turnPass = import.meta.env.VITE_TURN_PASSWORD;
+
+        const iceServers: any[] = [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun2.l.google.com:19302' },
+          { urls: 'stun:stun3.l.google.com:19302' },
+          { urls: 'stun:stun4.l.google.com:19302' },
+          { urls: 'stun:stun.stunprotocol.org' },
+          { urls: 'stun:stun.voipstunt.com' },
+          { urls: 'stun:stun.ekiga.net' },
+          { urls: 'stun:stun.ideasip.com' },
+          { urls: 'stun:stun.schlund.de' },
+          { urls: 'stun:global.stun.twilio.com:3478' },
+        ];
+
+        if (turnUrl) {
+          iceServers.push({
+            urls: turnUrl,
+            username: turnUser,
+            credential: turnPass
+          });
+        }
+
         peer = new Peer({
           initiator: shouldInitiate,
           trickle: true,
           stream: localStream,
           config: {
-            iceServers: [
-              { urls: 'stun:stun.l.google.com:19302' },
-              { urls: 'stun:stun1.l.google.com:19302' },
-              { urls: 'stun:stun2.l.google.com:19302' },
-              { urls: 'stun:stun3.l.google.com:19302' },
-              { urls: 'stun:stun4.l.google.com:19302' },
-              { urls: 'stun:global.stun.twilio.com:3478' },
-              { urls: 'stun:stun.services.mozilla.com' },
-            ],
-            iceCandidatePoolSize: 10
+            iceServers,
+            iceCandidatePoolSize: 10,
+            bundlePolicy: 'max-bundle',
+            rtcpMuxPolicy: 'require'
           }
         });
 

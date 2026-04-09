@@ -415,12 +415,25 @@ if (!card) {
     });
 
     socket.on('webrtc_signal', ({ roomId, targetId, signal, senderId }) => {
-      console.log(`[WebRTC] Signal from ${senderId} to ${targetId} in room ${roomId}`);
-      io.to(roomId).emit('webrtc_signal', {
-        senderId,
-        targetId,
-        signal
-      });
+      const game = games[roomId];
+      if (game) {
+        const targetPlayer = game.players.find(p => p.id === targetId);
+        if (targetPlayer && targetPlayer.socketId) {
+          console.log(`[WebRTC] Targeted signal from ${senderId} to ${targetId} (${targetPlayer.name})`);
+          io.to(targetPlayer.socketId).emit('webrtc_signal', {
+            senderId,
+            targetId,
+            signal
+          });
+        } else {
+          // Fallback to room broadcast if target socket not found (e.g. just reconnected)
+          io.to(roomId).emit('webrtc_signal', {
+            senderId,
+            targetId,
+            signal
+          });
+        }
+      }
     });
 
     socket.on('disconnect', () => {
