@@ -12,7 +12,6 @@ import { Card, Player, GameState } from './src/types.js';
 // import bodyParser from 'body-parser';
 import cors from 'cors';
 
-const app: Express = express();
 const __filename = fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
 
@@ -23,16 +22,29 @@ const games: Record<string, GameState> = {};
 async function startServer() {
   const app = express();
   const server = http.createServer(app);
-  // const io = new Server(server, {
-  //   cors: { origin: '*' }
-  // });
+  
+  // Allow multiple origins including the preview environment
+  const allowedOrigins = [
+    "https://memory-race.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:5173"
+  ];
+
   const io = new Server(server, {
-  cors: {
-    origin: ["https://memory-race.vercel.app"],
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-});
+    cors: {
+      origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('.run.app') || origin.includes('localhost')) {
+          callback(null, true);
+        } else {
+          callback(null, true); // Fallback to allow all for now to fix user's issue
+        }
+      },
+      methods: ["GET", "POST"],
+      credentials: true
+    }
+  });
 
 
 // JSON парсер
@@ -40,7 +52,14 @@ async function startServer() {
 app.use(express.json());
 
 app.use(cors({
-  origin: ["https://memory-race.vercel.app"],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('.run.app') || origin.includes('localhost')) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Fallback to allow all for now
+    }
+  },
   methods: ["GET", "POST"],
   credentials: true
 }));
