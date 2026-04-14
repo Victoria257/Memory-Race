@@ -224,13 +224,13 @@ export default function App() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col">
-            <div className="h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] flex flex-col desktop:flex-row p-0 overflow-hidden snap-start">
+          <div className="flex flex-col relative">
+            <div className="sticky top-0 w-full z-40">
+              <PlayerList />
+            </div>
+            <div className="h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] flex flex-col p-0 overflow-hidden snap-start">
               <div className="flex-1 h-full overflow-hidden">
                 <Board />
-              </div>
-              <div className="h-auto desktop:h-full desktop:w-64 bg-[#86B03C]/20 flex-shrink-0">
-                <PlayerList />
               </div>
             </div>
             
