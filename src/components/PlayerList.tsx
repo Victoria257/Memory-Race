@@ -22,8 +22,7 @@ export const PlayerList = () => {
         stream = await navigator.mediaDevices.getUserMedia({ 
           video: {
             width: { ideal: 640 },
-            height: { ideal: 480 },
-            frameRate: { ideal: 20 }
+            height: { ideal: 480 }
           }, 
           audio: {
             echoCancellation: true,
@@ -60,8 +59,7 @@ export const PlayerList = () => {
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: {
           width: { ideal: 640 },
-          height: { ideal: 480 },
-          frameRate: { ideal: 20 }
+          height: { ideal: 480 }
         }, 
         audio: {
           echoCancellation: true,

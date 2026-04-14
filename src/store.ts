@@ -52,8 +52,8 @@ export const useStore = create<AppState>((set, get) => ({
     if (get().socket) return;
     
     const socket = io(socketUrl, {
-      transports: ['websocket'],
-      upgrade: false
+      transports: ['polling', 'websocket'],
+      upgrade: true
     });
     
     socket.on('connect', () => {
