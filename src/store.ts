@@ -12,8 +12,12 @@ interface AppState {
   isMuted: boolean;
   gameState: GameState | null;
   error: string | null;
+  localStream: MediaStream | null;
+  cameraError: string | null;
   
   initSocket: () => void;
+  setLocalStream: (stream: MediaStream | null) => void;
+  setCameraError: (error: string | null) => void;
   setPlayerInfo: (name: string, age: number, color: string) => void;
   setLanguage: (lang: 'en' | 'sv' | 'uk') => void;
   toggleMute: () => void;
@@ -47,6 +51,11 @@ export const useStore = create<AppState>((set, get) => ({
   isMuted: localStorage.getItem('isMuted') === 'true',
   gameState: null,
   error: null,
+  localStream: null,
+  cameraError: null,
+  
+  setLocalStream: (stream) => set({ localStream: stream }),
+  setCameraError: (error) => set({ cameraError: error }),
 
   initSocket: () => {
     if (get().socket) return;

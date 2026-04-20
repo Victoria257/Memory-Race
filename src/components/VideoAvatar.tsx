@@ -201,20 +201,46 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
     setRetryCount(prev => prev + 1);
   };
 
-  const tokenColors: Record<string, string> = {
-    blue: 'bg-blue-500',
-    yellow: 'bg-yellow-400',
-    green: 'bg-green-500',
-    purple: 'bg-purple-500',
-    white: 'bg-white border border-gray-300',
-    orange: 'bg-orange-500'
+  const isCurrentTurn = gameState?.players[gameState.currentTurnIndex]?.id === player.id;
+  const [timeLeft, setTimeLeft] = useState(40);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isCurrentTurn && gameState?.status === 'playing') {
+      interval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - gameState.turnStartTime) / 1000);
+        setTimeLeft(Math.max(0, 40 - elapsed));
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isCurrentTurn, gameState?.turnStartTime, gameState?.status]);
+
+  const tokenBorderColors: Record<string, string> = {
+    blue: 'border-blue-500',
+    yellow: 'border-yellow-400',
+    green: 'border-green-500',
+    purple: 'border-purple-500',
+    white: 'border-gray-200',
+    orange: 'border-orange-500'
+  };
+
+  const turnGlowColors: Record<string, string> = {
+    blue: 'shadow-[0_0_20px_rgba(59,130,246,0.6)]',
+    yellow: 'shadow-[0_0_20px_rgba(250,204,21,0.6)]',
+    green: 'shadow-[0_0_20px_rgba(34,197,94,0.6)]',
+    purple: 'shadow-[0_0_20px_rgba(168,85,247,0.6)]',
+    white: 'shadow-[0_0_20px_rgba(255,255,255,0.6)]',
+    orange: 'shadow-[0_0_20px_rgba(249,115,22,0.6)]'
   };
 
   return (
-    <div className={`relative w-16 h-16 desktop:w-24 desktop:h-24 rounded-xl overflow-hidden shadow-inner border-2 border-white/50 ${tokenColors[player.tokenColor]} group`}>
+    <div className={`relative w-28 h-36 desktop:w-36 desktop:h-48 rounded-2xl overflow-hidden shadow-2xl border-4 ${tokenBorderColors[player.tokenColor] || 'border-white/20'} ${isCurrentTurn ? turnGlowColors[player.tokenColor] : ''} bg-gray-900 group transition-all duration-300 ${player.place !== null ? 'opacity-40 grayscale' : ''}`}>
       {player.isBot ? (
-        <div className="w-full h-full flex items-center justify-center text-white font-bold text-lg">
-          {player.name.charAt(0).toUpperCase()}
+        <div className="w-full h-full flex flex-col items-center justify-center text-white bg-gradient-to-br from-gray-700 to-gray-900">
+          <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-2">
+            <span className="text-xl font-black">{player.name.charAt(0).toUpperCase()}</span>
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest opacity-60 italic">Бот</span>
         </div>
       ) : (
         <>
@@ -225,12 +251,38 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
             className={`w-full h-full object-cover ${isMe ? 'scale-x-[-1]' : ''}`}
           />
           
+          <div className="absolute top-2 left-2 bg-black/60 px-2 py-0.5 rounded-full text-[9px] text-white font-black uppercase tracking-wider backdrop-blur-md border border-white/10 flex items-center gap-1.5">
+            <div className={`w-1.5 h-1.5 rounded-full ${player.connected ? 'bg-green-500' : 'bg-gray-500'}`} />
+            {isMe ? 'Ви' : player.name}
+          </div>
+
+          {isCurrentTurn && (
+            <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/80 px-2 py-0.5 rounded-full border border-white/20 animate-pulse">
+              <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full" />
+              <span className={`text-[10px] font-black ${timeLeft < 10 ? 'text-red-400' : 'text-white'}`}>{timeLeft}с</span>
+            </div>
+          )}
+
+          {player.place !== null && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+              <div className="bg-yellow-400 text-yellow-900 text-lg font-black w-10 h-10 rounded-full flex items-center justify-center shadow-xl border-2 border-white">
+                {player.place === 99 ? 'X' : player.place}
+              </div>
+            </div>
+          )}
+
+          {player.skipNextTurn && player.place === null && (
+            <div className="absolute bottom-2 left-2 bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter shadow-sm">
+              Пропуск ходу
+            </div>
+          )}
+
           {!isMe && !isConnected && player.connected && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[1px]">
-              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse mb-1" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse mb-2" />
               <button 
                 onClick={handleReconnect}
-                className="text-[8px] font-bold text-white bg-green-600 px-1 rounded hover:bg-green-500 transition-colors"
+                className="text-[10px] font-bold text-white bg-green-600 px-2 py-1 rounded-lg hover:bg-green-500 transition-colors shadow-lg"
               >
                 ОНОВИТИ
               </button>
@@ -238,16 +290,19 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
           )}
 
           {!player.connected && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-              <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Offline</span>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">
+              <span className="text-[10px] font-black text-white uppercase tracking-widest bg-red-500/80 px-2 py-1 rounded">Offline</span>
             </div>
           )}
           
           {!isMe && !remoteStream && player.connected && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white">
-              <div className="w-1 h-1 bg-white rounded-full animate-ping"></div>
+              <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
             </div>
           )}
+
+          {/* Player status indicator */}
+          <div className={`absolute bottom-2 right-2 w-3 h-3 rounded-full border-2 border-white shadow-sm ${player.connected ? 'bg-green-500' : 'bg-gray-500'}`} />
         </>
       )}
     </div>

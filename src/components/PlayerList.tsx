@@ -4,50 +4,11 @@ import { Bell, Clock, Flag, Video, VideoOff } from 'lucide-react';
 import { VideoAvatar } from './VideoAvatar';
 
 export const PlayerList = () => {
-  const { gameState, playerId, ringBell, giveUp } = useStore();
+  const { gameState, playerId, ringBell, giveUp, localStream, cameraError, setLocalStream, setCameraError } = useStore();
   const [timeLeft, setTimeLeft] = useState(40);
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [cameraError, setCameraError] = useState<string | null>(null);
   const [isCameraStarting, setIsCameraStarting] = useState(false);
 
   if (!gameState) return null;
-
-  useEffect(() => {
-    let stream: MediaStream | null = null;
-    
-    const startCamera = async () => {
-      if (isCameraStarting) return;
-      setIsCameraStarting(true);
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ 
-          video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 }
-          }, 
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true
-          } 
-        });
-        setLocalStream(stream);
-        setCameraError(null);
-      } catch (err) {
-        console.error("Camera error:", err);
-        setCameraError("Камера недоступна");
-      } finally {
-        setIsCameraStarting(false);
-      }
-    };
-
-    startCamera();
-
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, []);
 
   const refreshCamera = async () => {
     if (isCameraStarting) return;
@@ -104,12 +65,17 @@ export const PlayerList = () => {
   const myPlayer = gameState.players.find(p => p.id === playerId);
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;
 
+  // Filter out local player from the list as requested
+  const otherPlayers = gameState.players.filter(p => p.id !== playerId);
+
   return (
     <div className="w-full desktop:w-64 bg-[#3A5214] backdrop-blur-sm shadow-md rounded-xl desktop:rounded-3xl p-4 tablet:p-6 tablet-landscape:p-2 mb-0 tablet:mb-6 tablet-landscape:mb-1 flex flex-col desktop:flex-col items-center justify-between desktop:justify-start gap-4 border-b tablet-landscape:border-b-0 desktop:border-b-0 desktop:border-l border-[#7DA33C]/40 desktop:h-full desktop:overflow-y-auto">
       <h3 className="hidden desktop:block text-xs font-black text-green-300 uppercase tracking-widest mb-2">Гравці</h3>
       <div className="flex desktop:flex-col gap-4 overflow-x-auto desktop:overflow-x-visible py-2 desktop:py-0 px-2 w-full scrollbar-hide">
-        {gameState.players.map((player, idx) => {
-          const isCurrentTurn = idx === gameState.currentTurnIndex;
+        {otherPlayers.map((player) => {
+          // Find original index in gameState.players for isCurrentTurn check
+          const originalIdx = gameState.players.findIndex(p => p.id === player.id);
+          const isCurrentTurn = originalIdx === gameState.currentTurnIndex;
           
           return (
             <div 
@@ -119,7 +85,9 @@ export const PlayerList = () => {
                 ${player.place !== null ? 'opacity-50 grayscale' : ''}`}
             >
               <div className="relative flex-shrink-0">
-                <VideoAvatar key={`${player.id}-${playerId}`} player={player} localStream={localStream} />
+                <div className={`w-12 h-12 desktop:w-16 desktop:h-16 rounded-full flex items-center justify-center shadow-lg border-2 border-white/30 ${tokenColors[player.tokenColor]}`}>
+                  <span className="text-white font-black text-xl">{player.name.charAt(0).toUpperCase()}</span>
+                </div>
                 {player.place !== null && (
                   <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-md z-20">
                     {player.place === 99 ? 'X' : player.place}
@@ -139,7 +107,7 @@ export const PlayerList = () => {
               
               <div className="flex flex-col items-center min-w-0 flex-1">
                 <span className="text-sm font-black text-green-50 truncate w-full text-center">
-                  {player.name} {player.id === playerId ? '(Ви)' : ''}
+                  {player.name}
                 </span>
                 
                 {isCurrentTurn && (

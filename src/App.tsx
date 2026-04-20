@@ -1,19 +1,70 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from './store';
 import { Header } from './components/Header';
-import { Download, Video } from 'lucide-react';
+import { Download, Video, Bell, Flag, RefreshCw } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { JoinGame } from './components/JoinGame';
 import { Lobby } from './components/Lobby';
 import { Board } from './components/Board';
 import { SelectionPanel } from './components/SelectionPanel';
 import { Deck } from './components/Deck';
 import { ActionPanel } from './components/ActionPanel';
-import { PlayerList } from './components/PlayerList';
+import { VideoAvatar } from './components/VideoAvatar';
 
 export default function App() {
-  const { initSocket, gameState, playerId, reportActivity } = useStore();
+  const { initSocket, gameState, playerId, reportActivity, localStream, setLocalStream, setCameraError, ringBell, giveUp, cameraError } = useStore();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [isCameraStarting, setIsCameraStarting] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(40);
+
+  // Turn timer logic for UI buttons
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (gameState?.status === 'playing') {
+      interval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - (gameState.turnStartTime || Date.now())) / 1000);
+        setTimeLeft(Math.max(0, 40 - elapsed));
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [gameState?.turnStartTime, gameState?.status]);
+
+  const isMyTurn = gameState?.players[gameState.currentTurnIndex]?.id === playerId;
+  const showBell = !isMyTurn && timeLeft < 10 && gameState?.status === 'playing';
+  const anyPlayerFinished = gameState?.players.some(p => p.place !== null);
+  const myPlayer = gameState?.players.find(p => p.id === playerId);
+  const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null && gameState?.status === 'playing';
+
+  // Initialize camera globally
+  useEffect(() => {
+    if (!gameState || gameState.status !== 'playing') return;
+    
+    let stream: MediaStream | null = null;
+    const startCamera = async () => {
+      if (isCameraStarting || localStream) return;
+      setIsCameraStarting(true);
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: { ideal: 640 }, height: { ideal: 480 } }, 
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
+        });
+        setLocalStream(stream);
+        setCameraError(null);
+      } catch (err) {
+        console.error("Camera error:", err);
+        setCameraError("Камера недоступна");
+      } finally {
+        setIsCameraStarting(false);
+      }
+    };
+
+    startCamera();
+
+    return () => {
+      // Don't stop tracks here to allow persistence, but let's be clean if the whole app unmounts
+    };
+  }, [gameState?.status, localStream, isCameraStarting]);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: any) => {
@@ -90,70 +141,9 @@ export default function App() {
     }
   }, [gameState?.currentTurnIndex, gameState?.phase, gameState?.status, playerId]);
 
-  const [showTestVideo, setShowTestVideo] = useState(false);
-  const [testStream, setTestStream] = useState<MediaStream | null>(null);
-
-  const toggleTestVideo = async () => {
-    if (showTestVideo) {
-      if (testStream) {
-        testStream.getTracks().forEach(track => track.stop());
-      }
-      setTestStream(null);
-      setShowTestVideo(false);
-    } else {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: true, 
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true
-          } 
-        });
-        setTestStream(stream);
-        setShowTestVideo(true);
-      } catch (err) {
-        alert("Камера недоступна");
-      }
-    }
-  };
-
   return (
     <div className="min-h-screen bg-[#86B03C] font-sans text-gray-900 flex flex-col">
       <Header />
-      
-      <div className="fixed bottom-4 right-4 z-[60]">
-        <button 
-          onClick={toggleTestVideo}
-          className="bg-[#3A5214] text-white p-3 rounded-full shadow-lg hover:bg-[#4D6D1A] transition-all border-2 border-[#7DA33C]/40"
-          title="Тест камери"
-        >
-          <Video size={24} />
-        </button>
-      </div>
-
-      {showTestVideo && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-[#3A5214] p-6 rounded-[2rem] border-4 border-[#7DA33C] max-w-lg w-full shadow-2xl">
-            <h3 className="text-xl font-black text-white mb-4 text-center">Тест вашої камери</h3>
-            <div className="aspect-video bg-black rounded-xl overflow-hidden mb-6 border-2 border-[#7DA33C]/40">
-              <video 
-                autoPlay 
-                playsInline 
-                muted 
-                ref={el => { if (el) el.srcObject = testStream; }}
-                className="w-full h-full object-cover scale-x-[-1]"
-              />
-            </div>
-            <button 
-              onClick={toggleTestVideo}
-              className="w-full py-4 bg-[#7DA33C] hover:bg-[#86B03C] text-white rounded-xl font-black text-lg shadow-lg"
-            >
-              ЗАКРИТИ
-            </button>
-          </div>
-        </div>
-      )}
       
       {showInstallBanner && (
         <div className="bg-blue-600 text-white p-4 flex items-center justify-between shadow-lg animate-in slide-in-from-top duration-500">
@@ -185,6 +175,78 @@ export default function App() {
       )}
       
       <main className="flex-1 w-full max-w-[1800px] mx-auto p-0 tablet:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] overflow-y-auto scroll-smooth">
+        {/* Floating Cameras Container - Truly on top of everything */}
+        <AnimatePresence>
+          {gameState && gameState.status === 'playing' && (
+            <motion.div
+              drag
+              dragConstraints={{ left: -window.innerWidth + 100, right: 0, top: 0, bottom: window.innerHeight - 400 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="fixed bottom-24 right-4 z-[9999] flex flex-col gap-3 touch-none pointer-events-auto"
+              style={{ position: 'fixed' }}
+            >
+              {/* Drag handle for the whole stack */}
+              <div className="w-12 h-1.5 bg-white/40 rounded-full mx-auto mb-1 shadow-sm opacity-40 hover:opacity-100 transition-opacity" />
+              
+              <div className="flex flex-col gap-3">
+                {gameState.players
+                  .filter(p => !p.isBot) // Only human players have cameras
+                  .map(player => (
+                    <VideoAvatar 
+                      key={`floating-${player.id}`} 
+                      player={player} 
+                      localStream={localStream} 
+                    />
+                  ))
+                }
+
+                {/* Floating Game Controls */}
+                <div className="flex flex-col gap-2 mt-2">
+                  <AnimatePresence>
+                    {showBell && (
+                      <motion.button 
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        onClick={() => ringBell(gameState.players[gameState.currentTurnIndex].id)}
+                        className="bg-yellow-400 text-green-900 p-3 rounded-full shadow-xl hover:bg-yellow-500 transition-all border-2 border-white flex items-center justify-center"
+                        title="Подзвонити в дзвіночок"
+                      >
+                        <Bell size={24} className="animate-bounce" />
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
+
+                  <AnimatePresence>
+                    {canGiveUp && (
+                      <motion.button 
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        onClick={giveUp}
+                        className="bg-red-500 text-white p-3 rounded-full shadow-xl hover:bg-red-600 transition-all border-2 border-white flex items-center justify-center"
+                        title="Здатися"
+                      >
+                        <Flag size={20} />
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
+
+                  <button 
+                    onClick={() => window.location.reload()}
+                    className="bg-[#3A5214]/60 text-white p-3 rounded-full shadow-xl hover:bg-[#3A5214] transition-all border-2 border-white/20 backdrop-blur-md flex items-center justify-center"
+                    title="Оновити камеру/з'єднання"
+                  >
+                    <RefreshCw size={20} />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {!gameState ? (
           <div className="min-h-full flex items-center justify-center p-4 snap-start">
             <JoinGame />
@@ -228,9 +290,6 @@ export default function App() {
             <div className="h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] flex flex-col desktop:flex-row p-0 overflow-hidden snap-start">
               <div className="flex-1 h-full overflow-hidden">
                 <Board />
-              </div>
-              <div className="h-auto desktop:h-full desktop:w-64 bg-[#86B03C]/20 flex-shrink-0">
-                <PlayerList />
               </div>
             </div>
             
