@@ -105,16 +105,17 @@ export const PlayerList = () => {
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;
 
   return (
-    <div className="w-full p-2 tablet:p-3 flex flex-row items-center justify-between desktop:justify-end gap-4 overflow-x-auto scrollbar-hide">
-      <div className="flex flex-row gap-4 py-1 px-2 scrollbar-hide items-center">
+    <div className="w-full desktop:w-64 bg-[#3A5214] backdrop-blur-sm shadow-md rounded-xl desktop:rounded-3xl p-4 tablet:p-6 tablet-landscape:p-2 mb-0 tablet:mb-6 tablet-landscape:mb-1 flex flex-col desktop:flex-col items-center justify-between desktop:justify-start gap-4 border-b tablet-landscape:border-b-0 desktop:border-b-0 desktop:border-l border-[#7DA33C]/40 desktop:h-full desktop:overflow-y-auto">
+      <h3 className="hidden desktop:block text-xs font-black text-green-300 uppercase tracking-widest mb-2">Гравці</h3>
+      <div className="flex desktop:flex-col gap-4 overflow-x-auto desktop:overflow-x-visible py-2 desktop:py-0 px-2 w-full scrollbar-hide">
         {gameState.players.map((player, idx) => {
           const isCurrentTurn = idx === gameState.currentTurnIndex;
           
           return (
             <div 
               key={player.id}
-              className={`flex flex-col items-center p-2 rounded-2xl transition-all gap-2
-                ${isCurrentTurn ? 'bg-green-800 border-2 border-yellow-400 shadow-lg scale-105 z-10' : 'bg-green-900/40 border border-green-700/50 opacity-90'}
+              className={`flex flex-col desktop:flex-col items-center p-3 desktop:p-4 rounded-2xl min-w-[120px] desktop:min-w-0 desktop:w-full transition-all gap-3
+                ${isCurrentTurn ? 'bg-green-800 border-2 border-yellow-400 shadow-sm scale-105 z-10' : 'bg-green-900/40 border border-green-700/50 opacity-80'}
                 ${player.place !== null ? 'opacity-50 grayscale' : ''}`}
             >
               <div className="relative flex-shrink-0">
@@ -129,18 +130,31 @@ export const PlayerList = () => {
                     ПРОПУСК
                   </div>
                 )}
+                {!player.connected && (
+                  <div className="absolute -bottom-2 -left-2 bg-gray-500 text-white text-[10px] font-bold px-1 rounded shadow-sm">
+                    OFF
+                  </div>
+                )}
               </div>
               
-              <div className="flex flex-col items-center min-w-0">
-                <span className="text-[10px] desktop:text-xs font-black text-green-50 truncate max-w-[80px] desktop:max-w-[100px] text-center">
-                  {player.name}
+              <div className="flex flex-col items-center min-w-0 flex-1">
+                <span className="text-sm font-black text-green-50 truncate w-full text-center">
+                  {player.name} {player.id === playerId ? '(Ви)' : ''}
                 </span>
                 
                 {isCurrentTurn && (
-                  <div className={`flex items-center gap-1 text-[10px] font-bold ${timeLeft < 10 ? 'text-red-400 animate-pulse' : 'text-green-300'}`}>
-                    <Clock size={10} />
+                  <div className={`flex items-center gap-1 text-xs font-bold mt-1 ${timeLeft < 10 ? 'text-red-400 animate-pulse' : 'text-green-300'}`}>
+                    <Clock size={12} />
                     <span>{timeLeft}с</span>
                   </div>
+                )}
+                {player.missedTurns > 0 && player.place === null && (
+                  <div className="text-[10px] font-bold text-orange-400 mt-1">
+                    ⚠️ {player.missedTurns}/2
+                  </div>
+                )}
+                {player.place === 99 && (
+                  <div className="text-[10px] font-bold text-red-400 uppercase mt-1">Вибув</div>
                 )}
               </div>
             </div>
@@ -148,42 +162,45 @@ export const PlayerList = () => {
         })}
       </div>
 
-      <div className="flex flex-col tablet:flex-row gap-2 ml-auto desktop:ml-6 flex-shrink-0">
+      <div className="flex flex-col gap-2 border-t tablet-landscape:border-t-0 desktop:border-t-0 pt-4 desktop:pt-0 border-green-700/50 w-full desktop:mt-auto">
         {showBell && (
           <button 
             onClick={() => ringBell(gameState.players[gameState.currentTurnIndex].id)}
-            className="flex items-center justify-center bg-yellow-400 text-green-900 p-2 rounded-lg hover:bg-yellow-500 transition shadow-md"
-            title="Дзвіночок"
+            className="flex items-center justify-center gap-2 bg-yellow-400 text-green-900 px-4 py-2 rounded-lg hover:bg-yellow-500 transition font-bold text-sm shadow-md"
           >
-            <Bell size={16} className="animate-bounce" />
+            <Bell size={16} className="animate-bounce" /> Дзвіночок
           </button>
         )}
 
         {canGiveUp && (
           <button 
             onClick={giveUp}
-            className="flex items-center justify-center bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition shadow-md"
-            title="Здаюсь"
+            className="flex items-center justify-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition font-bold text-sm shadow-md"
           >
-            <Flag size={16} />
+            <Flag size={16} /> Здаюсь
           </button>
         )}
 
-        {cameraError ? (
+        {cameraError && (
+          <div className="flex flex-col gap-1 items-center justify-center text-[10px] text-red-300 font-bold bg-red-900/40 py-2 rounded">
+            <div className="flex items-center gap-1">
+              <VideoOff size={10} /> {cameraError}
+            </div>
+            <button 
+              onClick={refreshCamera}
+              className="mt-1 px-2 py-0.5 bg-red-700 hover:bg-red-600 rounded text-[8px] uppercase"
+            >
+              Спробувати знову
+            </button>
+          </div>
+        )}
+        
+        {!cameraError && (
           <button 
             onClick={refreshCamera}
-            className="flex items-center justify-center bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 transition shadow-md"
-            title={cameraError}
+            className="flex items-center justify-center gap-1 text-[8px] text-green-300/60 hover:text-green-300 font-bold py-1"
           >
-            <VideoOff size={16} />
-          </button>
-        ) : (
-          <button 
-            onClick={refreshCamera}
-            className="flex items-center justify-center text-green-300/60 hover:text-green-300 p-2 transition"
-            title="Оновити камеру"
-          >
-            <Video size={16} />
+            <Video size={10} /> Оновити камеру
           </button>
         )}
       </div>
