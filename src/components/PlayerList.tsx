@@ -105,8 +105,8 @@ export const PlayerList = () => {
   const canGiveUp = anyPlayerFinished && myPlayer && myPlayer.place === null;
 
   return (
-    <div className="w-full bg-[#3A5214]/40 backdrop-blur-sm p-2 tablet:p-4 flex flex-row items-center justify-between desktop:justify-end gap-4 border-b border-[#7DA33C]/20 z-30 overflow-x-auto scrollbar-hide">
-      <div className="flex flex-row gap-4 py-2 px-2 scrollbar-hide items-center">
+    <div className="w-full p-2 tablet:p-3 flex flex-row items-center justify-between desktop:justify-end gap-4 overflow-x-auto scrollbar-hide">
+      <div className="flex flex-row gap-4 py-1 px-2 scrollbar-hide items-center">
         {gameState.players.map((player, idx) => {
           const isCurrentTurn = idx === gameState.currentTurnIndex;
           

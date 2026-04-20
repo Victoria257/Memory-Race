@@ -119,9 +119,17 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#86B03C] font-sans text-gray-900 flex flex-col">
+    <div className="h-screen bg-[#86B03C] font-sans text-gray-900 flex flex-col overflow-hidden">
       <Header />
       
+      {gameState && (gameState.status === 'playing' || gameState.status === 'finished') && (
+        <div className="w-full bg-[#3A5214]/60 backdrop-blur-sm z-[45] flex-shrink-0">
+          <div className="max-w-[1800px] mx-auto tablet:px-4">
+            <PlayerList />
+          </div>
+        </div>
+      )}
+
       <div className="fixed bottom-4 right-4 z-[60]">
         <button 
           onClick={toggleTestVideo}
@@ -184,24 +192,24 @@ export default function App() {
         </div>
       )}
       
-      <main className="flex-1 w-full max-w-[1800px] mx-auto p-0 tablet:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] overflow-y-auto scroll-smooth">
+      <main className="flex-1 w-full max-w-[1800px] mx-auto p-0 tablet:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory overflow-y-auto scroll-smooth">
         {!gameState ? (
-          <div className="min-h-full flex items-center justify-center p-4 snap-start">
+          <div className="flex-1 flex items-center justify-center p-4 snap-start">
             <JoinGame />
           </div>
         ) : gameState.status === 'lobby' ? (
-          <div className="min-h-full flex items-center justify-center p-4 snap-start">
+          <div className="flex-1 flex items-center justify-center p-4 snap-start">
             <Lobby />
           </div>
         ) : gameState.status === 'paused' ? (
-          <div className="flex-1 flex items-center justify-center min-h-screen p-4">
+          <div className="flex-1 flex items-center justify-center p-4">
             <div className="bg-[#F1F8E9] p-8 rounded-2xl shadow-xl text-center border-4 border-[#7DA33C]">
               <h2 className="text-3xl font-black text-gray-800 mb-4">Гру призупинено</h2>
               <p className="text-gray-500">Очікуємо, поки хост відновить гру...</p>
             </div>
           </div>
         ) : gameState.status === 'finished' ? (
-          <div className="flex-1 flex items-center justify-center min-h-screen p-4">
+          <div className="flex-1 flex items-center justify-center p-4">
             <div className="bg-[#F1F8E9] p-8 rounded-2xl shadow-xl text-center border-4 border-[#7DA33C] max-w-md w-full">
               <h2 className="text-4xl font-black text-gray-800 mb-6">Гру завершено!</h2>
               <div className="space-y-4">
@@ -224,25 +232,22 @@ export default function App() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col relative">
-            <div className="sticky top-0 w-full z-40">
-              <PlayerList />
-            </div>
-            <div className="h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] flex flex-col p-0 overflow-hidden snap-start">
+          <div className="flex flex-col relative w-full h-full">
+            <div className="h-full flex flex-col p-0 overflow-hidden snap-start flex-shrink-0">
               <div className="flex-1 h-full overflow-hidden">
                 <Board />
               </div>
             </div>
             
-            <div className="flex flex-col desktop:flex-row gap-0 tablet:gap-4 items-stretch min-h-[calc(100vh-80px)] py-4 tablet:py-8 snap-start">
-              <div className="flex-1 min-h-screen desktop:min-h-0 flex flex-col">
+            <div className="h-full flex flex-col desktop:flex-row gap-0 tablet:gap-4 items-stretch py-4 tablet:py-8 snap-start flex-shrink-0">
+              <div className="flex-1 desktop:min-h-0 flex flex-col">
                 <SelectionPanel />
               </div>
               <div className="flex flex-col tablet:flex-row gap-0 tablet:gap-4 flex-1 items-stretch">
-                <div className="flex-shrink-0 min-h-screen desktop:min-h-0 flex flex-col">
+                <div className="flex-shrink-0 desktop:min-h-0 flex flex-col">
                   <Deck />
                 </div>
-                <div className="flex-1 min-h-screen desktop:min-h-0 flex flex-col">
+                <div className="flex-1 desktop:min-h-0 flex flex-col">
                   <ActionPanel />
                 </div>
               </div>
