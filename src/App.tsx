@@ -174,7 +174,7 @@ export default function App() {
         </div>
       )}
       
-      <main className="flex-1 w-full max-w-[1800px] mx-auto p-0 tablet:px-4 flex flex-col overflow-x-hidden snap-y snap-mandatory h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] overflow-y-auto scroll-smooth">
+      <main className="flex-1 w-full max-w-[1800px] mx-auto p-0 tablet:px-4 desktop:pr-[180px] flex flex-col overflow-x-hidden snap-y snap-mandatory h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] overflow-y-auto scroll-smooth">
         {/* Floating Cameras Container - Truly on top of everything */}
         <AnimatePresence>
           {gameState && gameState.status === 'playing' && (
