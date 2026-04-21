@@ -236,17 +236,11 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
   return (
     <div className={`relative w-28 h-36 desktop:w-36 desktop:h-48 rounded-2xl overflow-hidden shadow-2xl border-4 ${tokenBorderColors[player.tokenColor] || 'border-white/20'} ${isCurrentTurn ? turnGlowColors[player.tokenColor] : ''} bg-gray-900 group transition-all duration-300 ${player.place !== null ? 'opacity-40 grayscale' : ''}`}>
       {player.isBot ? (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-green-900 to-black relative">
-          <img 
-            src={`https://robohash.org/${player.id}?set=set1&bgset=bg2&size=200x200`} 
-            alt="Bot Avatar"
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute bottom-0 inset-x-0 bg-black/60 py-1 flex flex-col items-center backdrop-blur-sm border-t border-white/10">
-            <span className="text-[10px] font-black text-white uppercase tracking-widest opacity-90">{player.name}</span>
-            <span className="text-[8px] font-bold text-green-400 uppercase tracking-tighter italic">AI Бот</span>
+        <div className="w-full h-full flex flex-col items-center justify-center text-white bg-gradient-to-br from-gray-700 to-gray-900">
+          <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-2">
+            <span className="text-xl font-black">{player.name.charAt(0).toUpperCase()}</span>
           </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest opacity-60 italic">Бот</span>
         </div>
       ) : (
         <>
