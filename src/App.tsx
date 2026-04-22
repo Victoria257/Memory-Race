@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from './store';
 import { Header } from './components/Header';
-import { Download, Video, Bell, Flag, RefreshCw } from 'lucide-react';
+import { Download, Video, VideoOff, Mic, MicOff, Bell, Flag } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { JoinGame } from './components/JoinGame';
 import { Lobby } from './components/Lobby';
@@ -17,6 +17,28 @@ export default function App() {
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isCameraStarting, setIsCameraStarting] = useState(false);
   const [timeLeft, setTimeLeft] = useState(40);
+  const [isMicMuted, setIsMicMuted] = useState(false);
+  const [isCameraOff, setIsCameraOff] = useState(false);
+
+  const toggleMic = () => {
+    if (localStream) {
+      const audioTracks = localStream.getAudioTracks();
+      audioTracks.forEach(track => {
+        track.enabled = isMicMuted;
+      });
+      setIsMicMuted(!isMicMuted);
+    }
+  };
+
+  const toggleCamera = () => {
+    if (localStream) {
+      const videoTracks = localStream.getVideoTracks();
+      videoTracks.forEach(track => {
+        track.enabled = isCameraOff;
+      });
+      setIsCameraOff(!isCameraOff);
+    }
+  };
 
   // Turn timer logic for UI buttons
   useEffect(() => {
@@ -234,13 +256,23 @@ export default function App() {
                     )}
                   </AnimatePresence>
 
-                  <button 
-                    onClick={() => window.location.reload()}
-                    className="bg-[#3A5214]/60 text-white p-3 rounded-full shadow-xl hover:bg-[#3A5214] transition-all border-2 border-white/20 backdrop-blur-md flex items-center justify-center"
-                    title="Оновити камеру/з'єднання"
-                  >
-                    <RefreshCw size={20} />
-                  </button>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={toggleMic}
+                      className={`p-3 rounded-full shadow-xl transition-all border-2 border-white flex items-center justify-center ${isMicMuted ? 'bg-red-500 text-white' : 'bg-gray-800/80 text-white'}`}
+                      title={isMicMuted ? "Увімкнути мікрофон" : "Вимкнути мікрофон"}
+                    >
+                      {isMicMuted ? <MicOff size={20} /> : <Mic size={20} />}
+                    </button>
+
+                    <button 
+                      onClick={toggleCamera}
+                      className={`p-3 rounded-full shadow-xl transition-all border-2 border-white flex items-center justify-center ${isCameraOff ? 'bg-red-500 text-white' : 'bg-gray-800/80 text-white'}`}
+                      title={isCameraOff ? "Увімкнути камеру" : "Вимкнути камеру"}
+                    >
+                      {isCameraOff ? <VideoOff size={20} /> : <Video size={20} />}
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>

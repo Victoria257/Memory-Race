@@ -247,6 +247,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
           <video
             ref={videoRef}
             playsInline
+            autoPlay
             muted={isMe}
             className={`w-full h-full object-cover ${isMe ? 'scale-x-[-1]' : ''}`}
           />
