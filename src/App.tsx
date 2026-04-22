@@ -67,10 +67,21 @@ export default function App() {
       if (isCameraStarting || localStream) return;
       setIsCameraStarting(true);
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ 
+        const stream = await navigator.mediaDevices.getUserMedia({ 
           video: { width: { ideal: 640 }, height: { ideal: 480 } }, 
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
+          audio: { 
+            echoCancellation: true, 
+            noiseSuppression: true, 
+            autoGainControl: true 
+          } 
         });
+        
+        // Ensure all tracks are enabled by default
+        stream.getTracks().forEach(track => {
+          track.enabled = true;
+        });
+
+        console.log(`[App] Camera & Mic started. Audio tracks: ${stream.getAudioTracks().length}`);
         setLocalStream(stream);
         setCameraError(null);
       } catch (err) {

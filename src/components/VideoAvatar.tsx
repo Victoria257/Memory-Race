@@ -37,10 +37,17 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
     const video = videoRef.current;
     if (video && remoteStream && !isMe) {
       if (video.srcObject !== remoteStream) {
-        console.log(`[WebRTC] Setting remote stream for ${player.name}`);
+        console.log(`[WebRTC] Attaching remote stream for ${player.name}. Audio tracks: ${remoteStream.getAudioTracks().length}`);
         video.srcObject = remoteStream;
+        
+        // Ensure volume is up and video is unmuted for remote players
+        video.volume = 1.0;
+        
         video.play().catch(e => {
-          if (e.name !== 'AbortError') console.error("[WebRTC] Remote play error:", e);
+          if (e.name !== 'AbortError') {
+            console.error("[WebRTC] Remote play error:", e);
+            // If play fails, it might be due to autoplay policies
+          }
         });
       }
     }
