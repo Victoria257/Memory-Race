@@ -95,7 +95,8 @@ app.use(cors({
           connected: true,
           lastActive: Date.now(),
           missedTurns: 0,
-          isBot: false
+          isBot: false,
+          isPaused: false
         }],
         deck: generateDeck(),
         discardPile: [],
@@ -161,7 +162,8 @@ app.use(cors({
         connected: true,
         lastActive: Date.now(),
         missedTurns: 0,
-        isBot: false
+        isBot: false,
+        isPaused: false
       });
       
       socket.join(normalizedRoomId);
@@ -199,7 +201,8 @@ app.use(cors({
         connected: true,
         lastActive: Date.now(),
         missedTurns: 0,
-        isBot: true
+        isBot: true,
+        isPaused: false
       });
 
       io.to(roomId).emit('game_update', getPublicGameState(game));
@@ -411,6 +414,26 @@ if (!card) {
       const player = game.players.find(p => p.id === playerId);
       if (player) {
         player.lastActive = Date.now();
+        // If player was paused due to inactivity, unpause them when they show activity
+        if (player.isPaused) {
+          player.isPaused = false;
+          player.missedTurns = 0;
+          console.log(`[Game ${roomId}] Player ${player.name} unpaused due to activity`);
+        }
+      }
+    });
+
+    socket.on('unpause_player', ({ roomId, playerId }) => {
+      const game = games[roomId];
+      if (!game || game.status !== 'playing') return;
+      
+      const player = game.players.find(p => p.id === playerId);
+      if (player) {
+        player.isPaused = false;
+        player.missedTurns = 0;
+        player.lastActive = Date.now();
+        console.log(`[Game ${roomId}] Player ${player.name} manually unpaused`);
+        io.to(roomId).emit('game_update', getPublicGameState(game));
       }
     });
 
@@ -559,7 +582,7 @@ if (!card) {
     
     while (loopCount < game.players.length) {
       const p = game.players[nextIndex];
-      if (p.place !== null) {
+      if (p.place !== null || p.isPaused) {
         nextIndex = (nextIndex + 1) % game.players.length;
         loopCount++;
         continue;
@@ -602,9 +625,9 @@ if (!card) {
           // Auto skip turn
           currentPlayer.missedTurns++;
           if (currentPlayer.missedTurns >= 2) {
-            // Kick player
-            currentPlayer.place = 99; // Kicked/Last place
-            console.log(`[Game ${roomId}] Player ${currentPlayer.name} kicked for inactivity`);
+            // Pause player instead of kicking
+            currentPlayer.isPaused = true;
+            console.log(`[Game ${roomId}] Player ${currentPlayer.name} paused for inactivity`);
           } else {
             currentPlayer.skipNextTurn = true;
             console.log(`[Game ${roomId}] Player ${currentPlayer.name} turn skipped for inactivity`);

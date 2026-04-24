@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from './store';
 import { Header } from './components/Header';
-import { Download, Video, VideoOff, Mic, MicOff, Bell, Flag } from 'lucide-react';
+import { Download, Video, VideoOff, Mic, MicOff, Bell, Flag, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { JoinGame } from './components/JoinGame';
 import { Lobby } from './components/Lobby';
@@ -12,7 +12,7 @@ import { ActionPanel } from './components/ActionPanel';
 import { VideoAvatar } from './components/VideoAvatar';
 
 export default function App() {
-  const { initSocket, gameState, playerId, reportActivity, localStream, setLocalStream, setCameraError, ringBell, giveUp, cameraError } = useStore();
+  const { initSocket, gameState, playerId, reportActivity, localStream, setLocalStream, setCameraError, ringBell, giveUp, cameraError, unpausePlayer, reconnectMedia } = useStore();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isCameraStarting, setIsCameraStarting] = useState(false);
@@ -202,30 +202,34 @@ export default function App() {
           {gameState && gameState.status === 'playing' && (
             <motion.div
               drag
-              dragConstraints={{ left: -window.innerWidth + 100, right: 0, top: 0, bottom: window.innerHeight - 400 }}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="fixed bottom-24 right-4 z-[9999] flex flex-col gap-3 touch-none pointer-events-auto"
+              dragConstraints={{ left: -window.innerWidth + 100, right: window.innerWidth - 100, top: -window.innerHeight + 100, bottom: window.innerHeight - 100 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="fixed z-[9999] flex flex-row desktop:flex-col gap-2 desktop:gap-3 touch-none pointer-events-auto
+                bottom-4 left-1/2 -translate-x-1/2 
+                desktop:bottom-24 desktop:right-4 desktop:left-auto desktop:translate-x-0"
               style={{ position: 'fixed' }}
             >
-              {/* Drag handle for the whole stack */}
-              <div className="w-12 h-1.5 bg-white/40 rounded-full mx-auto mb-1 shadow-sm opacity-40 hover:opacity-100 transition-opacity" />
+              {/* Drag handle for the whole stack - hidden on mobile to save space */}
+              <div className="hidden desktop:block w-12 h-1.5 bg-white/40 rounded-full mx-auto mb-1 shadow-sm opacity-40 hover:opacity-100 transition-opacity" />
               
-              <div className="flex flex-col gap-3">
-                {gameState.players
-                  .filter(p => !p.isBot) // Only human players have cameras
-                  .map(player => (
-                    <VideoAvatar 
-                      key={`floating-${player.id}`} 
-                      player={player} 
-                      localStream={localStream} 
-                    />
-                  ))
-                }
+              <div className="flex flex-row desktop:flex-col gap-2 desktop:gap-3 items-end desktop:items-center">
+                <div className="flex flex-row desktop:flex-col gap-2 desktop:gap-3 overflow-x-auto desktop:overflow-visible pb-2 desktop:pb-0 max-w-[90vw] desktop:max-w-none">
+                  {gameState.players
+                    .filter(p => !p.isBot) // Only human players have cameras
+                    .map(player => (
+                      <VideoAvatar 
+                        key={`floating-${player.id}`} 
+                        player={player} 
+                        localStream={localStream} 
+                      />
+                    ))
+                  }
+                </div>
 
                 {/* Floating Game Controls */}
-                <div className="flex flex-col gap-2 mt-2">
+                <div className="flex flex-row desktop:flex-col gap-2">
                   <AnimatePresence>
                     {showBell && (
                       <motion.button 
@@ -233,10 +237,10 @@ export default function App() {
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0, opacity: 0 }}
                         onClick={() => ringBell(gameState.players[gameState.currentTurnIndex].id)}
-                        className="bg-yellow-400 text-green-900 p-3 rounded-full shadow-xl hover:bg-yellow-500 transition-all border-2 border-white flex items-center justify-center"
+                        className="bg-yellow-400 text-green-900 p-2 desktop:p-3 rounded-full shadow-xl hover:bg-yellow-500 transition-all border-2 border-white flex items-center justify-center shrink-0"
                         title="Подзвонити в дзвіночок"
                       >
-                        <Bell size={24} className="animate-bounce" />
+                        <Bell size={20} desktop:size={24} className="animate-bounce" />
                       </motion.button>
                     )}
                   </AnimatePresence>
@@ -248,29 +252,37 @@ export default function App() {
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0, opacity: 0 }}
                         onClick={giveUp}
-                        className="bg-red-500 text-white p-3 rounded-full shadow-xl hover:bg-red-600 transition-all border-2 border-white flex items-center justify-center"
+                        className="bg-red-500 text-white p-2 desktop:p-3 rounded-full shadow-xl hover:bg-red-600 transition-all border-2 border-white flex items-center justify-center shrink-0"
                         title="Здатися"
                       >
-                        <Flag size={20} />
+                        <Flag size={18} desktop:size={20} />
                       </motion.button>
                     )}
                   </AnimatePresence>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-row desktop:flex-col gap-2">
                     <button 
                       onClick={toggleMic}
-                      className={`p-3 rounded-full shadow-xl transition-all border-2 border-white flex items-center justify-center ${isMicMuted ? 'bg-red-500 text-white' : 'bg-gray-800/80 text-white'}`}
+                      className={`p-2 desktop:p-3 rounded-full shadow-xl transition-all border-2 border-white flex items-center justify-center shrink-0 ${isMicMuted ? 'bg-red-500 text-white' : 'bg-gray-800/80 text-white'}`}
                       title={isMicMuted ? "Увімкнути мікрофон" : "Вимкнути мікрофон"}
                     >
-                      {isMicMuted ? <MicOff size={20} /> : <Mic size={20} />}
+                      {isMicMuted ? <MicOff size={18} desktop:size={20} /> : <Mic size={18} desktop:size={20} />}
                     </button>
 
                     <button 
                       onClick={toggleCamera}
-                      className={`p-3 rounded-full shadow-xl transition-all border-2 border-white flex items-center justify-center ${isCameraOff ? 'bg-red-500 text-white' : 'bg-gray-800/80 text-white'}`}
+                      className={`p-2 desktop:p-3 rounded-full shadow-xl transition-all border-2 border-white flex items-center justify-center shrink-0 ${isCameraOff ? 'bg-red-500 text-white' : 'bg-gray-800/80 text-white'}`}
                       title={isCameraOff ? "Увімкнути камеру" : "Вимкнути камеру"}
                     >
-                      {isCameraOff ? <VideoOff size={20} /> : <Video size={20} />}
+                      {isCameraOff ? <VideoOff size={18} desktop:size={20} /> : <Video size={18} desktop:size={20} />}
+                    </button>
+
+                    <button 
+                      onClick={reconnectMedia}
+                      className="p-2 desktop:p-3 bg-blue-600/80 text-white rounded-full shadow-xl hover:bg-blue-600 transition-all border-2 border-white flex items-center justify-center shrink-0"
+                      title="Перезапустити медіа-пристрої"
+                    >
+                      <RefreshCcw size={18} desktop:size={20} />
                     </button>
                   </div>
                 </div>

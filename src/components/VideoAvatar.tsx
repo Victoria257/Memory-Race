@@ -11,7 +11,7 @@ interface VideoAvatarProps {
 }
 
 export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream }) => {
-  const { socket, playerId, gameState } = useStore();
+  const { socket, playerId, gameState, unpausePlayer } = useStore();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -19,6 +19,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
   const peerRef = useRef<any>(null);
 
   const isMe = player.id === playerId;
+  const isPaused = player.isPaused;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -261,6 +262,20 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
             <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/80 px-2 py-0.5 rounded-full border border-white/20 animate-pulse">
               <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full" />
               <span className={`text-[10px] font-black ${timeLeft < 10 ? 'text-red-400' : 'text-white'}`}>{timeLeft}с</span>
+            </div>
+          )}
+
+          {isPaused && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-md z-20">
+              <span className="text-[10px] font-black text-white uppercase tracking-widest bg-yellow-600 px-2 py-1 rounded mb-2">На паузі</span>
+              {isMe && (
+                <button 
+                  onClick={unpausePlayer}
+                  className="text-[11px] font-black text-white bg-green-600 px-3 py-1.5 rounded-xl hover:bg-green-500 transition-all shadow-xl border border-white/20 active:scale-95"
+                >
+                  ПРОДОВЖИТИ
+                </button>
+              )}
             </div>
           )}
 

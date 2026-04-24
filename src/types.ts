@@ -24,6 +24,7 @@ export type Player = {
   lastActive: number;
   missedTurns: number;
   isBot: boolean;
+  isPaused?: boolean;
 };
 
 export type GameState = {

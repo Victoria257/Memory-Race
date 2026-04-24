@@ -34,6 +34,8 @@ interface AppState {
   addBot: () => void;
   removeBot: () => void;
   reportActivity: () => void;
+  unpausePlayer: () => void;
+  reconnectMedia: () => void;
   clearError: () => void;
 }
 
@@ -212,6 +214,28 @@ export const useStore = create<AppState>((set, get) => ({
     const { socket, gameState, playerId } = get();
     if (!socket || !gameState || !playerId) return;
     socket.emit('player_activity', { roomId: gameState.roomId, playerId });
+  },
+
+  unpausePlayer: () => {
+    const { socket, gameState, playerId } = get();
+    if (!socket || !gameState || !playerId) return;
+    socket.emit('unpause_player', { roomId: gameState.roomId, playerId });
+  },
+
+  reconnectMedia: async () => {
+    const { setLocalStream, setCameraError } = get();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { width: { ideal: 640 }, height: { ideal: 480 } }, 
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
+      });
+      setLocalStream(stream);
+      setCameraError(null);
+      console.log("Media reconnected successfully");
+    } catch (err) {
+      console.error("Camera reconnection error:", err);
+      setCameraError("Камера недоступна. Перевірте дозволи.");
+    }
   },
 
   clearError: () => set({ error: null })
