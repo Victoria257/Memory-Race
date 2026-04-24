@@ -1,9 +1,9 @@
 import React from 'react';
 import { useStore } from '../store';
-import { Volume2, VolumeX, User, LogOut, Pause, Play } from 'lucide-react';
+import { User, LogOut, Pause, Play, RefreshCcw } from 'lucide-react';
 
 export const Header = () => {
-  const { language, setLanguage, playerName, playerTokenColor, gameState, playerId, pauseGame, leaveRoom, isMuted, toggleMute } = useStore();
+  const { language, setLanguage, playerName, playerTokenColor, gameState, playerId, pauseGame, leaveRoom, reconnectMedia } = useStore();
   const [showStats, setShowStats] = React.useState(false);
   const [showExitConfirm, setShowExitConfirm] = React.useState(false);
 
@@ -60,8 +60,12 @@ export const Header = () => {
           <option value="sv">SV</option>
         </select>
 
-        <button onClick={toggleMute} className="p-2 hover:bg-[#5A7D1E] rounded-full transition-all active:scale-90">
-          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+        <button 
+          onClick={reconnectMedia} 
+          className="p-2 hover:bg-[#5A7D1E] rounded-full transition-all active:scale-90 text-blue-300"
+          title="Перезапустити камеру/мікрофон"
+        >
+          <RefreshCcw size={20} />
         </button>
 
         {gameState?.initiator === playerId && gameState.status !== 'finished' && (

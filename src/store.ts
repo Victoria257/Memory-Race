@@ -10,6 +10,7 @@ interface AppState {
   playerTokenColor: string;
   language: 'en' | 'sv' | 'uk';
   isMuted: boolean;
+  isOthersMuted: boolean;
   gameState: GameState | null;
   error: string | null;
   localStream: MediaStream | null;
@@ -21,6 +22,7 @@ interface AppState {
   setPlayerInfo: (name: string, age: number, color: string) => void;
   setLanguage: (lang: 'en' | 'sv' | 'uk') => void;
   toggleMute: () => void;
+  toggleOthersMute: () => void;
   createGame: () => void;
   joinGame: (roomId: string) => void;
   startGame: () => void;
@@ -51,6 +53,7 @@ export const useStore = create<AppState>((set, get) => ({
   playerTokenColor: localStorage.getItem('playerTokenColor') || 'blue',
   language: (localStorage.getItem('language') as 'en' | 'sv' | 'uk') || 'uk',
   isMuted: localStorage.getItem('isMuted') === 'true',
+  isOthersMuted: localStorage.getItem('isOthersMuted') === 'true',
   gameState: null,
   error: null,
   localStream: null,
@@ -120,6 +123,12 @@ export const useStore = create<AppState>((set, get) => ({
     const newMuted = !get().isMuted;
     localStorage.setItem('isMuted', newMuted.toString());
     set({ isMuted: newMuted });
+  },
+
+  toggleOthersMute: () => {
+    const newMuted = !get().isOthersMuted;
+    localStorage.setItem('isOthersMuted', newMuted.toString());
+    set({ isOthersMuted: newMuted });
   },
 
   createGame: () => {
@@ -223,10 +232,20 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   reconnectMedia: async () => {
-    const { setLocalStream, setCameraError } = get();
+    const { localStream, setLocalStream, setCameraError } = get();
+    
+    // Reset first to force clean state
+    if (localStream) {
+      localStream.getTracks().forEach(track => track.stop());
+    }
+    setLocalStream(null);
+    
+    // Short delay to let browser release hardware
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { width: { ideal: 640 }, height: { ideal: 480 } }, 
+        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }, 
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
       });
       setLocalStream(stream);
@@ -234,7 +253,14 @@ export const useStore = create<AppState>((set, get) => ({
       console.log("Media reconnected successfully");
     } catch (err) {
       console.error("Camera reconnection error:", err);
-      setCameraError("Камера недоступна. Перевірте дозволи.");
+      // Fallback to audio only
+      try {
+        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        setLocalStream(audioStream);
+        setCameraError("Лише аудіо - камера недоступна");
+      } catch (e) {
+        setCameraError("Помилка доступу до медіа. Перевірте дозволи у браузері.");
+      }
     }
   },
 

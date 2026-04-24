@@ -75,7 +75,7 @@ export const SelectionPanel = () => {
   };
 
   return (
-    <div id="selection-panel" className="flex-grow h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] rounded-none tablet:rounded-3xl shadow-xl p-6 tablet-landscape:p-4 border-0 tablet:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center relative">
+    <div id="selection-panel" className="flex-grow h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] rounded-none tablet:rounded-3xl shadow-xl p-6 pb-[150px] tablet:pb-6 tablet-landscape:p-4 border-0 tablet:border-4 border-[#7DA33C]/20 transition-all duration-300 flex flex-col justify-center relative">
       {isSelectPhase && isMyTurn && (
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-white/80 px-3 py-1 rounded-full border-2 border-green-200 shadow-sm z-20">
           <div className={`w-3 h-3 rounded-full ${timeLeft < 10 ? 'bg-red-500 animate-ping' : 'bg-green-500'}`}></div>
@@ -88,8 +88,8 @@ export const SelectionPanel = () => {
         {getStatusMessage()}
       </h3>
 
-      <div className="mb-8 tablet-landscape:mb-3">
-        <h4 className="text-xs font-black text-green-600 mb-3 tablet-landscape:mb-1 uppercase tracking-[0.2em]">🌈 Категорії</h4>
+      <div className="mb-6 tablet-landscape:mb-2">
+        <h4 className="text-xs font-black text-green-600 mb-2 tablet-landscape:mb-0.5 uppercase tracking-[0.2em]">🌈 Категорії</h4>
         <div className="grid grid-cols-3 tablet:grid-cols-4 gap-3 tablet-landscape:gap-2">
           {categories.map(c => (
             <button
@@ -100,16 +100,16 @@ export const SelectionPanel = () => {
                 ${selectedCategory === c.id ? 'border-green-600 bg-green-50 shadow-lg scale-110' : 'border-white/50 hover:border-green-100 hover:bg-white/30'}
                 ${!canSelect ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'}`}
             >
-              <span className="text-2xl tablet:text-3xl tablet-landscape:text-xl mb-2 tablet-landscape:mb-1">{c.icon}</span>
+              <span className="text-2xl tablet:text-3xl tablet-landscape:text-xl mb-1 tablet-landscape:mb-0.5">{c.icon}</span>
               <span className="text-[10px] tablet:text-xs font-black text-center leading-tight text-gray-700">{c.name[language]}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="mb-8 tablet-landscape:mb-3">
-        <h4 className="text-xs font-black text-green-600 mb-3 tablet-landscape:mb-1 uppercase tracking-[0.2em]">🎨 Кольори</h4>
-        <div className="grid grid-cols-4 tablet:flex tablet:flex-row tablet:flex-nowrap gap-3 tablet:gap-3 tablet-landscape:gap-2 justify-items-center tablet:justify-between items-center py-6 tablet-landscape:py-3 px-4 bg-white/30 rounded-2xl overflow-x-auto scrollbar-hide">
+      <div className="mb-2 tablet-landscape:mb-2">
+        <h4 className="text-xs font-black text-green-600 mb-0.5 tablet-landscape:mb-0.5 uppercase tracking-[0.2em]">🎨 Кольори</h4>
+        <div className="grid grid-cols-4 tablet:flex tablet:flex-row tablet:flex-nowrap gap-3 tablet:gap-3 tablet-landscape:gap-2 justify-items-center tablet:justify-between items-center py-2 tablet-landscape:py-2 px-4 bg-white/30 rounded-2xl overflow-x-auto scrollbar-hide">
           {colors.map(c => (
             <button
               key={c.id}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from './store';
 import { Header } from './components/Header';
-import { Download, Video, VideoOff, Mic, MicOff, Bell, Flag, RefreshCcw } from 'lucide-react';
+import { Download, Video, VideoOff, Mic, MicOff, Bell, Flag, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { JoinGame } from './components/JoinGame';
 import { Lobby } from './components/Lobby';
@@ -12,7 +12,7 @@ import { ActionPanel } from './components/ActionPanel';
 import { VideoAvatar } from './components/VideoAvatar';
 
 export default function App() {
-  const { initSocket, gameState, playerId, reportActivity, localStream, setLocalStream, setCameraError, ringBell, giveUp, cameraError, unpausePlayer, reconnectMedia } = useStore();
+  const { initSocket, gameState, playerId, reportActivity, localStream, setLocalStream, setCameraError, ringBell, giveUp, cameraError, unpausePlayer, reconnectMedia, isOthersMuted, toggleOthersMute } = useStore();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isCameraStarting, setIsCameraStarting] = useState(false);
@@ -64,7 +64,7 @@ export default function App() {
     
     let stream: MediaStream | null = null;
     const startCamera = async () => {
-      if (isCameraStarting || localStream) return;
+      if (isCameraStarting || (localStream && localStream.active)) return;
       setIsCameraStarting(true);
       try {
         stream = await navigator.mediaDevices.getUserMedia({ 
@@ -207,15 +207,15 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               className="fixed z-[9999] flex flex-row desktop:flex-col gap-2 desktop:gap-3 touch-none pointer-events-auto
-                bottom-4 left-1/2 -translate-x-1/2 
-                desktop:bottom-24 desktop:right-4 desktop:left-auto desktop:translate-x-0"
+                bottom-2 right-2
+                desktop:bottom-24 desktop:right-4 desktop:left-auto"
               style={{ position: 'fixed' }}
             >
               {/* Drag handle for the whole stack - hidden on mobile to save space */}
               <div className="hidden desktop:block w-12 h-1.5 bg-white/40 rounded-full mx-auto mb-1 shadow-sm opacity-40 hover:opacity-100 transition-opacity" />
               
               <div className="flex flex-row desktop:flex-col gap-2 desktop:gap-3 items-end desktop:items-center">
-                <div className="flex flex-row desktop:flex-col gap-2 desktop:gap-3 overflow-x-auto desktop:overflow-visible pb-2 desktop:pb-0 max-w-[90vw] desktop:max-w-none">
+                <div className="flex flex-row desktop:flex-col gap-2 desktop:gap-3 desktop:overflow-visible max-w-[70vw] desktop:max-w-none">
                   {gameState.players
                     .filter(p => !p.isBot) // Only human players have cameras
                     .map(player => (
@@ -229,7 +229,7 @@ export default function App() {
                 </div>
 
                 {/* Floating Game Controls */}
-                <div className="flex flex-row desktop:flex-col gap-2">
+                <div className="flex flex-col gap-2">
                   <AnimatePresence>
                     {showBell && (
                       <motion.button 
@@ -240,11 +240,11 @@ export default function App() {
                         className="bg-yellow-400 text-green-900 p-2 desktop:p-3 rounded-full shadow-xl hover:bg-yellow-500 transition-all border-2 border-white flex items-center justify-center shrink-0"
                         title="Подзвонити в дзвіночок"
                       >
-                        <Bell size={20} desktop:size={24} className="animate-bounce" />
+                        <Bell className="w-5 h-5 desktop:w-6 desktop:h-6 animate-bounce" />
                       </motion.button>
                     )}
                   </AnimatePresence>
-
+ 
                   <AnimatePresence>
                     {canGiveUp && (
                       <motion.button 
@@ -255,34 +255,34 @@ export default function App() {
                         className="bg-red-500 text-white p-2 desktop:p-3 rounded-full shadow-xl hover:bg-red-600 transition-all border-2 border-white flex items-center justify-center shrink-0"
                         title="Здатися"
                       >
-                        <Flag size={18} desktop:size={20} />
+                        <Flag className="w-[18px] h-[18px] desktop:w-5 desktop:h-5" />
                       </motion.button>
                     )}
                   </AnimatePresence>
-
-                  <div className="flex flex-row desktop:flex-col gap-2">
+ 
+                  <div className="flex flex-col gap-2">
                     <button 
                       onClick={toggleMic}
                       className={`p-2 desktop:p-3 rounded-full shadow-xl transition-all border-2 border-white flex items-center justify-center shrink-0 ${isMicMuted ? 'bg-red-500 text-white' : 'bg-gray-800/80 text-white'}`}
                       title={isMicMuted ? "Увімкнути мікрофон" : "Вимкнути мікрофон"}
                     >
-                      {isMicMuted ? <MicOff size={18} desktop:size={20} /> : <Mic size={18} desktop:size={20} />}
+                      {isMicMuted ? <MicOff className="w-[18px] h-[18px] desktop:w-5 desktop:h-5" /> : <Mic className="w-[18px] h-[18px] desktop:w-5 desktop:h-5" />}
                     </button>
-
+ 
                     <button 
                       onClick={toggleCamera}
                       className={`p-2 desktop:p-3 rounded-full shadow-xl transition-all border-2 border-white flex items-center justify-center shrink-0 ${isCameraOff ? 'bg-red-500 text-white' : 'bg-gray-800/80 text-white'}`}
                       title={isCameraOff ? "Увімкнути камеру" : "Вимкнути камеру"}
                     >
-                      {isCameraOff ? <VideoOff size={18} desktop:size={20} /> : <Video size={18} desktop:size={20} />}
+                      {isCameraOff ? <VideoOff className="w-[18px] h-[18px] desktop:w-5 desktop:h-5" /> : <Video className="w-[18px] h-[18px] desktop:w-5 desktop:h-5" />}
                     </button>
-
+ 
                     <button 
-                      onClick={reconnectMedia}
-                      className="p-2 desktop:p-3 bg-blue-600/80 text-white rounded-full shadow-xl hover:bg-blue-600 transition-all border-2 border-white flex items-center justify-center shrink-0"
-                      title="Перезапустити медіа-пристрої"
+                      onClick={toggleOthersMute}
+                      className={`p-2 desktop:p-3 rounded-full shadow-xl transition-all border-2 border-white flex items-center justify-center shrink-0 ${isOthersMuted ? 'bg-red-500 text-white' : 'bg-gray-800/80 text-white'}`}
+                      title={isOthersMuted ? "Увімкнути звук інших" : "Вимкнути звук інших"}
                     >
-                      <RefreshCcw size={18} desktop:size={20} />
+                      {isOthersMuted ? <VolumeX className="w-[18px] h-[18px] desktop:w-5 desktop:h-5" /> : <Volume2 className="w-[18px] h-[18px] desktop:w-5 desktop:h-5" />}
                     </button>
                   </div>
                 </div>
@@ -332,7 +332,7 @@ export default function App() {
         ) : (
           <div className="flex flex-col">
             <div className="h-[calc(100vh-72px)] tablet:h-[calc(100vh-80px)] flex flex-col desktop:flex-row p-0 overflow-hidden snap-start">
-              <div className="flex-1 h-full overflow-hidden">
+              <div className="flex-1 h-full overflow-hidden pb-[100px] tablet:pb-0">
                 <Board />
               </div>
             </div>

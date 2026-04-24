@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { speakText } from '../services/geminiService';
-import { Dog, Cat, Rabbit, Bird, Fish, Turtle, Volume2 } from 'lucide-react';
+import { Dog, Cat, Rabbit, Bird, Fish, Turtle, Volume2, VolumeX } from 'lucide-react';
 
 export const Deck = () => {
-  const { gameState, playerId, revealCard, language, isMuted } = useStore();
+  const { gameState, playerId, revealCard, language, isMuted, toggleMute } = useStore();
   const lastSpokenCardId = useRef<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(40);
 
@@ -55,14 +55,23 @@ export const Deck = () => {
 
   return (
     <div id="deck-panel" className="w-full desktop:w-72 h-full min-h-screen tablet:min-h-0 bg-[#F1F8E9] rounded-none tablet:rounded-3xl shadow-xl p-6 tablet-landscape:p-4 flex flex-col items-center justify-center relative border-0 tablet:border-4 border-[#7DA33C]/20 transition-all duration-300 overflow-hidden">
-      {isRevealPhase && isMyTurn && (
-        <div className="absolute top-4 right-4 flex items-center gap-2 bg-white/80 px-3 py-1 rounded-full border-2 border-green-200 shadow-sm z-20">
-          <div className={`w-3 h-3 rounded-full ${timeLeft < 10 ? 'bg-red-500 animate-ping' : 'bg-green-500'}`}></div>
-          <span className={`font-black text-sm ${timeLeft < 10 ? 'text-red-600' : 'text-green-700'}`}>
-            {timeLeft}с
-          </span>
-        </div>
-      )}
+      <div className="absolute top-4 right-4 flex flex-col items-end gap-2 z-20">
+        {isRevealPhase && isMyTurn && (
+          <div className="flex items-center gap-2 bg-white/80 px-3 py-1 rounded-full border-2 border-green-200 shadow-sm">
+            <div className={`w-3 h-3 rounded-full ${timeLeft < 10 ? 'bg-red-500 animate-ping' : 'bg-green-500'}`}></div>
+            <span className={`font-black text-sm ${timeLeft < 10 ? 'text-red-600' : 'text-green-700'}`}>
+              {timeLeft}с
+            </span>
+          </div>
+        )}
+        <button 
+          onClick={toggleMute}
+          className={`p-2 rounded-full shadow-lg border-2 transition-all active:scale-95 flex items-center justify-center ${isMuted ? 'bg-red-100 border-red-200 text-red-600' : 'bg-white/80 border-green-200 text-green-600'}`}
+          title={isMuted ? "Увімкнути звук" : "Вимкнути звук"}
+        >
+          {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </button>
+      </div>
       {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.07] overflow-hidden">
         <Dog className="absolute top-10 left-10 rotate-12" size={48} />

@@ -11,7 +11,7 @@ interface VideoAvatarProps {
 }
 
 export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream }) => {
-  const { socket, playerId, gameState, unpausePlayer } = useStore();
+  const { socket, playerId, gameState, unpausePlayer, isOthersMuted } = useStore();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -235,7 +235,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
   };
 
   return (
-    <div className={`relative w-28 h-36 desktop:w-36 desktop:h-48 rounded-2xl overflow-hidden shadow-2xl border-4 ${tokenBorderColors[player.tokenColor] || 'border-white/20'} ${isCurrentTurn ? turnGlowColors[player.tokenColor] : ''} bg-gray-900 group transition-all duration-300 ${player.place !== null ? 'opacity-40 grayscale' : ''}`}>
+    <div className={`relative w-20 h-28 desktop:w-36 desktop:h-48 rounded-2xl overflow-hidden shadow-2xl border-4 ${tokenBorderColors[player.tokenColor] || 'border-white/20'} ${isCurrentTurn ? turnGlowColors[player.tokenColor] : ''} bg-gray-900 group transition-all duration-300 ${player.place !== null ? 'opacity-40 grayscale' : ''}`}>
       {player.isBot ? (
         <div className="w-full h-full flex flex-col items-center justify-center text-white bg-gradient-to-br from-gray-700 to-gray-900">
           <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-2">
@@ -249,19 +249,19 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
             ref={videoRef}
             playsInline
             autoPlay
-            muted={isMe}
+            muted={isMe || isOthersMuted}
             className={`w-full h-full object-cover ${isMe ? 'scale-x-[-1]' : ''}`}
           />
           
-          <div className="absolute top-2 left-2 bg-black/60 px-2 py-0.5 rounded-full text-[9px] text-white font-black uppercase tracking-wider backdrop-blur-md border border-white/10 flex items-center gap-1.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${player.connected ? 'bg-green-500' : 'bg-gray-500'}`} />
+          <div className="absolute top-1 left-1 bg-black/60 px-1.5 py-0.5 rounded-full text-[7px] desktop:text-[9px] text-white font-black uppercase tracking-wider backdrop-blur-md border border-white/10 flex items-center gap-1">
+            <div className={`w-1 h-1 desktop:w-1.5 desktop:h-1.5 rounded-full ${player.connected ? 'bg-green-500' : 'bg-gray-500'}`} />
             {isMe ? 'Ви' : player.name}
           </div>
 
           {isCurrentTurn && (
-            <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/80 px-2 py-0.5 rounded-full border border-white/20 animate-pulse">
-              <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full" />
-              <span className={`text-[10px] font-black ${timeLeft < 10 ? 'text-red-400' : 'text-white'}`}>{timeLeft}с</span>
+            <div className="absolute top-1 right-1 flex items-center gap-0.5 bg-black/80 px-1.5 py-0.5 rounded-full border border-white/20 animate-pulse">
+              <div className="w-1 h-1 bg-yellow-400 rounded-full" />
+              <span className={`text-[8px] desktop:text-[10px] font-black ${timeLeft < 10 ? 'text-red-400' : 'text-white'}`}>{timeLeft}с</span>
             </div>
           )}
 
@@ -281,7 +281,7 @@ export const VideoAvatar: React.FC<VideoAvatarProps> = ({ player, localStream })
 
           {player.place !== null && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
-              <div className="bg-yellow-400 text-yellow-900 text-lg font-black w-10 h-10 rounded-full flex items-center justify-center shadow-xl border-2 border-white">
+              <div className="bg-yellow-400 text-yellow-900 text-sm desktop:text-lg font-black w-7 h-7 desktop:w-10 desktop:h-10 rounded-full flex items-center justify-center shadow-xl border-2 border-white">
                 {player.place === 99 ? 'X' : player.place}
               </div>
             </div>
